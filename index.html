@@ -717,6 +717,7 @@
       font-size: 14px;
       color: #6b7280;
       line-height: 1.6;
+      white-space: nowrap;
     }
 
     /* Big preview */
@@ -942,10 +943,15 @@
     .p5-sub { font-size: 12px; color: #9ca3af; text-align: left; line-height: 1.6; white-space: normal; }
 
     /* ── p5 action bar: search + filter ── */
+    .p5-allapps-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 20px; font-weight: 500; color: #07191E;
+      margin-bottom: 12px;
+    }
     .p5-action-bar { display: flex; align-items: center; gap: 24px; width: 100%; flex-shrink: 0; }
     .p5-search-wrap { flex: 1; position: relative; }
     .p5-search {
-      width: 100%; height: 38px; border-radius: 999px; border: 1.5px solid #e5e7eb;
+      width: 100%; height: 44px; border-radius: 12px; border: 1.5px solid #e5e7eb;
       padding: 0 14px 0 38px; font-size: 13px; font-family: 'Poppins', sans-serif;
       color: #07191e; outline: none; background: #fff; box-sizing: border-box;
       transition: border-color 0.15s;
@@ -961,11 +967,10 @@
     }
     .app-cat-header {
       grid-column: span 2;
-      font-size: 13px; font-weight: 600; color: #9ca3af;
+      font-size: 13px; font-weight: 500; color: #9ca3af;
       letter-spacing: 0.03em;
-      padding: 20px 0 6px;
-      border-bottom: 1px solid rgba(7,25,30,0.07);
-      margin-bottom: 2px;
+      padding: 20px 0 0;
+      margin-bottom: 6px;
     }
     .app-cat-header.first { padding-top: 4px; }
     .app-grid { display: contents; }
@@ -976,12 +981,14 @@
       cursor: default; transition: border-color 0.18s, background 0.18s;
     }
     .app-card:hover { border-color: #b0e4fe; }
-    .app-card.connected { border-color: #89D2F8; background: #f6fbff; }
+    .app-card.connected { border-color: transparent; background: #fff; }
+    .app-card.connected:hover { border-color: transparent; }
     .app-card-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
     .app-card-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+    .app-card-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .app-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .app-name { font-size: 13px; font-weight: 600; color: #07191e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .app-desc { font-size: 11px; color: #9ca3af; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .app-name { font-size: 13px; font-weight: 400; color: #07191e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .app-desc { display: none; }
     .app-tag  {
       flex-shrink: 0; font-size: 11px; font-weight: 500; cursor: pointer;
       padding: 4px 12px; border-radius: 999px; background: #f0f4f8; color: #6b7280;
@@ -989,7 +996,19 @@
       transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
     .app-tag:hover { background: #ddf2ff; color: #014261; border-color: #89D2F8; }
-    .app-card.connected .app-tag { background: #ddf2ff; color: #014261; border-color: #89D2F8; }
+    .app-card.connected .app-tag {
+      background: #D1FAE5; color: #10b981; border-color: transparent; cursor: default;
+    }
+    .app-card.connected .app-tag:hover {
+      background: #D1FAE5; color: #10b981; border-color: transparent;
+    }
+    .app-unlink {
+      background: none; border: none; padding: 2px 2px;
+      font-size: 12px; font-weight: 500; color: #9ca3af;
+      font-family: 'Poppins', sans-serif; cursor: pointer;
+      transition: color 0.15s;
+    }
+    .app-unlink:hover { color: #014261; }
 
     .p5-sticky-bar {
       flex-shrink: 0; padding: 16px 48px 16px;
@@ -1034,15 +1053,24 @@
       position: relative; flex-shrink: 0;
     }
     .p5-filter-dropdown-btn {
-      height: 38px; padding: 0 16px;
-      border: 1.5px solid #e5e7eb; border-radius: 999px;
+      height: 44px; min-width: 110px; padding: 0 16px;
+      border: 1.5px solid #e5e7eb; border-radius: 12px;
       font-size: 13px; font-weight: 500; font-family: 'Poppins', sans-serif;
       color: #6b7280; background: #fff; cursor: pointer;
-      display: flex; align-items: center; gap: 7px;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
       transition: all 0.15s; white-space: nowrap;
     }
     .p5-filter-dropdown-btn:hover { border-color: #89D2F8; color: #014261; }
-    .p5-filter-dropdown-btn.active { background: #014261; border-color: #014261; color: #fff; }
+    .p5-filter-dropdown-btn.active {
+      background: #DDF2FF;
+      border-color: #DDF2FF;
+      color: #014261;
+    }
+    #p5-filter-dd-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; line-height: 0;
+    }
+    #p5-filter-dd-icon svg { display: block; }
     .p5-filter-dropdown-menu {
       display: none; position: absolute; top: calc(100% + 6px); right: 0;
       background: #fff; border: 1.5px solid #e5e7eb; border-radius: 14px;
@@ -1140,6 +1168,7 @@
     }
     .p5-profile-linked-icons {
       display: flex; gap: 4px; align-items: center;
+      min-height: 24px;
     }
     .p5-linked-icon {
       width: 24px; height: 24px; border-radius: 7px;
@@ -1183,10 +1212,12 @@
     .p5-top .p5-action-bar  { margin-bottom: 0; }
     .p5-app-scroll {
       flex: 1; min-height: 0; overflow-y: auto;
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, black 88%, transparent 100%);
+      mask-image: linear-gradient(to bottom, black 0%, black 88%, transparent 100%);
     }
     .p5-app-inner {
       width: 660px; max-width: 100%; margin: 0 auto;
-      padding: 24px 0 16px;
+      padding: 20px 0 16px;
     }
     .p5-app-scroll::-webkit-scrollbar { width: 4px; }
     .p5-app-scroll::-webkit-scrollbar-thumb { background: rgba(7,25,30,0.12); border-radius: 4px; }
@@ -1195,12 +1226,10 @@
     .p5-bottom-bar {
       flex-shrink: 0;
       width: 100%;
-      background: linear-gradient(to bottom,
-        rgba(255,236,224,0) 0%,
-        rgba(255,232,219,0.55) 25%,
-        rgba(255,228,213,0.88) 55%,
-        rgba(255,228,213,1) 100%);
-      padding: 36px 0 28px;
+      background: transparent;
+      padding: 0 0 52px;
+      position: relative;
+      z-index: 5;
     }
     .p5-bottom-bar-inner {
       width: 660px; max-width: 100%; margin: 0 auto;
@@ -1409,7 +1438,7 @@
     <div class="av2-body">
       <div class="av2-heading">
         <div class="av2-title">Pick your avatar</div>
-        <div class="av2-sub">This is how your AI self will appear to teammates every time it acts on your behalf.</div>
+        <div class="av2-sub">This is how your AI appears to teammates.</div>
       </div>
 
       <!-- Preview -->
@@ -1454,7 +1483,7 @@
     <div class="p5-main">
       <div class="p5-top">
         <div class="step-heading">
-          <div class="ob-step-title">Link Apps, Activate Your AI</div>
+          <div class="ob-step-title">Link Apps, Feed Your AI</div>
           <div class="ob-step-sub">Connect more to make your AI smarter and more like you.</div>
         </div>
 
@@ -1481,6 +1510,7 @@
           </div>
         </div>
 
+        <div class="p5-allapps-title">All Apps</div>
         <div class="p5-action-bar">
           <div class="p5-search-wrap">
             <svg class="p5-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none">
@@ -1491,14 +1521,13 @@
           </div>
           <div class="p5-filter-dropdown-wrap" id="p5-filter-dd-wrap">
             <button class="p5-filter-dropdown-btn" id="p5-filter-dd-btn" onclick="toggleFilterDD(event)">
-              <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M6 10h8M9 15h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              Filter
+              <span id="p5-filter-dd-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M6 10h8M9 15h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span id="p5-filter-dd-text">Filter</span>
             </button>
             <div class="p5-filter-dropdown-menu" id="p5-filter-dd-menu">
               <div class="p5-filter-dd-label">Category</div>
-              <div class="p5-filter-dropdown-item" data-cat="all" onclick="selectDDFilter(this)">
-                <input type="checkbox" onclick="event.stopPropagation()"/> All
-              </div>
               <div class="p5-filter-dropdown-item" data-cat="productivity" onclick="selectDDFilter(this)">
                 <input type="checkbox" onclick="event.stopPropagation()"/> Productivity
               </div>
@@ -2798,8 +2827,8 @@
     if (page === 4) screens.classList.add('page4');
     if (page === 5) {
       screens.classList.add('page5');
+      if (typeof resetFilterButton === 'function') resetFilterButton();
       filteredApps = APPS.slice();
-      activeFilter = 'all';
       renderAppGrid(filteredApps);
       updateP5Status();
     }
@@ -2872,17 +2901,16 @@
   const APPS = [
     { id:'slack',   name:'Slack',           desc:'Communication style',    cat:'communication', bg:'#F4EEF9', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zm2.521-10.123a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zm0 1.271a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zm10.122 2.521a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.52V8.834zm-1.268 0a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zm-2.523 10.122a2.527 2.527 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.52h2.52zm0-1.268a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#4A154B"/></svg>' },
     { id:'gmail',   name:'Gmail',           desc:'Email habits & tone',    cat:'communication', bg:'#FEF0EE', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" fill="#EA4335"/></svg>' },
-    { id:'gcal',    name:'Google Calendar', desc:'Schedule & priorities',  cat:'productivity', bg:'#EEF3FF', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M18.316 5.684H24v12.632h-5.684V5.684zM5.684 24v-5.684H18.32V24H5.684zM0 18.316v-12.63h5.684v12.63H0zM5.684 0H18.32v5.684H5.684V0zm6.829 9.895-1.061.73-.563-.822 1.354-.928h1.007v6.25h-1.14l.003-5.23z" fill="#1967D2"/></svg>' },
     { id:'notion',  name:'Notion',          desc:'Docs & knowledge base',  cat:'productivity', bg:'#F5F5F5', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466l1.823 1.447zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.14c-.093-.514.28-.887.747-.933l3.222-.187z" fill="#191919"/></svg>' },
+    { id:'gdrive',  name:'Google Drive',    desc:'Files & documents',      cat:'productivity', bg:'#EEF2FF', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M6.28 2.788 1.142 12l4.57 7.928h11.576L22 12 16.862 2.788zm-.93 16.212L1.86 12.75h20.28l-3.49 6.25H5.35zm10.43-15-4.43 7.676L6.84 4.005h9.94zm-5.4 8.5H2.905l4.57-7.926 3.905 7.926z" fill="#4285F4"/></svg>' },
     { id:'github',  name:'GitHub',          desc:'Code & projects',        cat:'productivity', bg:'#F0F0F0', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" fill="#24292E"/></svg>' },
     { id:'linear',  name:'Linear',          desc:'Tasks & sprints',        cat:'productivity', bg:'#EEEEFF', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M3.38 9.6c.07.07.17.07.24 0L9.6 3.62a.17.17 0 0 0 0-.25A12.12 12.12 0 0 0 3.38 9.6zm-.49.93a.17.17 0 0 0 0 .2 12.12 12.12 0 0 0 10.38 5.32.17.17 0 0 0 .1-.3L3.1 10.28a.17.17 0 0 0-.2 0zm1.08 6.3a.17.17 0 0 0 0 .24 12.12 12.12 0 0 0 8.3 3.43.17.17 0 0 0 .1-.29l-8.4-3.38zm-1.32-9.7A12.1 12.1 0 0 1 9.37 2.8a.17.17 0 0 0-.24 0L3.38 6.3a.17.17 0 0 0 0 .24l2.26 2.26a.17.17 0 0 0 .24 0l3.38-3.38a.17.17 0 0 0-.24-.24L5.88 7.42 4.07 5.61A11.77 11.77 0 0 1 9.37 3.1a.17.17 0 0 0-.24-.24 12.1 12.1 0 0 0-5.68 4.27zm13.6-3.74A12.1 12.1 0 0 1 21.2 9.4a.17.17 0 0 0 .24-.24A12.1 12.1 0 0 0 14.7 3.1a.17.17 0 0 0 0 .3zm3.62 14A12.12 12.12 0 0 0 21.2 14a.17.17 0 0 0-.3 0 12.12 12.12 0 0 0-1.43 4.12.17.17 0 0 0 .3.07zm-1.13 1.73a.17.17 0 0 0 .25 0 12.12 12.12 0 0 0 2.11-2.86.17.17 0 0 0-.29-.17 12.12 12.12 0 0 0-2.07 2.78.17.17 0 0 0 0 .25z" fill="#5E6AD2"/></svg>' },
     { id:'figma',   name:'Figma',           desc:'Design files',           cat:'content', bg:'#FFF0EC', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.354-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.02s1.354 3.018 3.019 3.018h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 10.98c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.019 3.019 3.019h3.117v-6.038H8.148zm4.587 8.981h-4.588c-2.476 0-4.49-2.014-4.49-4.49 0-2.476 2.014-4.49 4.49-4.49h4.588v8.98zm-4.588-7.509c-1.665 0-3.019 1.354-3.019 3.019 0 1.664 1.354 3.018 3.019 3.018h3.117v-6.037H8.147zm10.148.531c0 2.476-2.014 4.49-4.49 4.49-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49c2.476 0 4.49 2.014 4.49 4.49z" fill="#F24E1E"/></svg>' },
     { id:'jira',    name:'Jira',            desc:'Issues & backlogs',      cat:'productivity', bg:'#EEF4FF', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M11.571 11.513H0a5.218 5.218 0 0 0 5.232 5.215h2.13v2.057A5.215 5.215 0 0 0 12.575 24V12.518a1.005 1.005 0 0 0-1.004-1.005zm5.723-5.756H5.736a5.215 5.215 0 0 0 5.215 5.214h2.129v2.058a5.218 5.218 0 0 0 5.215 5.214V6.758a1.001 1.001 0 0 0-1.001-1.001zM23.013 0H11.455a5.215 5.215 0 0 0 5.215 5.215h2.129v2.057A5.215 5.215 0 0 0 24.016 12.49V1.002A1.001 1.001 0 0 0 23.013 0z" fill="#0052CC"/></svg>' },
     { id:'zoom',    name:'Zoom',            desc:'Meeting patterns',       cat:'communication', bg:'#EEF6FF', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M24 12c0 6.629-5.371 12-12 12S0 18.629 0 12 5.371 0 12 0s12 5.371 12 12zm-6.91-4.636h-8.06c-.804 0-1.03.532-1.03 1.058v5.38l3.233-2.157v1.098c0 .816.662 1.478 1.478 1.478h5.45c.804 0 1.03-.532 1.03-1.058V8.841c0-.804-.662-1.477-1.478-1.477h-.623zm2.47 2.388-2.47 1.648v-1.649l2.47-1.648v1.649z" fill="#2D8CFF"/></svg>' },
-    { id:'gdrive',  name:'Google Drive',    desc:'Files & documents',      cat:'productivity', bg:'#EEF2FF', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M6.28 2.788 1.142 12l4.57 7.928h11.576L22 12 16.862 2.788zm-.93 16.212L1.86 12.75h20.28l-3.49 6.25H5.35zm10.43-15-4.43 7.676L6.84 4.005h9.94zm-5.4 8.5H2.905l4.57-7.926 3.905 7.926z" fill="#4285F4"/></svg>' },
+    { id:'gcal',    name:'Google Calendar', desc:'Schedule & priorities',  cat:'productivity', bg:'#EEF3FF', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M18.316 5.684H24v12.632h-5.684V5.684zM5.684 24v-5.684H18.32V24H5.684zM0 18.316v-12.63h5.684v12.63H0zM5.684 0H18.32v5.684H5.684V0zm6.829 9.895-1.061.73-.563-.822 1.354-.928h1.007v6.25h-1.14l.003-5.23z" fill="#1967D2"/></svg>' },
     { id:'hubspot', name:'HubSpot',         desc:'CRM & pipeline',         cat:'customer', bg:'#FFF4F1', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M18.164 7.93V5.586a1.696 1.696 0 0 0 .979-1.527v-.05A1.695 1.695 0 0 0 17.449 2.3h-.05a1.695 1.695 0 0 0-1.695 1.695v.05c0 .664.38 1.24.979 1.527V7.93a4.814 4.814 0 0 0-2.293 1.01L7.582 3.89a1.878 1.878 0 1 0-.906.96l6.71 5.014a4.816 4.816 0 0 0 .005 5.744l-1.88 1.88a1.56 1.56 0 1 0 .902.9l1.913-1.913a4.82 4.82 0 1 0 3.838-8.545zm-.715 7.343a2.544 2.544 0 1 1 0-5.088 2.544 2.544 0 0 1 0 5.088z" fill="#FF7A59"/></svg>' },
     { id:'asana',   name:'Asana',           desc:'Projects & deadlines',   cat:'productivity', bg:'#FFF1F2', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><path d="M19.013 11.028a4.987 4.987 0 1 0 0 9.974 4.987 4.987 0 0 0 0-9.974zm-14.026 0a4.987 4.987 0 1 0 0 9.974 4.987 4.987 0 0 0 0-9.974zM16.987 6.987a4.987 4.987 0 1 1-9.974 0 4.987 4.987 0 0 1 9.974 0z" fill="#FC636B"/></svg>' },
-,
   { id:'confluence', name:'Confluence', desc:'Docs & wikis', cat:'productivity', bg:'#EEF4FF', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><rect width="24" height="24" rx="5" fill="#EEF4FF"/><text x="12" y="17" font-size="10" font-weight="700" text-anchor="middle" fill="#0052CC" font-family="sans-serif">CO</text></svg>' },
   { id:'monday', name:'Monday.com', desc:'Project tracking', cat:'productivity', bg:'#FFF3E0', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><rect width="24" height="24" rx="5" fill="#FFF3E0"/><text x="12" y="17" font-size="10" font-weight="700" text-anchor="middle" fill="#FF3D57" font-family="sans-serif">MO</text></svg>' },
   { id:'clickup', name:'ClickUp', desc:'Task management', cat:'productivity', bg:'#F3EEFF', icon:'<svg viewBox="0 0 24 24" width="15" height="15"><rect width="24" height="24" rx="5" fill="#F3EEFF"/><text x="12" y="17" font-size="10" font-weight="700" text-anchor="middle" fill="#7B68EE" font-family="sans-serif">CL</text></svg>' },
@@ -3007,17 +3035,28 @@
     var on = connectedApps.has(app.id);
     var card = document.createElement('div');
     card.className = 'app-card' + (on ? ' connected' : '');
-    card.innerHTML = '<div class="app-card-left"><div class="app-icon" style="background:' + app.bg + '">' + app.icon + '</div><div class="app-card-info"><div class="app-name">' + app.name + '</div><div class="app-desc">' + app.desc + '</div></div></div><div class="app-tag">' + (on ? '✓ Linked' : 'Link') + '</div>';
-    card.querySelector('.app-tag').addEventListener('click', function(e) {
-      e.stopPropagation();
-      if (connectedApps.has(app.id)) {
+    card.style.cursor = on ? 'default' : 'pointer';
+    var left = '<div class="app-card-left"><div class="app-icon" style="background:' + app.bg + '">' + app.icon + '</div><div class="app-card-info"><div class="app-name">' + app.name + '</div><div class="app-desc">' + app.desc + '</div></div></div>';
+    var right = on
+      ? '<div class="app-card-right"><button class="app-unlink" type="button">Unlink</button><div class="app-tag">✓ Linked</div></div>'
+      : '<div class="app-card-right"><div class="app-tag">Link</div></div>';
+    card.innerHTML = left + right;
+    if (on) {
+      card.querySelector('.app-unlink').addEventListener('click', function(e) {
+        e.stopPropagation();
         connectedApps.delete(app.id);
         renderAppGrid(filteredApps);
         updateP5Status();
-      } else {
+      });
+      // Linked tag and card body are no-op when connected
+    } else {
+      function openLink(e) {
+        e.stopPropagation();
         openOAuth(app);
       }
-    });
+      card.addEventListener('click', openLink);
+      card.querySelector('.app-tag').addEventListener('click', openLink);
+    }
     return card;
   }
 
@@ -3092,15 +3131,8 @@
   }
 
   function syncP5() {
-    // Reset filter state to All
-    activeFilter = 'all';
-    // Reset dropdown
-    document.querySelectorAll('#p5-filter-dd-menu .p5-filter-dropdown-item').forEach(item => {
-      item.classList.remove('checked');
-      const cb = item.querySelector('input'); if (cb) cb.checked = false;
-    });
-    const ddBtn = document.getElementById('p5-filter-dd-btn');
-    if (ddBtn) ddBtn.classList.remove('active');
+    // Reset filter to All (icon/text/active state)
+    resetFilterButton();
     // Clear search
     const srch = document.getElementById('p5-search');
     if (srch) srch.value = '';
@@ -3113,7 +3145,7 @@
     const sumRole = document.getElementById('p5-sum-role');
     if (sumRole) sumRole.textContent = roleVal || '—';
     // Render all apps
-    filteredApps = [...APPS];
+    filteredApps = APPS.slice();
     renderAppGrid(filteredApps);
     updateP5Status();
   }
@@ -3126,6 +3158,10 @@
   // OAuth modal logic
   let pendingOAuthApp = null;
   const oauthOverlay = document.getElementById('oauth-overlay');
+  // Move overlay out of #screens (which has transform:translateX) so position:fixed works against viewport
+  if (oauthOverlay && oauthOverlay.parentElement !== document.body) {
+    document.body.appendChild(oauthOverlay);
+  }
   const oauthAuthorize = document.getElementById('oauth-authorize-btn');
   const oauthCancel = document.getElementById('oauth-cancel-btn');
 
@@ -3175,38 +3211,49 @@
   if (oauthCancel) oauthCancel.addEventListener('click', closeOAuth);
   if (oauthOverlay) oauthOverlay.addEventListener('click', (e) => { if (e.target === oauthOverlay) closeOAuth(); });
 
-  // Filter tab clicks
-  function toggleFilterDD(e) {
-    e.stopPropagation();
-    document.getElementById('p5-filter-dd-menu').classList.toggle('open');
-  }
-  function selectDDFilter(item) {
-    const cat = item.dataset.cat;
-    // Clear all checkboxes and checked states
+  // Filter dropdown: toggle menu (or clear filter when one is active)
+  const FILTER_ICON_OPEN = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M6 10h8M9 15h2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const FILTER_ICON_CLOSE = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5l-10 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  function resetFilterButton() {
+    const ddBtn = document.getElementById('p5-filter-dd-btn');
+    document.getElementById('p5-filter-dd-icon').innerHTML = FILTER_ICON_OPEN;
+    document.getElementById('p5-filter-dd-text').textContent = 'Filter';
+    ddBtn.classList.remove('active');
     document.querySelectorAll('#p5-filter-dd-menu .p5-filter-dropdown-item').forEach(i => {
       i.classList.remove('checked');
       const cb = i.querySelector('input'); if (cb) cb.checked = false;
     });
-    // Check this one
+    activeFilter = 'all';
+  }
+  function toggleFilterDD(e) {
+    e.stopPropagation();
+    const ddBtn = document.getElementById('p5-filter-dd-btn');
+    // If a filter is already active, clicking the button clears it (X behaviour)
+    if (ddBtn.classList.contains('active')) {
+      resetFilterButton();
+      applyFilter();
+      document.getElementById('p5-filter-dd-menu').classList.remove('open');
+      return;
+    }
+    document.getElementById('p5-filter-dd-menu').classList.toggle('open');
+  }
+  function selectDDFilter(item) {
+    const cat = item.dataset.cat;
+    // Clear prior check marks
+    document.querySelectorAll('#p5-filter-dd-menu .p5-filter-dropdown-item').forEach(i => {
+      i.classList.remove('checked');
+      const cb = i.querySelector('input'); if (cb) cb.checked = false;
+    });
+    // Mark this one
     const cb = item.querySelector('input[type=checkbox]');
     if (cb) cb.checked = true;
     item.classList.add('checked');
-    // Deselect quick-tab filters
-    const fr = document.getElementById('p5-filter-row');
-    fr.querySelectorAll('.p5-filter-btn').forEach(b => b.classList.remove('active'));
-    // Update dropdown button style
+    // Update button UI: outlined highlight + X icon; keep "Filter" label
     const ddBtn = document.getElementById('p5-filter-dd-btn');
-    if (cat === 'all') {
-      // Treat as All — activate the All quick tab, clear dropdown
-      ddBtn.classList.remove('active');
-      item.classList.remove('checked');
-      if (cb) cb.checked = false;
-      fr.querySelector('[data-cat="all"]').classList.add('active');
-      activeFilter = 'all';
-    } else {
-      ddBtn.classList.add('active');
-      activeFilter = cat;
-    }
+    ddBtn.classList.add('active');
+    document.getElementById('p5-filter-dd-icon').innerHTML = FILTER_ICON_CLOSE;
+    document.getElementById('p5-filter-dd-text').textContent = 'Filter';
+    activeFilter = cat;
     applyFilter();
     document.getElementById('p5-filter-dd-menu').classList.remove('open');
   }
