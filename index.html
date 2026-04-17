@@ -21,7 +21,14 @@
       font-style: normal;
       font-display: swap;
     }
-    
+    @font-face {
+      font-family: 'GeistPixelSquare';
+      src: url('./GeistPixel-Square.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; font-family: 'Poppins', sans-serif; overflow: hidden; }
 
@@ -1516,13 +1523,13 @@
       font-size: 12.5px;
       color: #6b7280;
       letter-spacing: 1.5px; text-transform: uppercase;
-      font-family: 'Tickerbit', ui-monospace, monospace;
+      font-family: 'GeistPixelSquare', 'Tickerbit', ui-monospace, monospace;
       font-weight: 400;
       line-height: 1;
     }
     .p7-card-code {
       font-size: 22px;
-      font-family: 'Tickerbit', ui-monospace, monospace;
+      font-family: 'GeistPixelSquare', 'Tickerbit', ui-monospace, monospace;
       font-weight: 400;
       color: #014261;
       letter-spacing: 1.2px;
@@ -1878,6 +1885,7 @@
       border-bottom: 1px solid #e5e7eb;
       flex-shrink: 0;
     }
+    .p8-main-nav[hidden] { display: none; }
     .p8-nav-left {
       display: flex; align-items: center; gap: 12px;
     }
@@ -2191,7 +2199,7 @@
     .admin-profile-avatar {
       position: relative;
       width: 84px; height: 84px;
-      border-radius: 18px;
+      border-radius: 50%;
       background: #ddf2ff;
       overflow: hidden;
       flex-shrink: 0;
@@ -2199,10 +2207,10 @@
     .admin-profile-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .admin-profile-dot {
       position: absolute;
-      right: -2px; bottom: -2px;
+      right: 2px; bottom: 2px;
       width: 14px; height: 14px;
       border-radius: 50%;
-      background: #f59e0b;
+      background: #10b981;
       box-shadow: 0 0 0 3px #fff;
     }
     .admin-profile-body {
@@ -2220,13 +2228,19 @@
       letter-spacing: 0.01em;
     }
     .admin-profile-tag {
-      display: inline-flex; align-items: center;
-      padding: 3px 10px;
-      background: #f3f5f9; color: #6b7280;
-      font-family: 'Tickerbit', monospace;
-      font-size: 11px; font-weight: 500;
-      letter-spacing: 0.08em;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 10px 3px 9px;
+      background: #ecfdf5; color: #059669;
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.04em;
       border-radius: 999px;
+    }
+    .admin-profile-tag::before {
+      content: '';
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 2px rgba(16,185,129,0.18);
     }
     .admin-profile-desc {
       font-family: 'Poppins', sans-serif;
@@ -2237,8 +2251,22 @@
     .admin-profile-actions { display: flex; gap: 10px; margin-top: 6px; }
     .admin-btn-chat {
       display: inline-flex; align-items: center; gap: 8px;
-      background: #fff; color: #014261;
-      border: 1px solid #d0eaff;
+      background: #014261; color: #fff;
+      border: 1px solid #014261;
+      padding: 9px 20px;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    .admin-btn-chat:hover { background: #0a5d85; border-color: #0a5d85; }
+    .admin-btn-chat:active { transform: translateY(1px); }
+    .admin-btn-chat svg { width: 15px; height: 15px; }
+    .admin-btn-settings {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: #fff; color: #07191e;
+      border: 1px solid #e5e7eb;
       padding: 9px 18px;
       border-radius: 12px;
       font-family: 'Poppins', sans-serif;
@@ -2246,8 +2274,8 @@
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s;
     }
-    .admin-btn-chat:hover { background: #ddf2ff; border-color: #b0e4fe; }
-    .admin-btn-chat svg { width: 15px; height: 15px; }
+    .admin-btn-settings:hover { background: #f7f8fb; border-color: #d1d5db; }
+    .admin-btn-settings svg { width: 15px; height: 15px; }
 
     /* 2-col grid used by Identity/Usage and Knowledge/Apps rows */
     .admin-profile-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -2306,6 +2334,74 @@
     .admin-status-pill.idle { color: #9ca3af; }
     .admin-status-pill.idle::before { background: #9ca3af; }
 
+    /* Activity heatmap — full-width card, GitHub-style contribution grid
+       compressed to a single week (7 days × 4 time buckets). */
+    .admin-activity-card {
+      padding: 16px 20px 18px;
+    }
+    .admin-activity-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .admin-activity-sub { font-size: 12px; color: #9ca3af; }
+    .admin-activity-grid {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      column-gap: 10px;
+      row-gap: 4px;
+      align-items: center;
+    }
+    .admin-activity-row-label {
+      font-size: 10px; color: #9ca3af;
+      font-family: 'Poppins', sans-serif;
+      letter-spacing: 0.04em;
+      text-align: right;
+    }
+    .admin-activity-row {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .admin-activity-cell {
+      aspect-ratio: 1 / 1;
+      min-height: 18px;
+      border-radius: 3px;
+      background: #f3f5f9;
+      transition: transform 0.12s, filter 0.12s;
+    }
+    .admin-activity-cell[data-lvl="1"] { background: #d0eaff; }
+    .admin-activity-cell[data-lvl="2"] { background: #89D2F8; }
+    .admin-activity-cell[data-lvl="3"] { background: #3ba8e0; }
+    .admin-activity-cell[data-lvl="4"] { background: #014261; }
+    .admin-activity-cell:hover { transform: scale(1.15); filter: brightness(1.08); }
+    .admin-activity-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      margin-top: 8px;
+      padding-left: 32px;
+    }
+    .admin-activity-day-label {
+      font-size: 10px; color: #9ca3af;
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      letter-spacing: 0.04em;
+    }
+    .admin-activity-legend {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; color: #9ca3af;
+      font-family: 'Poppins', sans-serif;
+    }
+    .admin-activity-legend-swatches { display: flex; gap: 3px; }
+    .admin-activity-legend-swatch {
+      width: 11px; height: 11px; border-radius: 2px;
+      background: #f3f5f9;
+    }
+    .admin-activity-legend-swatch[data-lvl="1"] { background: #d0eaff; }
+    .admin-activity-legend-swatch[data-lvl="2"] { background: #89D2F8; }
+    .admin-activity-legend-swatch[data-lvl="3"] { background: #3ba8e0; }
+    .admin-activity-legend-swatch[data-lvl="4"] { background: #014261; }
+
     /* Value callout — warm cream box with diamond/price icon */
     .admin-usage-callout {
       margin-top: 10px;
@@ -2323,28 +2419,34 @@
     .admin-usage-callout-text strong { color: #07191e; display: block; }
     .admin-usage-callout-text span { display: block; color: #92400e; font-size: 12px; margin-top: 2px; }
 
-    /* Section headers (Feed, Permissions) */
+    /* Section headers (Activity, Feed, Permissions) */
     .admin-section-head {
       display: flex; align-items: center; justify-content: space-between;
-      margin-top: 4px;
+      margin-top: 8px;
     }
     .admin-section-title {
-      font-family: 'SF Pro', -apple-system, sans-serif;
-      font-weight: 600; font-size: 16px; color: #07191e;
-    }
-    .admin-btn-link {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: #014261; color: #fff;
-      border: none;
-      padding: 7px 14px;
-      border-radius: 999px;
       font-family: 'Poppins', sans-serif;
-      font-size: 12px; font-weight: 500;
-      cursor: pointer;
-      transition: background 0.15s;
+      font-weight: 600; font-size: 14px; color: #99A1AF;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
-    .admin-btn-link:hover { background: #0a5d85; }
-    .admin-btn-link svg { width: 12px; height: 12px; }
+    /* Text link with arrow (e.g. "Link more →") — replaces the old dark pill */
+    .admin-btn-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: transparent; color: #6b7280;
+      border: none;
+      padding: 4px 2px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer;
+      transition: color 0.15s, gap 0.15s;
+    }
+    .admin-btn-link:hover { color: #014261; gap: 6px; }
+    .admin-btn-link svg {
+      width: 14px; height: 14px;
+      transition: transform 0.15s;
+    }
+    .admin-btn-link:hover svg { transform: translateX(2px); }
 
     /* Data cards (Knowledge + Apps Linked) */
     .admin-data-card {
@@ -4772,16 +4874,23 @@
                 </div>
                 <div class="admin-profile-body">
                   <div class="admin-profile-name-row">
-                    <span class="admin-profile-name" id="admin-hero-name">AI Employee</span>
-                    <span class="admin-profile-tag" id="admin-hero-tag">FLEX</span>
+                    <span class="admin-profile-name" id="admin-hero-name">Shine AI</span>
+                    <span class="admin-profile-tag" id="admin-hero-tag">Active</span>
                   </div>
-                  <div class="admin-profile-desc" id="admin-hero-desc">Flexible team member. Trained on your linked tools and team context — ask anything about your work and it keeps learning as you go.</div>
+                  <div class="admin-profile-desc" id="admin-hero-desc">AI Employee</div>
                   <div class="admin-profile-actions">
                     <button class="admin-btn-chat" type="button" onclick="switchP8View('chat')">
                       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M14 7.5A5.5 5.5 0 0 1 8.5 13c-.9 0-1.76-.22-2.5-.6L3 13l.6-3A5.5 5.5 0 1 1 14 7.5z"/>
                       </svg>
                       Chat
+                    </button>
+                    <button class="admin-btn-settings" type="button" aria-label="Settings">
+                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="8" cy="8" r="2"/>
+                        <path d="M13.2 9.5a5.2 5.2 0 0 0 0-3l1.3-1-1.5-2.6-1.6.5a5.2 5.2 0 0 0-2.6-1.5L8 .5l-1.5.4a5.2 5.2 0 0 0-2.6 1.5l-1.6-.5L.8 4.5l1.3 1a5.2 5.2 0 0 0 0 3l-1.3 1 1.5 2.6 1.6-.5a5.2 5.2 0 0 0 2.6 1.5l.5 1.4h3l.5-1.4a5.2 5.2 0 0 0 2.6-1.5l1.6.5 1.5-2.6-1.3-1z"/>
+                      </svg>
+                      Settings
                     </button>
                   </div>
                 </div>
@@ -4844,12 +4953,46 @@
                 </div>
               </div>
 
+              <!-- ── Activity heatmap (full-width card, GitHub contribution style
+                   compressed to a single week, 7 days × 4 time buckets) ── -->
+              <div class="admin-card admin-activity-card">
+                <div class="admin-activity-head">
+                  <div class="admin-card-title">Activity</div>
+                  <div class="admin-activity-sub">Last 7 days</div>
+                </div>
+                <div class="admin-activity-grid" id="admin-activity-grid">
+                  <!-- Populated by renderActivityHeatmap() — 4 rows × 7 cells each -->
+                </div>
+                <div class="admin-activity-days">
+                  <div class="admin-activity-day-label">Mon</div>
+                  <div class="admin-activity-day-label">Tue</div>
+                  <div class="admin-activity-day-label">Wed</div>
+                  <div class="admin-activity-day-label">Thu</div>
+                  <div class="admin-activity-day-label">Fri</div>
+                  <div class="admin-activity-day-label">Sat</div>
+                  <div class="admin-activity-day-label">Sun</div>
+                </div>
+                <div class="admin-activity-head" style="margin-top:12px;margin-bottom:0;justify-content:flex-end;">
+                  <div class="admin-activity-legend">
+                    <span>Less</span>
+                    <div class="admin-activity-legend-swatches">
+                      <div class="admin-activity-legend-swatch"></div>
+                      <div class="admin-activity-legend-swatch" data-lvl="1"></div>
+                      <div class="admin-activity-legend-swatch" data-lvl="2"></div>
+                      <div class="admin-activity-legend-swatch" data-lvl="3"></div>
+                      <div class="admin-activity-legend-swatch" data-lvl="4"></div>
+                    </div>
+                    <span>More</span>
+                  </div>
+                </div>
+              </div>
+
               <!-- ── Feed section ── -->
               <div class="admin-section-head">
                 <div class="admin-section-title">Feed</div>
                 <button class="admin-btn-link" type="button" onclick="openLinkAppsModal()">
-                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 1.5v11M1.5 7h11"/></svg>
                   Link more
+                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>
                 </button>
               </div>
               <div class="admin-profile-grid-2">
@@ -4905,6 +5048,8 @@
       </main>
     </div>
   </div>
+
+</div><!-- /#screens — close the transformed container so modals below are positioned relative to the viewport, not to translateX(-N*100vw) -->
 
     <!-- Link Apps modal — opened from the "Link tools to Relay" bar on p8 -->
   <div class="p8-link-overlay" id="p8-link-overlay" onclick="if(event.target===this)closeLinkAppsModal()" role="dialog" aria-modal="true" aria-labelledby="p8-link-modal-title">
@@ -5616,11 +5761,40 @@
 
     const img = document.getElementById('admin-hero-avatar-img');
     if (img && avatarSrc) img.src = avatarSrc;
+    // Name is always "Shine AI"; the job title shows as the subtitle.
     const nameEl = document.getElementById('admin-hero-name');
-    if (nameEl) nameEl.textContent = ROLE;
+    if (nameEl) nameEl.textContent = 'Shine AI';
+    const descEl = document.getElementById('admin-hero-desc');
+    if (descEl) descEl.textContent = ROLE;
+    const tagEl = document.getElementById('admin-hero-tag');
+    if (tagEl) tagEl.textContent = 'Active';
+
+    // Paint the weekly activity heatmap.
+    renderActivityHeatmap();
 
     // Ensure profile view is shown (vs. list view, which is kept hidden)
     switchAdminTab('dashboard');
+  }
+
+  /* Populate the admin Activity heatmap. 4 time buckets (rows) x 7 days
+     (columns). Each cell gets a data-lvl 0-4 which drives the color
+     intensity via CSS. Data is mocked but shaped to feel like a real
+     week of AI activity (busier mornings/afternoons on weekdays). */
+  function renderActivityHeatmap() {
+    const grid = document.getElementById('admin-activity-grid');
+    if (!grid) return;
+    const rows = [
+      { label: 'Night', data: [0, 0, 1, 0, 1, 0, 0] },
+      { label: 'Eve',   data: [1, 2, 1, 2, 2, 1, 0] },
+      { label: 'Aft',   data: [3, 4, 3, 4, 4, 1, 0] },
+      { label: 'AM',    data: [2, 3, 4, 3, 4, 2, 1] },
+    ];
+    grid.innerHTML = rows.map(r => `
+      <div class="admin-activity-row-label">${r.label}</div>
+      <div class="admin-activity-row">
+        ${r.data.map(lvl => `<div class="admin-activity-cell" data-lvl="${lvl}" title="Level ${lvl}"></div>`).join('')}
+      </div>
+    `).join('');
   }
 
   /* Toggle between single-profile and multi-avatar list views.
@@ -5713,9 +5887,14 @@
     if (img) img.src = avatar.src || '';
     const nameEl = document.getElementById('admin-hero-name');
     if (nameEl) nameEl.textContent = avatar.name;
+    const descEl = document.getElementById('admin-hero-desc');
+    if (descEl) descEl.textContent = avatar.role || 'AI Employee';
+    const tagEl = document.getElementById('admin-hero-tag');
+    if (tagEl) tagEl.textContent = 'Active';
     const roleEl = document.getElementById('admin-hero-role');
     if (roleEl) roleEl.textContent = avatar.role;
 
+    renderActivityHeatmap();
     switchAdminTab('dashboard');
   }
 
