@@ -2402,6 +2402,296 @@
     .admin-activity-legend-swatch[data-lvl="3"] { background: #3ba8e0; }
     .admin-activity-legend-swatch[data-lvl="4"] { background: #014261; }
 
+    /* ═══════════════════════════════════════════════════════════════
+       New AI — kanban-style creation management board.
+       Shares the p8 sidebar + frame with Avatar Admin; sits in its own
+       body (.p8-newai-body) that swaps in when the sidebar "New AI"
+       item is selected.
+       ═══════════════════════════════════════════════════════════════ */
+    .p8-newai-body {
+      flex: 1; min-height: 0;
+      overflow-y: auto;
+      padding: 32px 40px 48px;
+      background: #fafbfc;
+      font-family: 'Poppins', sans-serif;
+    }
+    .p8-newai-body[hidden] { display: none; }
+
+    .newai-head {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 16px; margin-bottom: 26px;
+    }
+    .newai-head-text .newai-title {
+      font-size: 22px; font-weight: 600; color: #07191e;
+      line-height: 1.2;
+    }
+    .newai-head-text .newai-sub {
+      font-size: 13px; color: #6b7280; margin-top: 4px;
+    }
+    .newai-create-btn {
+      background: #014261; color: #fff;
+      border: 1px solid #014261;
+      height: 40px; padding: 0 18px;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 7px;
+      cursor: pointer; transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .newai-create-btn:hover { background: #0a5d85; border-color: #0a5d85; }
+    .newai-create-btn svg { width: 14px; height: 14px; }
+
+    /* Kanban columns */
+    .newai-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .newai-col {
+      background: #f4f6f8;
+      border-radius: 14px;
+      padding: 14px 12px 16px;
+      display: flex; flex-direction: column;
+      gap: 10px;
+      min-height: 360px;
+    }
+    .newai-col-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 2px 6px 8px;
+    }
+    .newai-col-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px; font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .newai-col-title::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .newai-col[data-status="awaiting"]  .newai-col-title { color: #d97706; }
+    .newai-col[data-status="review"]    .newai-col-title { color: #0a5d85; }
+    .newai-col[data-status="completed"] .newai-col-title { color: #10b981; }
+
+    .newai-col-count {
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px; font-weight: 600;
+      color: #6b7280;
+      background: #fff;
+      border-radius: 999px;
+      padding: 2px 9px;
+      min-width: 22px; text-align: center;
+    }
+
+    /* Kanban card */
+    .newai-card {
+      background: #fff;
+      border: 1px solid rgba(7,25,30,0.08);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex; flex-direction: column; gap: 10px;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+    }
+    .newai-card:hover {
+      border-color: #89D2F8;
+      box-shadow: 0 4px 14px rgba(7,25,30,0.06);
+      transform: translateY(-1px);
+    }
+    .newai-card-head {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .newai-card-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #e5e7eb; color: #6b7280;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; overflow: hidden;
+      text-transform: uppercase;
+    }
+    .newai-card-avatar img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .newai-card-info { flex: 1; min-width: 0; }
+    .newai-card-name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px; font-weight: 600; color: #07191e;
+      line-height: 1.25;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .newai-card-owner {
+      font-size: 12px; color: #9ca3af;
+      margin-top: 2px;
+    }
+    .newai-card-stage {
+      font-size: 12px; color: #374151;
+      line-height: 1.4;
+    }
+    .newai-card-wait {
+      font-size: 11px; color: #9ca3af;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .newai-card-wait.warn { color: #d97706; font-weight: 500; }
+    .newai-card-wait svg { width: 11px; height: 11px; }
+
+    .newai-progress {
+      height: 4px;
+      background: #eef2f6;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .newai-progress > span {
+      display: block; height: 100%;
+      background: #89D2F8;
+      border-radius: 999px;
+      transition: width 0.3s;
+    }
+
+    .newai-card-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 2px;
+    }
+    .newai-card-cta {
+      border: none; background: transparent;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12.5px; font-weight: 600;
+      color: #014261; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 0;
+      transition: gap 0.15s, color 0.15s;
+    }
+    .newai-card-cta:hover { gap: 7px; }
+    .newai-card-cta svg { width: 12px; height: 12px; }
+    .newai-card-cta.secondary { color: #6b7280; }
+    .newai-card-cta.secondary:hover { color: #014261; }
+
+    .newai-col-empty {
+      text-align: center; padding: 44px 14px;
+      font-size: 12px; color: #9ca3af;
+      font-family: 'Poppins', sans-serif;
+      border: 1.5px dashed #e5e7eb;
+      border-radius: 10px;
+      background: transparent;
+    }
+
+    /* ── Create AI choice modal ── */
+    .newai-create-overlay {
+      position: fixed; inset: 0;
+      background: rgba(7,25,30,0.45);
+      backdrop-filter: blur(4px);
+      z-index: 700;
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 24px;
+    }
+    .newai-create-overlay.show { display: flex !important; }
+    .newai-create-modal {
+      width: 100%; max-width: 520px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 28px 28px 24px;
+      box-shadow: 0 24px 60px rgba(7,25,30,0.22);
+      font-family: 'Poppins', sans-serif;
+    }
+    .newai-create-modal-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .newai-create-modal-title {
+      font-size: 18px; font-weight: 600; color: #07191e;
+    }
+    .newai-create-modal-close {
+      width: 32px; height: 32px; border: none; background: transparent;
+      color: #6b7280; border-radius: 8px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .newai-create-modal-close:hover { background: #f3f5f9; color: #07191e; }
+    .newai-create-modal-close svg { width: 18px; height: 18px; }
+    .newai-create-modal-sub {
+      font-size: 13px; color: #6b7280; margin-bottom: 20px;
+    }
+    .newai-choice {
+      border: 1.5px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 16px;
+      display: flex; align-items: flex-start; gap: 14px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      margin-bottom: 10px;
+    }
+    .newai-choice:last-child { margin-bottom: 0; }
+    .newai-choice:hover { border-color: #89D2F8; background: #f0f9ff; }
+    .newai-choice-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: #DDF2FF; color: #014261;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .newai-choice-icon svg { width: 20px; height: 20px; }
+    .newai-choice-body { flex: 1; min-width: 0; }
+    .newai-choice-title {
+      font-size: 14px; font-weight: 600; color: #07191e;
+      line-height: 1.3; margin-bottom: 3px;
+    }
+    .newai-choice-desc {
+      font-size: 12.5px; color: #6b7280; line-height: 1.45;
+    }
+    .newai-choice-chev {
+      color: #9ca3af; flex-shrink: 0; margin-top: 4px;
+    }
+    .newai-choice-chev svg { width: 16px; height: 16px; }
+
+    /* Invite submodal */
+    .newai-invite-body { display: flex; flex-direction: column; gap: 14px; }
+    .newai-invite-field {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .newai-invite-label {
+      font-size: 12px; font-weight: 600; color: #374151;
+      letter-spacing: 0.02em;
+    }
+    .newai-invite-input,
+    .newai-invite-textarea {
+      border: 1.5px solid #e5e7eb; border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px; font-family: 'Poppins', sans-serif;
+      color: #07191e; outline: none; background: #fff;
+      transition: border-color 0.15s;
+      box-sizing: border-box; width: 100%;
+    }
+    .newai-invite-textarea { resize: vertical; min-height: 80px; }
+    .newai-invite-input:focus,
+    .newai-invite-textarea:focus { border-color: #89D2F8; }
+    .newai-invite-actions {
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 10px; margin-top: 4px;
+    }
+    .newai-invite-cancel {
+      background: transparent; color: #6b7280;
+      border: 1.5px solid #e5e7eb;
+      padding: 9px 16px; border-radius: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .newai-invite-cancel:hover { border-color: #b0e4fe; color: #014261; }
+    .newai-invite-send {
+      background: #014261; color: #fff;
+      border: 1px solid #014261;
+      padding: 9px 18px; border-radius: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .newai-invite-send:hover { background: #0a5d85; border-color: #0a5d85; }
+
     /* Value callout — warm cream box with diamond/price icon */
     .admin-usage-callout {
       margin-top: 10px;
@@ -4751,7 +5041,7 @@
             </svg>
             Search
           </div>
-          <div class="p8-nav-item" onclick="switchP8View('chat')">
+          <div class="p8-nav-item" id="p8-nav-newai" onclick="switchP8View('newai')">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
               <rect x="4" y="3" width="12" height="8" rx="2"/>
               <path d="M7.5 11v2.5M12.5 11v2.5M6 16h8"/>
@@ -5105,6 +5395,47 @@
             <div class="admin-list" id="admin-list" hidden></div>
           </div>
         </div>
+
+        <!-- NEW AI VIEW — kanban board for creation management.
+             Columns: AWAITING (waiting on invitee) / NEEDS REVIEW (your
+             turn) / COMPLETED (active AIs). Cards rendered by JS from
+             _NEWAI_BOARD_DATA so the empty state and counts stay in sync. -->
+        <div class="p8-newai-body" id="p8-newai-body" hidden>
+          <div class="newai-head">
+            <div class="newai-head-text">
+              <div class="newai-title">New AI</div>
+              <div class="newai-sub">Create and track your AI team across invites and reviews.</div>
+            </div>
+            <button class="newai-create-btn" type="button" onclick="openCreateAIModal()">
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 2v10M2 7h10"/></svg>
+              Create AI
+            </button>
+          </div>
+
+          <div class="newai-board">
+            <div class="newai-col" data-status="awaiting">
+              <div class="newai-col-head">
+                <span class="newai-col-title">Awaiting</span>
+                <span class="newai-col-count" id="newai-count-awaiting">0</span>
+              </div>
+              <div class="newai-col-body" id="newai-col-awaiting"></div>
+            </div>
+            <div class="newai-col" data-status="review">
+              <div class="newai-col-head">
+                <span class="newai-col-title">Needs Review</span>
+                <span class="newai-col-count" id="newai-count-review">0</span>
+              </div>
+              <div class="newai-col-body" id="newai-col-review"></div>
+            </div>
+            <div class="newai-col" data-status="completed">
+              <div class="newai-col-head">
+                <span class="newai-col-title">Completed</span>
+                <span class="newai-col-count" id="newai-count-completed">0</span>
+              </div>
+              <div class="newai-col-body" id="newai-col-completed"></div>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   </div>
@@ -5212,6 +5543,83 @@
       <div class="admin-perm-modal-foot">
         <button class="admin-btn" type="button" onclick="closePermissionModal()">Cancel</button>
         <button class="admin-btn primary" type="button" onclick="savePermission()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create AI modal — opened from the "+ Create AI" button on the New AI page -->
+  <div class="newai-create-overlay" id="newai-create-overlay" onclick="if(event.target===this)closeCreateAIModal()" role="dialog" aria-modal="true" aria-labelledby="newai-create-modal-title">
+    <div class="newai-create-modal" role="document">
+      <!-- Choice view — pick self or invite -->
+      <div id="newai-choice-view">
+        <div class="newai-create-modal-head">
+          <div class="newai-create-modal-title" id="newai-create-modal-title">Create a new AI</div>
+          <button class="newai-create-modal-close" type="button" aria-label="Close" onclick="closeCreateAIModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="newai-create-modal-sub">Pick how you'd like to start.</div>
+
+        <div class="newai-choice" onclick="pickNewAISelf()" role="button" tabindex="0">
+          <div class="newai-choice-icon">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="8" cy="7" r="3"/><path d="M2 17c1-3 3-4.5 6-4.5s5 1.5 6 4.5"/><path d="M15 7h4M17 5v4"/>
+            </svg>
+          </div>
+          <div class="newai-choice-body">
+            <div class="newai-choice-title">For yourself</div>
+            <div class="newai-choice-desc">Build your own AI with your own data — you'll pick an avatar, role, and link the apps you use.</div>
+          </div>
+          <span class="newai-choice-chev">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg>
+          </span>
+        </div>
+
+        <div class="newai-choice" onclick="pickNewAIInvite()" role="button" tabindex="0">
+          <div class="newai-choice-icon">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2.5" y="4" width="15" height="12" rx="2"/>
+              <path d="m2.5 6 7.5 5 7.5-5"/>
+            </svg>
+          </div>
+          <div class="newai-choice-body">
+            <div class="newai-choice-title">Invite a colleague</div>
+            <div class="newai-choice-desc">Best for offboarding — capture someone's knowledge before they leave. They link their tools, then hand it back to you.</div>
+          </div>
+          <span class="newai-choice-chev">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- Invite view — email form -->
+      <div id="newai-invite-view" hidden>
+        <div class="newai-create-modal-head">
+          <div class="newai-create-modal-title">Invite a colleague</div>
+          <button class="newai-create-modal-close" type="button" aria-label="Close" onclick="closeCreateAIModal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="newai-create-modal-sub">They'll get an email to join Relay and link their tools. You'll get a "Needs Review" card when they're done.</div>
+
+        <div class="newai-invite-body">
+          <div class="newai-invite-field">
+            <label class="newai-invite-label" for="newai-invite-name">Their name</label>
+            <input class="newai-invite-input" id="newai-invite-name" type="text" placeholder="e.g. Alex Kim" autocomplete="off"/>
+          </div>
+          <div class="newai-invite-field">
+            <label class="newai-invite-label" for="newai-invite-email">Their email</label>
+            <input class="newai-invite-input" id="newai-invite-email" type="email" placeholder="alex@company.com" autocomplete="off"/>
+          </div>
+          <div class="newai-invite-field">
+            <label class="newai-invite-label" for="newai-invite-note">Note <span style="color:#9ca3af;font-weight:400;">(optional)</span></label>
+            <textarea class="newai-invite-textarea" id="newai-invite-note" placeholder="Hey — want to get this set up before you go?"></textarea>
+          </div>
+          <div class="newai-invite-actions">
+            <button class="newai-invite-cancel" type="button" onclick="closeCreateAIModal()">Cancel</button>
+            <button class="newai-invite-send" type="button" onclick="sendNewAIInvite()">Send invite</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -5871,6 +6279,7 @@
   function switchP8View(mode) {
     const chatBody  = document.getElementById('p8-chat-body');
     const adminBody = document.getElementById('p8-admin-body');
+    const newaiBody = document.getElementById('p8-newai-body');
     const inputArea = document.getElementById('p8-input-area');
     const topNav    = document.querySelector('.p8-main .p8-main-nav');
     if (!chatBody || !adminBody) return;
@@ -5878,29 +6287,36 @@
     if (mode === 'admin') {
       chatBody.hidden = true;
       adminBody.hidden = false;
+      if (newaiBody) newaiBody.hidden = true;
       if (inputArea) inputArea.hidden = true;
-      // Hide the chat-mode top nav ("Shine AI · <role> · Free"); the admin
-      // body has its own "Avatar Administration" header.
-      if (topNav) topNav.hidden = true;
+      if (topNav)    topNav.hidden = true;
       syncAdminView();
+    } else if (mode === 'newai') {
+      chatBody.hidden = true;
+      adminBody.hidden = true;
+      if (newaiBody) newaiBody.hidden = false;
+      if (inputArea) inputArea.hidden = true;
+      if (topNav)    topNav.hidden = true;
+      renderNewAIBoard();
     } else {
       // default → chat view
       chatBody.hidden = false;
       adminBody.hidden = true;
+      if (newaiBody) newaiBody.hidden = true;
       if (inputArea) inputArea.hidden = false;
-      if (topNav) topNav.hidden = false;
+      if (topNav)    topNav.hidden = false;
     }
 
-    // Sidebar active state — only the admin nav item gets the .active class
-    // when in admin mode; otherwise clear all.
+    // Sidebar active state — only the active nav item gets the .active class.
     document.querySelectorAll('.p8-sidebar .p8-nav-item').forEach(el => el.classList.remove('active'));
-    // Mirror on the team list item for Shine AI — it should ONLY appear
-    // selected when the user is in chat mode; in admin mode the row returns
-    // to its unselected (white) background.
     const shineTeamItem = document.querySelector('.p8-sidebar .p8-chat-item');
     if (mode === 'admin') {
       const adminNav = document.getElementById('p8-nav-admin');
       if (adminNav) adminNav.classList.add('active');
+      if (shineTeamItem) shineTeamItem.classList.remove('active');
+    } else if (mode === 'newai') {
+      const newaiNav = document.getElementById('p8-nav-newai');
+      if (newaiNav) newaiNav.classList.add('active');
       if (shineTeamItem) shineTeamItem.classList.remove('active');
     } else {
       if (shineTeamItem) shineTeamItem.classList.add('active');
@@ -5952,6 +6368,188 @@
         ${r.data.map(lvl => `<div class="admin-activity-cell" data-lvl="${lvl}" title="Level ${lvl}"></div>`).join('')}
       </div>
     `).join('');
+  }
+
+  /* ── New AI kanban board ──
+     Mock data for the 3-column board. In a real build this would come from
+     the server; here we keep it in-memory so "send invite" can push a new
+     card into the Awaiting column. Each card carries enough info for the
+     renderer to pick the right sub-status and CTA. */
+  const _NEWAI_BOARD_DATA = [
+    {
+      id: 'ai-priya', name: "Priya's AI", owner: 'Priya Patel',
+      avatarInitial: 'P', status: 'awaiting', stage: 'linking',
+      progress: 3, progressTotal: 5, wait: '1d ago'
+    },
+    {
+      id: 'ai-alex', name: "Alex's AI", owner: 'Alex Kim',
+      avatarInitial: 'A', status: 'awaiting', stage: 'invited',
+      progress: 0, progressTotal: 5, wait: '3d ago', warn: true
+    },
+    {
+      id: 'ai-jamie', name: "Jamie's AI", owner: 'Jamie Rivera',
+      avatarInitial: 'J', status: 'review', stage: 'ready',
+      progress: 5, progressTotal: 5, wait: 'Ready now'
+    },
+    {
+      id: 'ai-shine', name: 'Shine AI', owner: 'You',
+      avatarInitial: 'S', status: 'completed', stage: 'active',
+      created: 'Feb 15, 2026'
+    }
+  ];
+
+  /* Build one kanban card. The stage/status drives the sub-text, the
+     progress bar (only for "linking" in the Awaiting column), the wait
+     label, and the contextual CTA. */
+  function _newaiCardHTML(c) {
+    let stageText = '';
+    let showProgress = false;
+    let ctaLabel = '';
+    let ctaClass = 'newai-card-cta';
+    if (c.stage === 'invited') {
+      stageText = 'Invitation sent';
+      ctaLabel  = 'Resend invite'; ctaClass += ' secondary';
+    } else if (c.stage === 'linking') {
+      stageText = `Linking sources · ${c.progress}/${c.progressTotal}`;
+      showProgress = true;
+      ctaLabel = 'View progress'; ctaClass += ' secondary';
+    } else if (c.stage === 'ready') {
+      stageText = 'All sources linked · ready to confirm';
+      ctaLabel  = 'Review & confirm';
+    } else if (c.stage === 'active') {
+      stageText = c.created ? `Created ${c.created}` : 'Active';
+      ctaLabel  = 'Open chat';
+    }
+    const progressPct = showProgress
+      ? Math.round((c.progress / c.progressTotal) * 100)
+      : 0;
+    const waitCls = c.warn ? 'newai-card-wait warn' : 'newai-card-wait';
+    const waitIcon = c.warn
+      ? '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M6 3.5v3M6 8.5v.01"/><circle cx="6" cy="6" r="5"/></svg>'
+      : '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="6" cy="6" r="4.5"/><path d="M6 3.5V6l1.5 1"/></svg>';
+    return `
+      <div class="newai-card" data-id="${c.id}" onclick="openNewAICard('${c.id}')" role="button" tabindex="0">
+        <div class="newai-card-head">
+          <div class="newai-card-avatar">${c.avatarSrc ? `<img src="${c.avatarSrc}" alt=""/>` : c.avatarInitial || '?'}</div>
+          <div class="newai-card-info">
+            <div class="newai-card-name">${c.name}</div>
+            <div class="newai-card-owner">${c.owner}</div>
+          </div>
+        </div>
+        <div class="newai-card-stage">${stageText}</div>
+        ${showProgress ? `<div class="newai-progress"><span style="width:${progressPct}%"></span></div>` : ''}
+        <div class="newai-card-foot">
+          <span class="${waitCls}">${waitIcon}${c.wait || ''}</span>
+          <button class="${ctaClass}" type="button" onclick="event.stopPropagation();openNewAICard('${c.id}')">
+            ${ctaLabel}
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>
+          </button>
+        </div>
+      </div>`;
+  }
+
+  /* Paint the 3 columns from _NEWAI_BOARD_DATA. Empty columns get a dashed
+     placeholder so the board doesn't collapse visually. */
+  function renderNewAIBoard() {
+    const buckets = { awaiting: [], review: [], completed: [] };
+    _NEWAI_BOARD_DATA.forEach(c => { if (buckets[c.status]) buckets[c.status].push(c); });
+    const emptyMsg = {
+      awaiting:  'No pending invites.',
+      review:    'Nothing to review yet.',
+      completed: 'No AIs deployed yet.'
+    };
+    Object.keys(buckets).forEach(k => {
+      const host = document.getElementById('newai-col-' + k);
+      const cnt  = document.getElementById('newai-count-' + k);
+      if (cnt) cnt.textContent = buckets[k].length;
+      if (!host) return;
+      if (buckets[k].length === 0) {
+        host.innerHTML = `<div class="newai-col-empty">${emptyMsg[k]}</div>`;
+      } else {
+        host.innerHTML = buckets[k].map(_newaiCardHTML).join('');
+      }
+    });
+  }
+
+  /* Clicking a card. In a real build this would open a detail side-panel;
+     for the prototype we just bounce review/completed cards into the
+     existing Avatar Admin dashboard, and leave awaiting cards as no-ops
+     (the button already conveys the action). */
+  function openNewAICard(id) {
+    const card = _NEWAI_BOARD_DATA.find(c => c.id === id);
+    if (!card) return;
+    if (card.status === 'completed' || card.status === 'review') {
+      switchP8View('admin');
+    }
+  }
+
+  /* ── Create AI choice modal ── */
+  function openCreateAIModal() {
+    const overlay = document.getElementById('newai-create-overlay');
+    const choiceView = document.getElementById('newai-choice-view');
+    const inviteView = document.getElementById('newai-invite-view');
+    if (!overlay) return;
+    if (choiceView) choiceView.hidden = false;
+    if (inviteView) inviteView.hidden = true;
+    overlay.classList.add('show');
+    document.addEventListener('keydown', _newaiEscHandler);
+  }
+  function closeCreateAIModal() {
+    const overlay = document.getElementById('newai-create-overlay');
+    if (overlay) overlay.classList.remove('show');
+    document.removeEventListener('keydown', _newaiEscHandler);
+  }
+  function _newaiEscHandler(e) { if (e.key === 'Escape') closeCreateAIModal(); }
+
+  /* "For yourself" — kick off the onboarding flow (page 1). */
+  function pickNewAISelf() {
+    closeCreateAIModal();
+    if (typeof goTo === 'function') goTo(1);
+    else {
+      // Fallback: scroll the transformed screens container back to page 1
+      const sc = document.getElementById('screens');
+      if (sc) sc.classList.remove('page2','page3','page4','page5','page6','page7','page8');
+    }
+  }
+
+  /* "Invite a colleague" — flip the modal to the email form. */
+  function pickNewAIInvite() {
+    const choiceView = document.getElementById('newai-choice-view');
+    const inviteView = document.getElementById('newai-invite-view');
+    if (choiceView) choiceView.hidden = true;
+    if (inviteView) inviteView.hidden = false;
+    setTimeout(() => {
+      const first = document.getElementById('newai-invite-name');
+      if (first) first.focus();
+    }, 50);
+  }
+
+  /* Submit the invite form: push a new Awaiting card + close. */
+  function sendNewAIInvite() {
+    const name  = (document.getElementById('newai-invite-name')?.value  || '').trim();
+    const email = (document.getElementById('newai-invite-email')?.value || '').trim();
+    if (!email) {
+      const field = document.getElementById('newai-invite-email');
+      if (field) { field.focus(); field.style.borderColor = '#ef4444'; }
+      return;
+    }
+    const display = name || email.split('@')[0];
+    _NEWAI_BOARD_DATA.push({
+      id: 'ai-' + Date.now(),
+      name: `${display}'s AI`,
+      owner: display,
+      avatarInitial: display.charAt(0).toUpperCase(),
+      status: 'awaiting',
+      stage:  'invited',
+      progress: 0, progressTotal: 5,
+      wait: 'Just now'
+    });
+    // Reset form
+    ['newai-invite-name','newai-invite-email','newai-invite-note'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    closeCreateAIModal();
+    renderNewAIBoard();
   }
 
   /* Toggle between single-profile and multi-avatar list views.
