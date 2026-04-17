@@ -2403,9 +2403,8 @@
     .p8-newai-body[hidden] { display: none; }
 
     /* Head — mirrors .admin-head typography and 960px centered width.
-       Title+sub stack is centered on the page; the Create AI button is
-       absolutely positioned to the right edge of the head so the center
-       layout of the text is preserved. */
+       Title+sub stack is left-aligned; the Create AI button is absolutely
+       positioned to the right edge of the head. */
     .newai-head {
       position: relative;
       max-width: 960px; width: 100%;
@@ -2413,7 +2412,7 @@
     }
     .newai-head-text {
       display: flex; flex-direction: column; gap: 4px;
-      text-align: center;
+      text-align: left;
     }
     .newai-head-text .newai-title {
       font-family: 'Poppins', sans-serif;
