@@ -2204,14 +2204,11 @@
       overflow: hidden;
       flex-shrink: 0;
     }
-    .admin-profile-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .admin-profile-dot {
-      position: absolute;
-      right: 2px; bottom: 2px;
-      width: 14px; height: 14px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 0 3px #fff;
+    .admin-profile-avatar img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
     }
     .admin-profile-body {
       flex: 1; min-width: 0;
@@ -5286,7 +5283,6 @@
               <div class="admin-profile">
                 <div class="admin-profile-avatar">
                   <img id="admin-hero-avatar-img" src="" alt=""/>
-                  <span class="admin-profile-dot" aria-hidden="true"></span>
                 </div>
                 <div class="admin-profile-body">
                   <div class="admin-profile-name-row">
