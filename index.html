@@ -2438,13 +2438,18 @@
     .newai-create-btn:hover { background: #0a5d85; border-color: #0a5d85; }
     .newai-create-btn svg { width: 14px; height: 14px; }
 
-    /* Kanban columns — constrained to 960px like .admin-wrap */
+    /* Kanban columns — constrained to 960px like .admin-wrap. Board fills
+       the remaining viewport height so the column backgrounds extend to the
+       bottom of the page, with the .p8-newai-body 48px bottom padding
+       preserving the breathing room. */
     .newai-board {
+      flex: 1;
       max-width: 960px; width: 100%;
       margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
+      align-items: stretch;
     }
     .newai-col {
       background: #f4f6f8;
@@ -2452,10 +2457,11 @@
       padding: 14px 12px 16px;
       display: flex; flex-direction: column;
       gap: 10px;
-      min-height: 360px;
+      min-height: 0;
     }
     .newai-col-head {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center;
+      gap: 8px;
       padding: 2px 6px 8px;
     }
     .newai-col-title {
@@ -2477,12 +2483,14 @@
 
     .newai-col-count {
       font-family: 'Poppins', sans-serif;
-      font-size: 11px; font-weight: 600;
-      color: #6b7280;
-      background: #fff;
-      border-radius: 999px;
-      padding: 2px 9px;
-      min-width: 22px; text-align: center;
+      font-size: 12px; font-weight: 600;
+      color: #9ca3af;
+      letter-spacing: 0;
+    }
+    .newai-col-body {
+      flex: 1; min-height: 0;
+      display: flex; flex-direction: column; gap: 10px;
+      overflow-y: auto;
     }
 
     /* Kanban card */
