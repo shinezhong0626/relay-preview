@@ -8,9 +8,11 @@
   <style>
     @font-face {
       font-family: 'GeistPixel';
-      src: url('./GeistPixel-Line.ttf') format('truetype');
+      src: url('./GeistPixel-Line.woff2') format('woff2'),
+           url('./GeistPixel-Line.ttf') format('truetype');
       font-weight: 100 900;
       font-style: normal;
+      font-display: swap;
     }
     
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1072,7 +1074,7 @@
       height: 260px;
       display: block;
       position: relative;
-      top: -16px;
+      top: -32px;
     }
 
     /* ── Page 3 & 4 bottom continue bar ── */
@@ -3283,7 +3285,7 @@ function draw() {
     }
   }
   ctx.globalAlpha = 1;
-  t++;
+  t += 1.4;
   requestAnimationFrame(draw);
 }
 
