@@ -3313,6 +3313,28 @@
       cursor: pointer; flex-shrink: 0; pointer-events: none;
     }
     .p8-link-filter-dd-item.checked { color: #014261; font-weight: 600; }
+    /* "Clear filter" row lives at the bottom of the menu. */
+    .p8-link-filter-dd-clear {
+      display: none; /* only shown when a filter is active */
+      margin-top: 4px; padding: 8px 16px;
+      border-top: 1px solid #f0f4f8;
+      font-size: 12.5px; color: #9ca3af; cursor: pointer;
+      font-family: 'Poppins', sans-serif; user-select: none;
+      transition: background 0.1s, color 0.1s;
+    }
+    .p8-link-filter-dd-clear:hover { background: #fef2f2; color: #dc2626; }
+    .p8-link-filter-dd-menu.has-active .p8-link-filter-dd-clear { display: block; }
+    /* Modal override: keep the card border visible even when the card is
+       linked. Onboarding Step-3 zeroes out the border (design intent there),
+       but inside the Link Apps modal we want the card outline to stay
+       stable so the list still reads as a uniform grid. */
+    .p8-link-app-list .app-card.connected {
+      border-color: rgba(7,25,30,0.07);
+      background: #fff;
+    }
+    .p8-link-app-list .app-card.connected:hover {
+      border-color: #b0e4fe;
+    }
     /* Scrollable app list region — inherits .app-card / .app-cat-header styles. */
     .p8-link-modal-body {
       flex: 1;
@@ -5501,6 +5523,7 @@
               <div class="p8-link-filter-dd-item" data-cat="data" onclick="selectLinkDDFilter(this)"><input type="checkbox" onclick="event.stopPropagation()"/> Data &amp; Analytics</div>
               <div class="p8-link-filter-dd-item" data-cat="content" onclick="selectLinkDDFilter(this)"><input type="checkbox" onclick="event.stopPropagation()"/> Content &amp; Design</div>
               <div class="p8-link-filter-dd-item" data-cat="finance" onclick="selectLinkDDFilter(this)"><input type="checkbox" onclick="event.stopPropagation()"/> Finance &amp; Management</div>
+              <div class="p8-link-filter-dd-clear" id="p8-link-filter-dd-clear" onclick="clearLinkDDFilter(event)">Clear filter</div>
             </div>
           </div>
         </div>
@@ -6121,6 +6144,37 @@
     }
   }
 
+  /* Rebuild the right-hand side of a modal app-card to match onboarding
+     Step-3: "Unlink" + "✓ Linked" when linked, plain "Link" tag otherwise.
+     Also toggles the .connected class and wires click handlers.
+     Used exclusively inside the Link Apps modal (not onboarding). */
+  function _setModalLinkCardState(card, linked) {
+    if (!card) return;
+    card.classList.toggle('connected', !!linked);
+    card.style.cursor = linked ? 'default' : 'pointer';
+    const right = card.querySelector('.app-card-right');
+    if (!right) return;
+    if (linked) {
+      right.innerHTML = '<button class="app-unlink" type="button">Unlink</button><div class="app-tag">✓ Linked</div>';
+      const unlink = right.querySelector('.app-unlink');
+      if (unlink) {
+        unlink.onclick = (ev) => {
+          ev.stopPropagation();
+          _setModalLinkCardState(card, false);
+        };
+      }
+    } else {
+      right.innerHTML = '<div class="app-tag">Link</div>';
+      const tag = right.querySelector('.app-tag');
+      if (tag) {
+        tag.onclick = (ev) => {
+          ev.stopPropagation();
+          _setModalLinkCardState(card, true);
+        };
+      }
+    }
+  }
+
   /* ── Link Apps modal (opens from the "Link tools to Relay" bar) ──
      Clones the onboarding Step-3 app-list HTML so we get identical
      category headers + cards (2-column grid), and rewires each Link tag
@@ -6134,17 +6188,12 @@
     // Rebuild the cloned list each open so it reflects the current state.
     if (src) {
       dest.innerHTML = src.innerHTML;
-      // Strip any onclick/handlers from the cloned nodes and wire fresh ones.
+      // Strip any onclick/handlers from the cloned nodes and wire fresh ones
+      // that mirror the onboarding Step-3 linked state: when connected show
+      // an "Unlink" button + "✓ Linked" tag; otherwise just a "Link" tag.
       dest.querySelectorAll('.app-card').forEach(card => {
         card.onclick = null;
-        const tag = card.querySelector('.app-tag');
-        if (tag) {
-          tag.onclick = (ev) => {
-            ev.stopPropagation();
-            card.classList.toggle('connected');
-            tag.textContent = card.classList.contains('connected') ? 'Connected' : 'Link';
-          };
-        }
+        _setModalLinkCardState(card, card.classList.contains('connected'));
       });
     }
     // Clear search + reset category filter + show
@@ -6173,6 +6222,7 @@
     if (icon) icon.innerHTML = _P8_FILTER_ICON_OPEN;
     if (menu) {
       menu.classList.remove('open');
+      menu.classList.remove('has-active');
       menu.querySelectorAll('.p8-link-filter-dd-item').forEach(i => {
         i.classList.remove('checked');
         const cb = i.querySelector('input'); if (cb) cb.checked = false;
@@ -6181,23 +6231,27 @@
     _p8LinkActiveFilter = 'all';
   }
 
+  /* Button click: always toggle the menu open/closed. Earlier behaviour
+     (clicking the active button cleared the filter) was confusing because
+     users expected a second click to re-open the menu so they could switch
+     categories. Clearing is still available via the "Clear filter" row at
+     the bottom of the menu, or by re-clicking the currently checked item. */
   function toggleLinkFilterDD(e) {
     if (e) e.stopPropagation();
-    const btn  = document.getElementById('p8-link-filter-dd-btn');
     const menu = document.getElementById('p8-link-filter-dd-menu');
-    if (!btn || !menu) return;
-    // If a filter is active, the button acts as an X — clear it.
-    if (btn.classList.contains('active')) {
-      resetLinkFilterBtn();
-      filterLinkAppsModal();
-      return;
-    }
+    if (!menu) return;
     menu.classList.toggle('open');
   }
 
   function selectLinkDDFilter(item) {
     const cat = item.dataset.cat;
     const menu = document.getElementById('p8-link-filter-dd-menu');
+    // If the same category is re-clicked, treat it as a toggle-off (clear).
+    if (_p8LinkActiveFilter === cat) {
+      resetLinkFilterBtn();
+      filterLinkAppsModal();
+      return;
+    }
     if (menu) {
       menu.querySelectorAll('.p8-link-filter-dd-item').forEach(i => {
         i.classList.remove('checked');
@@ -6211,8 +6265,16 @@
     const icon = document.getElementById('p8-link-filter-dd-icon');
     if (btn)  btn.classList.add('active');
     if (icon) icon.innerHTML = _P8_FILTER_ICON_CLOSE;
+    if (menu) menu.classList.add('has-active');
     _p8LinkActiveFilter = cat;
     if (menu) menu.classList.remove('open');
+    filterLinkAppsModal();
+  }
+
+  /* Explicit "Clear filter" row — visible only while a filter is active. */
+  function clearLinkDDFilter(e) {
+    if (e) e.stopPropagation();
+    resetLinkFilterBtn();
     filterLinkAppsModal();
   }
 
