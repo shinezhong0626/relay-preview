@@ -2398,24 +2398,38 @@
     .p8-newai-body {
       flex: 1; min-height: 0;
       overflow-y: auto;
-      padding: 32px 40px 48px;
+      padding: 28px 48px 48px;
       background: #fafbfc;
       font-family: 'Poppins', sans-serif;
+      display: flex; flex-direction: column;
+      gap: 20px;
     }
     .p8-newai-body[hidden] { display: none; }
 
+    /* Head — mirrors .admin-head typography and 960px centered width.
+       Title+sub stack is centered on the page; the Create AI button is
+       absolutely positioned to the right edge of the head so the center
+       layout of the text is preserved. */
     .newai-head {
-      display: flex; align-items: flex-start; justify-content: space-between;
-      gap: 16px; margin-bottom: 26px;
+      position: relative;
+      max-width: 960px; width: 100%;
+      margin: 0 auto;
+    }
+    .newai-head-text {
+      display: flex; flex-direction: column; gap: 4px;
+      text-align: center;
     }
     .newai-head-text .newai-title {
-      font-size: 22px; font-weight: 600; color: #07191e;
-      line-height: 1.2;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600; font-size: 20px; line-height: 28px;
+      color: #07191e;
     }
     .newai-head-text .newai-sub {
-      font-size: 13px; color: #6b7280; margin-top: 4px;
+      font-size: 14px; line-height: 20px; color: #6b7280;
     }
     .newai-create-btn {
+      position: absolute; right: 0; top: 50%;
+      transform: translateY(-50%);
       background: #014261; color: #fff;
       border: 1px solid #014261;
       height: 40px; padding: 0 18px;
@@ -2429,8 +2443,10 @@
     .newai-create-btn:hover { background: #0a5d85; border-color: #0a5d85; }
     .newai-create-btn svg { width: 14px; height: 14px; }
 
-    /* Kanban columns */
+    /* Kanban columns — constrained to 960px like .admin-wrap */
     .newai-board {
+      max-width: 960px; width: 100%;
+      margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
@@ -2460,9 +2476,9 @@
       border-radius: 50%;
       background: currentColor;
     }
-    .newai-col[data-status="awaiting"]  .newai-col-title { color: #d97706; }
-    .newai-col[data-status="review"]    .newai-col-title { color: #0a5d85; }
-    .newai-col[data-status="completed"] .newai-col-title { color: #10b981; }
+    .newai-col[data-status="review"]    .newai-col-title { color: #d97706; } /* Need Confirm — orange */
+    .newai-col[data-status="awaiting"]  .newai-col-title { color: #6b7280; } /* In Progress — gray */
+    .newai-col[data-status="completed"] .newai-col-title { color: #10b981; } /* Completed — green */
 
     .newai-col-count {
       font-family: 'Poppins', sans-serif;
@@ -5435,20 +5451,23 @@
           </div>
 
           <div class="newai-board">
-            <div class="newai-col" data-status="awaiting">
-              <div class="newai-col-head">
-                <span class="newai-col-title">Awaiting</span>
-                <span class="newai-col-count" id="newai-count-awaiting">0</span>
-              </div>
-              <div class="newai-col-body" id="newai-col-awaiting"></div>
-            </div>
+            <!-- Col 1: items waiting on YOU to confirm (data-status "review") -->
             <div class="newai-col" data-status="review">
               <div class="newai-col-head">
-                <span class="newai-col-title">Needs Review</span>
+                <span class="newai-col-title">Need Confirm</span>
                 <span class="newai-col-count" id="newai-count-review">0</span>
               </div>
               <div class="newai-col-body" id="newai-col-review"></div>
             </div>
+            <!-- Col 2: items in progress (invite sent / linking) — data-status "awaiting" -->
+            <div class="newai-col" data-status="awaiting">
+              <div class="newai-col-head">
+                <span class="newai-col-title">In Progress</span>
+                <span class="newai-col-count" id="newai-count-awaiting">0</span>
+              </div>
+              <div class="newai-col-body" id="newai-col-awaiting"></div>
+            </div>
+            <!-- Col 3: deployed AIs -->
             <div class="newai-col" data-status="completed">
               <div class="newai-col-head">
                 <span class="newai-col-title">Completed</span>
@@ -6518,9 +6537,9 @@
     const buckets = { awaiting: [], review: [], completed: [] };
     _NEWAI_BOARD_DATA.forEach(c => { if (buckets[c.status]) buckets[c.status].push(c); });
     const emptyMsg = {
-      awaiting:  'No pending invites.',
-      review:    'Nothing to review yet.',
-      completed: 'No AIs deployed yet.'
+      review:    'Nothing to confirm yet.',   // Col 1 — Need Confirm
+      awaiting:  'No invites in progress.',   // Col 2 — In Progress
+      completed: 'No AIs deployed yet.'       // Col 3 — Completed
     };
     Object.keys(buckets).forEach(k => {
       const host = document.getElementById('newai-col-' + k);
