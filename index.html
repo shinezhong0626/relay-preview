@@ -6528,7 +6528,11 @@
   function openNewAICard(id) {
     const card = _NEWAI_BOARD_DATA.find(c => c.id === id);
     if (!card) return;
-    if (card.status === 'completed' || card.status === 'review') {
+    // Completed AIs are deployed → clicking opens the chat view with that
+    // AI. Review (Need Confirm) cards still route to Admin for review.
+    if (card.status === 'completed') {
+      switchP8View('chat');
+    } else if (card.status === 'review') {
       switchP8View('admin');
     }
   }
