@@ -2493,13 +2493,13 @@
       overflow-y: auto;
     }
 
-    /* Kanban card */
+    /* Kanban card — left-aligned info with the avatar pinned to the right. */
     .newai-card {
       background: #fff;
       border: 1px solid rgba(7,25,30,0.08);
       border-radius: 12px;
-      padding: 14px;
-      display: flex; flex-direction: column; gap: 10px;
+      padding: 16px;
+      display: flex; flex-direction: column; gap: 14px;
       cursor: pointer;
       transition: border-color 0.15s, box-shadow 0.15s, transform 0.12s;
     }
@@ -2508,12 +2508,25 @@
       box-shadow: 0 4px 14px rgba(7,25,30,0.06);
       transform: translateY(-1px);
     }
-    .newai-card-head {
-      display: flex; align-items: center; gap: 10px;
+    .newai-card-top {
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .newai-card-info { flex: 1; min-width: 0; text-align: left; }
+    .newai-card-name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px; font-weight: 600; color: #07191e;
+      line-height: 1.25;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .newai-card-job {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px; color: #9ca3af;
+      margin-top: 3px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .newai-card-avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: #e5e7eb; color: #6b7280;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #ddf2ff; color: #0369a1;
       font-family: 'Poppins', sans-serif;
       font-size: 14px; font-weight: 600;
       display: flex; align-items: center; justify-content: center;
@@ -2523,58 +2536,26 @@
     .newai-card-avatar img {
       width: 100%; height: 100%; object-fit: cover;
     }
-    .newai-card-info { flex: 1; min-width: 0; }
-    .newai-card-name {
-      font-family: 'Poppins', sans-serif;
-      font-size: 14px; font-weight: 600; color: #07191e;
-      line-height: 1.25;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    .newai-card-meta {
+      display: flex; flex-direction: column; gap: 6px;
     }
-    .newai-card-owner {
-      font-size: 12px; color: #9ca3af;
-      margin-top: 2px;
-    }
-    .newai-card-stage {
-      font-size: 12px; color: #374151;
-      line-height: 1.4;
-    }
-    .newai-card-wait {
-      font-size: 11px; color: #9ca3af;
-      display: inline-flex; align-items: center; gap: 5px;
-    }
-    .newai-card-wait.warn { color: #d97706; font-weight: 500; }
-    .newai-card-wait svg { width: 11px; height: 11px; }
-
-    .newai-progress {
-      height: 4px;
-      background: #eef2f6;
-      border-radius: 999px;
-      overflow: hidden;
-    }
-    .newai-progress > span {
-      display: block; height: 100%;
-      background: #89D2F8;
-      border-radius: 999px;
-      transition: width 0.3s;
-    }
-
-    .newai-card-foot {
+    .newai-card-meta-row {
       display: flex; align-items: center; justify-content: space-between;
-      margin-top: 2px;
+      gap: 8px;
     }
-    .newai-card-cta {
-      border: none; background: transparent;
+    .newai-card-meta-label {
       font-family: 'Poppins', sans-serif;
-      font-size: 12.5px; font-weight: 600;
-      color: #014261; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 4px 0;
-      transition: gap 0.15s, color 0.15s;
+      font-size: 11px; font-weight: 500; color: #9ca3af;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
     }
-    .newai-card-cta:hover { gap: 7px; }
-    .newai-card-cta svg { width: 12px; height: 12px; }
-    .newai-card-cta.secondary { color: #6b7280; }
-    .newai-card-cta.secondary:hover { color: #014261; }
+    .newai-card-meta-value {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12.5px; color: #374151; font-weight: 500;
+      text-align: right;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      max-width: 65%;
+    }
 
     .newai-col-empty {
       text-align: center; padding: 44px 14px;
@@ -6461,73 +6442,58 @@
      renderer to pick the right sub-status and CTA. */
   const _NEWAI_BOARD_DATA = [
     {
-      id: 'ai-priya', name: "Priya's AI", owner: 'Priya Patel',
-      avatarInitial: 'P', status: 'awaiting', stage: 'linking',
-      progress: 3, progressTotal: 5, wait: '1d ago'
-    },
-    {
-      id: 'ai-alex', name: "Alex's AI", owner: 'Alex Kim',
-      avatarInitial: 'A', status: 'awaiting', stage: 'invited',
-      progress: 0, progressTotal: 5, wait: '3d ago', warn: true
-    },
-    {
-      id: 'ai-jamie', name: "Jamie's AI", owner: 'Jamie Rivera',
-      avatarInitial: 'J', status: 'review', stage: 'ready',
-      progress: 5, progressTotal: 5, wait: 'Ready now'
-    },
-    {
-      id: 'ai-shine', name: 'Shine AI', owner: 'You',
+      id: 'ai-shine', name: 'Shine AI',
       avatarInitial: 'S', status: 'completed', stage: 'active',
       created: 'Feb 15, 2026'
     }
   ];
 
-  /* Build one kanban card. The stage/status drives the sub-text, the
-     progress bar (only for "linking" in the Awaiting column), the wait
-     label, and the contextual CTA. */
+  /* Stage → human-readable status label for the card body. */
+  function _newaiStageLabel(stage) {
+    if (stage === 'invited')  return 'Invitation sent';
+    if (stage === 'linking')  return 'Linking sources';
+    if (stage === 'ready')    return 'Ready to confirm';
+    if (stage === 'active')   return 'Active';
+    return stage || '—';
+  }
+
+  /* Build one kanban card. Layout: left column is the info stack
+     (name + job title, then Created + Status rows). Avatar sits on the
+     right. For the current user (Shine AI) the avatar + job title are
+     pulled live from the onboarding selection so they match Admin. */
   function _newaiCardHTML(c) {
-    let stageText = '';
-    let showProgress = false;
-    let ctaLabel = '';
-    let ctaClass = 'newai-card-cta';
-    if (c.stage === 'invited') {
-      stageText = 'Invitation sent';
-      ctaLabel  = 'Resend invite'; ctaClass += ' secondary';
-    } else if (c.stage === 'linking') {
-      stageText = `Linking sources · ${c.progress}/${c.progressTotal}`;
-      showProgress = true;
-      ctaLabel = 'View progress'; ctaClass += ' secondary';
-    } else if (c.stage === 'ready') {
-      stageText = 'All sources linked · ready to confirm';
-      ctaLabel  = 'Review & confirm';
-    } else if (c.stage === 'active') {
-      stageText = c.created ? `Created ${c.created}` : 'Active';
-      ctaLabel  = 'Open chat';
+    // For Shine AI, pull the live avatar + job title from onboarding state.
+    let avatarSrc = c.avatarSrc || '';
+    let jobTitle = c.jobTitle || '';
+    if (c.id === 'ai-shine') {
+      const sel = document.querySelector('.av2-opt.selected');
+      if (sel && sel.dataset.src) avatarSrc = sel.dataset.src;
+      const roleVal = (document.getElementById('role-select')?.value || '').trim();
+      jobTitle = roleVal || 'AI Employee';
     }
-    const progressPct = showProgress
-      ? Math.round((c.progress / c.progressTotal) * 100)
-      : 0;
-    const waitCls = c.warn ? 'newai-card-wait warn' : 'newai-card-wait';
-    const waitIcon = c.warn
-      ? '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M6 3.5v3M6 8.5v.01"/><circle cx="6" cy="6" r="5"/></svg>'
-      : '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><circle cx="6" cy="6" r="4.5"/><path d="M6 3.5V6l1.5 1"/></svg>';
+    const avatarInner = avatarSrc
+      ? `<img src="${avatarSrc}" alt=""/>`
+      : (c.avatarInitial || '?');
+    const createdLine = c.created ? c.created : '—';
+    const statusLine = _newaiStageLabel(c.stage);
     return `
       <div class="newai-card" data-id="${c.id}" onclick="openNewAICard('${c.id}')" role="button" tabindex="0">
-        <div class="newai-card-head">
-          <div class="newai-card-avatar">${c.avatarSrc ? `<img src="${c.avatarSrc}" alt=""/>` : c.avatarInitial || '?'}</div>
+        <div class="newai-card-top">
           <div class="newai-card-info">
             <div class="newai-card-name">${c.name}</div>
-            <div class="newai-card-owner">${c.owner}</div>
+            <div class="newai-card-job">${jobTitle || ''}</div>
           </div>
+          <div class="newai-card-avatar">${avatarInner}</div>
         </div>
-        <div class="newai-card-stage">${stageText}</div>
-        ${showProgress ? `<div class="newai-progress"><span style="width:${progressPct}%"></span></div>` : ''}
-        <div class="newai-card-foot">
-          <span class="${waitCls}">${waitIcon}${c.wait || ''}</span>
-          <button class="${ctaClass}" type="button" onclick="event.stopPropagation();openNewAICard('${c.id}')">
-            ${ctaLabel}
-            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>
-          </button>
+        <div class="newai-card-meta">
+          <div class="newai-card-meta-row">
+            <span class="newai-card-meta-label">Created</span>
+            <span class="newai-card-meta-value">${createdLine}</span>
+          </div>
+          <div class="newai-card-meta-row">
+            <span class="newai-card-meta-label">Status</span>
+            <span class="newai-card-meta-value">${statusLine}</span>
+          </div>
         </div>
       </div>`;
   }
