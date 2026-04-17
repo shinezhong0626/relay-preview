@@ -2193,7 +2193,7 @@
       border: 1px solid #eef1f5;
       border-radius: 16px;
       padding: 26px 30px;
-      display: flex; align-items: flex-start; gap: 22px;
+      display: flex; align-items: center; gap: 22px;
       box-shadow: 0 1px 3px rgba(7,25,30,0.04);
     }
     .admin-profile-avatar {
@@ -2223,7 +2223,7 @@
     .admin-profile-name {
       font-family: 'Tickerbit', 'GeistPixel Line', monospace;
       font-weight: 400;
-      font-size: 26px; line-height: 30px;
+      font-size: 24px; line-height: 28px;
       color: #07191e;
       letter-spacing: 0.01em;
     }
@@ -2248,7 +2248,12 @@
       color: #6b7280;
       max-width: 680px;
     }
-    .admin-profile-actions { display: flex; gap: 10px; margin-top: 6px; }
+    /* Hero action buttons — docked to the right of the profile card.
+       Order in markup is Settings, then Chat — so Chat sits furthest right. */
+    .admin-profile-actions {
+      display: flex; gap: 10px; align-items: center;
+      margin-left: auto; flex-shrink: 0;
+    }
     .admin-btn-chat {
       display: inline-flex; align-items: center; gap: 8px;
       background: #014261; color: #fff;
@@ -2319,6 +2324,7 @@
       letter-spacing: 0.05em; text-transform: uppercase;
     }
     .admin-info-value { font-size: 15px; color: #07191e; overflow-wrap: anywhere; }
+    .admin-info-sub { font-size: 12px; color: #9ca3af; margin-left: 2px; }
 
     /* Usage rows */
     .admin-usage-row {
@@ -2334,59 +2340,40 @@
     .admin-status-pill.idle { color: #9ca3af; }
     .admin-status-pill.idle::before { background: #9ca3af; }
 
-    /* Activity heatmap — full-width card, GitHub-style contribution grid
-       compressed to a single week (7 days × 4 time buckets). */
+    /* Activity heatmap — compact 30-day grid. Precise small cells arranged
+       left-to-right, top-to-bottom. Narrow card that doesn't dominate the
+       dashboard. */
     .admin-activity-card {
-      padding: 16px 20px 18px;
+      padding: 14px 18px 14px;
     }
     .admin-activity-head {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
-    .admin-activity-sub { font-size: 12px; color: #9ca3af; }
+    .admin-activity-sub { font-size: 11px; color: #9ca3af; }
     .admin-activity-grid {
       display: grid;
-      grid-template-columns: 22px 1fr;
-      column-gap: 10px;
-      row-gap: 4px;
-      align-items: center;
-    }
-    .admin-activity-row-label {
-      font-size: 10px; color: #9ca3af;
-      font-family: 'Poppins', sans-serif;
-      letter-spacing: 0.04em;
-      text-align: right;
-    }
-    .admin-activity-row {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
+      grid-template-columns: repeat(15, 11px);
+      grid-auto-rows: 11px;
+      gap: 3px;
+      justify-content: flex-start;
     }
     .admin-activity-cell {
-      aspect-ratio: 1 / 1;
-      min-height: 18px;
-      border-radius: 3px;
-      background: #f3f5f9;
+      width: 11px; height: 11px;
+      border-radius: 2px;
+      background: #eef1f5;
       transition: transform 0.12s, filter 0.12s;
     }
     .admin-activity-cell[data-lvl="1"] { background: #d0eaff; }
     .admin-activity-cell[data-lvl="2"] { background: #89D2F8; }
     .admin-activity-cell[data-lvl="3"] { background: #3ba8e0; }
     .admin-activity-cell[data-lvl="4"] { background: #014261; }
-    .admin-activity-cell:hover { transform: scale(1.15); filter: brightness(1.08); }
-    .admin-activity-days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      margin-top: 8px;
-      padding-left: 32px;
-    }
-    .admin-activity-day-label {
-      font-size: 10px; color: #9ca3af;
-      font-family: 'Poppins', sans-serif;
-      text-align: center;
-      letter-spacing: 0.04em;
-    }
+    .admin-activity-cell:hover { transform: scale(1.2); filter: brightness(1.08); }
+    /* Hidden remnants from the old week view — keep selectors so any stale
+       markup renders cleanly without a layout shift. */
+    .admin-activity-row-label,
+    .admin-activity-days,
+    .admin-activity-day-label { display: none; }
     .admin-activity-legend {
       display: flex; align-items: center; gap: 6px;
       font-size: 11px; color: #9ca3af;
@@ -2716,7 +2703,7 @@
     }
     .admin-section-title {
       font-family: 'Poppins', sans-serif;
-      font-weight: 600; font-size: 14px; color: #99A1AF;
+      font-weight: 500; font-size: 14px; color: #99A1AF;
       text-transform: uppercase;
       letter-spacing: 0.06em;
     }
@@ -2751,8 +2738,9 @@
     .admin-data-icon svg { width: 22px; height: 22px; }
     .admin-data-info { display: flex; flex-direction: column; gap: 2px; }
     .admin-data-value {
-      font-family: 'SF Pro', -apple-system, sans-serif;
-      font-weight: 600; font-size: 22px; line-height: 28px; color: #07191e;
+      font-family: 'GeistPixel', 'SF Mono', ui-monospace, monospace;
+      font-weight: 500; font-size: 26px; line-height: 30px; color: #07191e;
+      letter-spacing: 0.01em;
     }
     .admin-data-label { font-size: 13px; color: #07191e; font-weight: 500; }
     .admin-data-sub { font-size: 12px; color: #9ca3af; }
@@ -5277,21 +5265,21 @@
                     <span class="admin-profile-tag" id="admin-hero-tag">Active</span>
                   </div>
                   <div class="admin-profile-desc" id="admin-hero-desc">AI Employee</div>
-                  <div class="admin-profile-actions">
-                    <button class="admin-btn-chat" type="button" onclick="switchP8View('chat')">
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M14 7.5A5.5 5.5 0 0 1 8.5 13c-.9 0-1.76-.22-2.5-.6L3 13l.6-3A5.5 5.5 0 1 1 14 7.5z"/>
-                      </svg>
-                      Chat
-                    </button>
-                    <button class="admin-btn-settings" type="button" aria-label="Settings">
-                      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <circle cx="8" cy="8" r="2"/>
-                        <path d="M13.2 9.5a5.2 5.2 0 0 0 0-3l1.3-1-1.5-2.6-1.6.5a5.2 5.2 0 0 0-2.6-1.5L8 .5l-1.5.4a5.2 5.2 0 0 0-2.6 1.5l-1.6-.5L.8 4.5l1.3 1a5.2 5.2 0 0 0 0 3l-1.3 1 1.5 2.6 1.6-.5a5.2 5.2 0 0 0 2.6 1.5l.5 1.4h3l.5-1.4a5.2 5.2 0 0 0 2.6-1.5l1.6.5 1.5-2.6-1.3-1z"/>
-                      </svg>
-                      Settings
-                    </button>
-                  </div>
+                </div>
+                <div class="admin-profile-actions">
+                  <button class="admin-btn-settings" type="button" aria-label="Settings">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <circle cx="8" cy="8" r="2"/>
+                      <path d="M13.2 9.5a5.2 5.2 0 0 0 0-3l1.3-1-1.5-2.6-1.6.5a5.2 5.2 0 0 0-2.6-1.5L8 .5l-1.5.4a5.2 5.2 0 0 0-2.6 1.5l-1.6-.5L.8 4.5l1.3 1a5.2 5.2 0 0 0 0 3l-1.3 1 1.5 2.6 1.6-.5a5.2 5.2 0 0 0 2.6 1.5l.5 1.4h3l.5-1.4a5.2 5.2 0 0 0 2.6-1.5l1.6.5 1.5-2.6-1.3-1z"/>
+                    </svg>
+                    Settings
+                  </button>
+                  <button class="admin-btn-chat" type="button" onclick="switchP8View('chat')">
+                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M14 7.5A5.5 5.5 0 0 1 8.5 13c-.9 0-1.76-.22-2.5-.6L3 13l.6-3A5.5 5.5 0 1 1 14 7.5z"/>
+                    </svg>
+                    Chat
+                  </button>
                 </div>
               </div>
 
@@ -5316,6 +5304,15 @@
                       <div class="admin-info-text">
                         <div class="admin-info-label">Organization</div>
                         <div class="admin-info-value">Relay</div>
+                      </div>
+                    </div>
+                    <div class="admin-info-row">
+                      <div class="admin-info-icon">
+                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="3.5" width="11" height="10" rx="1.5"/><path d="M2.5 6.5h11M5.5 2.5v2M10.5 2.5v2"/></svg>
+                      </div>
+                      <div class="admin-info-text">
+                        <div class="admin-info-label">First Day</div>
+                        <div class="admin-info-value">Apr 18, 2026 <span class="admin-info-sub">· Active today</span></div>
                       </div>
                     </div>
                   </div>
@@ -5357,32 +5354,10 @@
               <div class="admin-card admin-activity-card">
                 <div class="admin-activity-head">
                   <div class="admin-card-title">Activity</div>
-                  <div class="admin-activity-sub">Last 7 days</div>
+                  <div class="admin-activity-sub">Last 30 days</div>
                 </div>
                 <div class="admin-activity-grid" id="admin-activity-grid">
-                  <!-- Populated by renderActivityHeatmap() — 4 rows × 7 cells each -->
-                </div>
-                <div class="admin-activity-days">
-                  <div class="admin-activity-day-label">Mon</div>
-                  <div class="admin-activity-day-label">Tue</div>
-                  <div class="admin-activity-day-label">Wed</div>
-                  <div class="admin-activity-day-label">Thu</div>
-                  <div class="admin-activity-day-label">Fri</div>
-                  <div class="admin-activity-day-label">Sat</div>
-                  <div class="admin-activity-day-label">Sun</div>
-                </div>
-                <div class="admin-activity-head" style="margin-top:12px;margin-bottom:0;justify-content:flex-end;">
-                  <div class="admin-activity-legend">
-                    <span>Less</span>
-                    <div class="admin-activity-legend-swatches">
-                      <div class="admin-activity-legend-swatch"></div>
-                      <div class="admin-activity-legend-swatch" data-lvl="1"></div>
-                      <div class="admin-activity-legend-swatch" data-lvl="2"></div>
-                      <div class="admin-activity-legend-swatch" data-lvl="3"></div>
-                      <div class="admin-activity-legend-swatch" data-lvl="4"></div>
-                    </div>
-                    <span>More</span>
-                  </div>
+                  <!-- Populated by renderActivityHeatmap() — 30 small cells -->
                 </div>
               </div>
 
@@ -5402,7 +5377,6 @@
                   <div class="admin-data-info">
                     <div class="admin-data-value">1.2 GB</div>
                     <div class="admin-data-label">Knowledge</div>
-                    <div class="admin-data-sub">4,500 documents indexed</div>
                   </div>
                 </div>
                 <div class="admin-card admin-data-card">
@@ -5412,7 +5386,6 @@
                   <div class="admin-data-info">
                     <div class="admin-data-value" id="admin-apps-count">5</div>
                     <div class="admin-data-label">Apps Linked</div>
-                    <div class="admin-data-sub">Notion, Drive, Slack, Linear, Figma</div>
                   </div>
                 </div>
               </div>
@@ -6445,18 +6418,20 @@
   function renderActivityHeatmap() {
     const grid = document.getElementById('admin-activity-grid');
     if (!grid) return;
-    const rows = [
-      { label: 'Night', data: [0, 0, 1, 0, 1, 0, 0] },
-      { label: 'Eve',   data: [1, 2, 1, 2, 2, 1, 0] },
-      { label: 'Aft',   data: [3, 4, 3, 4, 4, 1, 0] },
-      { label: 'AM',    data: [2, 3, 4, 3, 4, 2, 1] },
+    // 30 days of mock activity, left-to-right, top-to-bottom. Values are 0–4
+    // mapped to the CSS swatch colors. This gives a calm rhythm: weekends
+    // slightly quieter, a build-up mid-month, and a couple of heavy days.
+    const days = [
+      1, 2, 1, 0, 2, 3, 1,
+      2, 3, 2, 1, 3, 4, 2,
+      3, 4, 3, 2, 4, 3, 1,
+      2, 3, 2, 3, 4, 2, 1,
+      3, 4
     ];
-    grid.innerHTML = rows.map(r => `
-      <div class="admin-activity-row-label">${r.label}</div>
-      <div class="admin-activity-row">
-        ${r.data.map(lvl => `<div class="admin-activity-cell" data-lvl="${lvl}" title="Level ${lvl}"></div>`).join('')}
-      </div>
-    `).join('');
+    grid.innerHTML = days.map((lvl, i) => {
+      const dayNum = i + 1;
+      return `<div class="admin-activity-cell" data-lvl="${lvl}" title="Day ${dayNum} · Level ${lvl}"></div>`;
+    }).join('');
   }
 
   /* ── New AI kanban board ──
