@@ -2282,8 +2282,16 @@
     .admin-btn-settings:hover { background: #f7f8fb; border-color: #d1d5db; }
     .admin-btn-settings svg { width: 15px; height: 15px; }
 
-    /* 2-col grid used by Identity/Usage and Knowledge/Apps rows */
+    /* 2-col grid used by Knowledge/Apps row */
     .admin-profile-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    /* 3-col grid used by Identity / Usage / Activity — Activity sits as a
+       narrow right column whose height matches the sibling cards. */
+    .admin-profile-grid-3 {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr) minmax(0, 0.85fr);
+      gap: 16px;
+      align-items: stretch;
+    }
 
     .admin-card {
       background: #fff;
@@ -2340,27 +2348,32 @@
     .admin-status-pill.idle { color: #9ca3af; }
     .admin-status-pill.idle::before { background: #9ca3af; }
 
-    /* Activity heatmap — compact 30-day grid. Precise small cells arranged
-       left-to-right, top-to-bottom. Narrow card that doesn't dominate the
-       dashboard. */
+    /* Activity heatmap — sits as the right column next to Identity + Usage.
+       30 cells in a 5×6 grid, cells auto-size to fill the column width and
+       stretch vertically to match the card's height. */
     .admin-activity-card {
-      padding: 14px 18px 14px;
+      padding: 16px 18px 16px;
+      display: flex; flex-direction: column;
     }
     .admin-activity-head {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .admin-activity-sub { font-size: 11px; color: #9ca3af; }
     .admin-activity-grid {
+      flex: 1;
       display: grid;
-      grid-template-columns: repeat(15, 11px);
-      grid-auto-rows: 11px;
-      gap: 3px;
-      justify-content: flex-start;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(6, 1fr);
+      gap: 6px;
+      align-content: stretch;
+      justify-content: stretch;
+      min-height: 140px;
     }
     .admin-activity-cell {
-      width: 11px; height: 11px;
-      border-radius: 2px;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 4px;
       background: #eef1f5;
       transition: transform 0.12s, filter 0.12s;
     }
@@ -5299,8 +5312,8 @@
                 </div>
               </div>
 
-              <!-- ── Identity + Usage ── -->
-              <div class="admin-profile-grid-2">
+              <!-- ── Identity + Usage + Activity ── -->
+              <div class="admin-profile-grid-3">
                 <div class="admin-card">
                   <div class="admin-card-head"><div class="admin-card-title">Identity</div></div>
                   <div class="admin-card-body">
@@ -5363,17 +5376,17 @@
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- ── Activity heatmap (full-width card, GitHub contribution style
-                   compressed to a single week, 7 days × 4 time buckets) ── -->
-              <div class="admin-card admin-activity-card">
-                <div class="admin-activity-head">
-                  <div class="admin-card-title">Activity</div>
-                  <div class="admin-activity-sub">Last 30 days</div>
-                </div>
-                <div class="admin-activity-grid" id="admin-activity-grid">
-                  <!-- Populated by renderActivityHeatmap() — 30 small cells -->
+                <!-- Activity heatmap — right column, 5×6 grid, matches
+                     Identity/Usage height via align-items: stretch. -->
+                <div class="admin-card admin-activity-card">
+                  <div class="admin-activity-head">
+                    <div class="admin-card-title">Activity</div>
+                    <div class="admin-activity-sub">Last 30 days</div>
+                  </div>
+                  <div class="admin-activity-grid" id="admin-activity-grid">
+                    <!-- Populated by renderActivityHeatmap() — 30 cells -->
+                  </div>
                 </div>
               </div>
 
