@@ -2279,16 +2279,8 @@
     .admin-btn-settings:hover { background: #f7f8fb; border-color: #d1d5db; }
     .admin-btn-settings svg { width: 15px; height: 15px; }
 
-    /* 2-col grid used by Knowledge/Apps row */
+    /* 2-col grid used by Identity/Usage and Knowledge/Apps rows */
     .admin-profile-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    /* 3-col grid used by Identity / Usage / Activity — Activity sits as a
-       narrow right column whose height matches the sibling cards. */
-    .admin-profile-grid-3 {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr) minmax(0, 0.85fr);
-      gap: 16px;
-      align-items: stretch;
-    }
 
     .admin-card {
       background: #fff;
@@ -2345,27 +2337,21 @@
     .admin-status-pill.idle { color: #9ca3af; }
     .admin-status-pill.idle::before { background: #9ca3af; }
 
-    /* Activity heatmap — sits as the right column next to Identity + Usage.
-       30 cells in a 5×6 grid, cells auto-size to fill the column width and
-       stretch vertically to match the card's height. */
+    /* Activity heatmap — full-width strip showing the last 30 days. Cells
+       stretch horizontally to fill the card while keeping a crisp square
+       look via aspect-ratio. */
     .admin-activity-card {
-      padding: 16px 18px 16px;
-      display: flex; flex-direction: column;
+      padding: 18px 22px 18px;
     }
     .admin-activity-head {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .admin-activity-sub { font-size: 11px; color: #9ca3af; }
     .admin-activity-grid {
-      flex: 1;
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      grid-template-rows: repeat(6, 1fr);
+      grid-template-columns: repeat(30, 1fr);
       gap: 6px;
-      align-content: stretch;
-      justify-content: stretch;
-      min-height: 140px;
     }
     .admin-activity-cell {
       width: 100%;
@@ -5308,8 +5294,8 @@
                 </div>
               </div>
 
-              <!-- ── Identity + Usage + Activity ── -->
-              <div class="admin-profile-grid-3">
+              <!-- ── Identity + Usage ── -->
+              <div class="admin-profile-grid-2">
                 <div class="admin-card">
                   <div class="admin-card-head"><div class="admin-card-title">Identity</div></div>
                   <div class="admin-card-body">
@@ -5337,7 +5323,7 @@
                       </div>
                       <div class="admin-info-text">
                         <div class="admin-info-label">First Day</div>
-                        <div class="admin-info-value">Apr 18, 2026 <span class="admin-info-sub">· Active today</span></div>
+                        <div class="admin-info-value">Apr 18, 2026</div>
                       </div>
                     </div>
                   </div>
@@ -5372,17 +5358,16 @@
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <!-- Activity heatmap — right column, 5×6 grid, matches
-                     Identity/Usage height via align-items: stretch. -->
-                <div class="admin-card admin-activity-card">
-                  <div class="admin-activity-head">
-                    <div class="admin-card-title">Activity</div>
-                    <div class="admin-activity-sub">Last 30 days</div>
-                  </div>
-                  <div class="admin-activity-grid" id="admin-activity-grid">
-                    <!-- Populated by renderActivityHeatmap() — 30 cells -->
-                  </div>
+              <!-- ── Activity heatmap (full-width 30-day strip) ── -->
+              <div class="admin-card admin-activity-card">
+                <div class="admin-activity-head">
+                  <div class="admin-card-title">Activity</div>
+                  <div class="admin-activity-sub">Last 30 days</div>
+                </div>
+                <div class="admin-activity-grid" id="admin-activity-grid">
+                  <!-- Populated by renderActivityHeatmap() — 30 cells -->
                 </div>
               </div>
 
