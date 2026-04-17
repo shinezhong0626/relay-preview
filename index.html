@@ -5570,18 +5570,23 @@
     const chatBody  = document.getElementById('p8-chat-body');
     const adminBody = document.getElementById('p8-admin-body');
     const inputArea = document.getElementById('p8-input-area');
+    const topNav    = document.querySelector('.p8-main .p8-main-nav');
     if (!chatBody || !adminBody) return;
 
     if (mode === 'admin') {
       chatBody.hidden = true;
       adminBody.hidden = false;
       if (inputArea) inputArea.hidden = true;
+      // Hide the chat-mode top nav ("Shine AI · <role> · Free"); the admin
+      // body has its own "Avatar Administration" header.
+      if (topNav) topNav.hidden = true;
       syncAdminView();
     } else {
       // default → chat view
       chatBody.hidden = false;
       adminBody.hidden = true;
       if (inputArea) inputArea.hidden = false;
+      if (topNav) topNav.hidden = false;
     }
 
     // Sidebar active state — only the admin nav item gets the .active class
