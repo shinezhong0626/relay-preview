@@ -2723,6 +2723,18 @@
     #page9, #page10, #page11 {
       background: linear-gradient(to bottom, #eef7ff 53%, #ffe4d5 100%);
     }
+
+    /* Page 10 uses the onboarding step layout (same as page 3 "What's your
+       job title?") — but our heading "Select a departing employee" is longer
+       than the onboarding one, so allow it to wrap and widen the container. */
+    .handover-step-centered {
+      max-width: 560px;
+    }
+    .handover-step-title {
+      white-space: normal !important;
+      text-align: left;
+    }
+
     .handover-page {
       width: 100vw; height: 100vh;
       display: flex; align-items: center; justify-content: center;
@@ -5897,73 +5909,42 @@
     </div>
   </div>
 
-  <!-- ═══════════ PAGE 10: Handover step 1 — invite form ═══════════ -->
+  <!-- ═══════════ PAGE 10: Handover step 1 — Select a departing employee ═══════════
+       Re-skinned to match Build-your-AI-self step 1 (page 3 "What's your job title?"):
+       onboarding-style topbar with step dots, centered heading, one focused selector,
+       and a single primary Continue button. -->
   <div class="screen" id="page10">
-    <div class="handover-page">
-      <div class="handover-modal" role="document">
-        <div class="handover-head">
-          <div>
-            <div class="handover-step-header">
-              Step 1 of 3
-              <span class="handover-step-dots">
-                <span class="dot active"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-              </span>
-            </div>
-            <div class="handover-title">Start the offboarding</div>
-          </div>
-          <button class="handover-close" type="button" aria-label="Back to options" onclick="goTo(2)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-        <div class="handover-sub">Give us the basics and we'll generate an invite link you can send them.</div>
-
-        <form class="handover-form" id="handover-form" onsubmit="event.preventDefault();handoverGenerateLink();">
-          <div class="handover-field">
-            <label class="handover-label" for="handover-email">Departing teammate's email</label>
-            <input class="handover-input" id="handover-email" type="email" required placeholder="priya@company.com" autocomplete="off"/>
-          </div>
-          <div class="handover-field-row">
-            <div class="handover-field">
-              <label class="handover-label" for="handover-successor">Handover to</label>
-              <select class="handover-select" id="handover-successor" required>
-                <option value="">Pick a teammate</option>
-                <option value="you">You (ShineZhong)</option>
-                <option value="alex">Alex Kim · Design</option>
-                <option value="jamie">Jamie Rivera · Engineering</option>
-                <option value="maya">Maya Chen · Operations</option>
-                <option value="ravi">Ravi Shah · Product</option>
-              </select>
-            </div>
-            <div class="handover-field">
-              <label class="handover-label" for="handover-lastday">Last working day</label>
-              <input class="handover-input" id="handover-lastday" type="date" required/>
-            </div>
-          </div>
-          <div class="handover-field">
-            <label class="handover-label" for="handover-job">Their job title</label>
-            <input class="handover-input" id="handover-job" type="text" required placeholder="e.g. Senior Product Designer" autocomplete="off"/>
-          </div>
-
-          <!-- Generated invite link (hidden until generated) -->
-          <div class="handover-field" id="handover-link-field" hidden>
-            <label class="handover-label">Invite link</label>
-            <div class="handover-link-box">
-              <span class="handover-link-url" id="handover-link-url">—</span>
-              <button class="handover-link-copy" type="button" id="handover-link-copy" onclick="handoverCopyLink()">Copy</button>
-            </div>
-          </div>
-
-          <div class="handover-actions">
-            <button class="handover-btn-secondary" type="button" onclick="goTo(9)">Back</button>
-            <button class="handover-btn-primary" type="submit" id="handover-primary-btn">
-              Generate invite link
-              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>
-            </button>
-          </div>
-        </form>
+    <div class="ob-topbar">
+      <button class="btn-back" id="backbtn10" onclick="goTo(9)">Back</button>
+      <div class="step-dots">
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
       </div>
+      <div style="width:88px;"></div>
+    </div>
+
+    <div class="step-centered handover-step-centered">
+      <div class="step-heading">
+        <div class="ob-step-title handover-step-title">Select a departing employee</div>
+        <div class="ob-step-sub">Initiate the digital asset preservation process for a departing employee.</div>
+      </div>
+      <div class="role-select-wrap">
+        <select class="role-select" id="handover-employee" onchange="handoverEmployeeChange(this)">
+          <option value="">Select a teammate…</option>
+          <option value="priya" data-email="priya.menon@company.com" data-title="Senior Product Designer">Priya Menon · Senior Product Designer</option>
+          <option value="daniel" data-email="daniel.rossi@company.com" data-title="Growth Marketing Lead">Daniel Rossi · Growth Marketing Lead</option>
+          <option value="maya" data-email="maya.chen@company.com" data-title="Operations Manager">Maya Chen · Operations Manager</option>
+          <option value="alex" data-email="alex.kim@company.com" data-title="Engineering Manager">Alex Kim · Engineering Manager</option>
+          <option value="ravi" data-email="ravi.shah@company.com" data-title="Product Lead">Ravi Shah · Product Lead</option>
+        </select>
+        <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M6 9l6 6 6-6" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <button class="step-continue-btn" id="handover-continue-btn" data-active="false" onclick="if(this.dataset.active==='true') handoverProceedToStep2();">
+        Continue <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
+      </button>
     </div>
   </div>
 
@@ -5999,14 +5980,6 @@
             <div class="handover-waiting-row">
               <span class="handover-waiting-label">Departing</span>
               <span class="handover-waiting-value" id="handover-waiting-who">—</span>
-            </div>
-            <div class="handover-waiting-row">
-              <span class="handover-waiting-label">Handover to</span>
-              <span class="handover-waiting-value" id="handover-waiting-succ">—</span>
-            </div>
-            <div class="handover-waiting-row">
-              <span class="handover-waiting-label">Last day</span>
-              <span class="handover-waiting-value" id="handover-waiting-lastday">—</span>
             </div>
             <div class="handover-waiting-row">
               <span class="handover-waiting-label">Status</span>
@@ -7187,12 +7160,48 @@
      via goTo(); this block only handles form reset + back-compat shims
      so older call sites don't throw. */
   function resetHandoverForm() {
-    const linkField = document.getElementById('handover-link-field');
-    const btn       = document.getElementById('handover-primary-btn');
-    if (linkField) linkField.hidden = true;
+    // Legacy modal form (removed) — reset the new step 1 picker instead.
+    const sel = document.getElementById('handover-employee');
+    const btn = document.getElementById('handover-continue-btn');
+    if (sel) sel.value = '';
     if (btn) {
-      btn.innerHTML = 'Generate invite link <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>';
+      btn.classList.remove('active');
+      btn.dataset.active = 'false';
     }
+  }
+
+  /* Page 10 – Select a departing employee.
+     Enable the primary Continue button only once a teammate is chosen,
+     matching the page 3 "What's your job title?" interaction model. */
+  function handoverEmployeeChange(sel) {
+    const btn = document.getElementById('handover-continue-btn');
+    if (!btn) return;
+    if (sel && sel.value) {
+      btn.classList.add('active');
+      btn.dataset.active = 'true';
+    } else {
+      btn.classList.remove('active');
+      btn.dataset.active = 'false';
+    }
+  }
+
+  /* Stash the selected teammate into the page-11 waiting summary, then
+     advance. Uses data-email / data-title attributes on the option so we
+     don't need a separate lookup map. */
+  function handoverProceedToStep2() {
+    const sel = document.getElementById('handover-employee');
+    if (!sel || !sel.value) return;
+    const opt = sel.options[sel.selectedIndex];
+    const label = (opt && opt.textContent) || '';
+    const email = (opt && opt.dataset.email) || '';
+    const title = (opt && opt.dataset.title) || '';
+    const name  = label.split('·')[0].trim() || label;
+
+    const emailEl = document.getElementById('handover-waiting-email');
+    const whoEl   = document.getElementById('handover-waiting-who');
+    if (emailEl) emailEl.textContent = email;
+    if (whoEl)   whoEl.textContent   = title ? `${name} · ${title}` : name;
+    goTo(11);
   }
   /* Back-compat shims — in case any stale onclick still points here. */
   function openHandoverModal() { goTo(9); }
@@ -7209,73 +7218,12 @@
     return `${base}-${rand}`;
   }
 
-  /* Validate the form, generate an invite link, and reveal it. A second
-     click (same primary button, different label) advances to Step 2. */
-  function handoverGenerateLink() {
-    const email    = (document.getElementById('handover-email')?.value || '').trim();
-    const succ     = document.getElementById('handover-successor')?.value || '';
-    const lastday  = document.getElementById('handover-lastday')?.value || '';
-    const job      = (document.getElementById('handover-job')?.value || '').trim();
-    if (!email || !succ || !lastday || !job) return;
-
-    const btn = document.getElementById('handover-primary-btn');
-    const linkField = document.getElementById('handover-link-field');
-    const linkUrl = document.getElementById('handover-link-url');
-
-    // If the link is already shown, the primary button is now "Send &
-    // continue" and advances to Step 2. Otherwise generate and reveal.
-    if (linkField && !linkField.hidden) {
-      // Advance to step 2, pass form values into the waiting summary.
-      const succOpt = document.querySelector('#handover-successor option[value="' + succ + '"]');
-      const succLabel = succOpt ? succOpt.textContent : succ;
-      const emailEl = document.getElementById('handover-waiting-email');
-      const whoEl   = document.getElementById('handover-waiting-who');
-      const succEl  = document.getElementById('handover-waiting-succ');
-      const lastEl  = document.getElementById('handover-waiting-lastday');
-      if (emailEl) emailEl.textContent = email;
-      if (whoEl)   whoEl.textContent   = `${email} · ${job}`;
-      if (succEl)  succEl.textContent  = succLabel;
-      if (lastEl) {
-        try {
-          const d = new Date(lastday);
-          lastEl.textContent = isNaN(d) ? lastday : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        } catch (_) { lastEl.textContent = lastday; }
-      }
-      goTo(11);
-      return;
-    }
-
-    // First click — build the link and reveal the link box.
-    const slug = _handoverSlug(email);
-    const url  = `https://relay.ai/handover/${slug}`;
-    if (linkUrl) linkUrl.textContent = url;
-    if (linkField) linkField.hidden = false;
-    if (btn) {
-      btn.innerHTML = 'Send invite & continue <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>';
-    }
-  }
-
-  /* Copy the generated link to the clipboard with a brief "Copied!" state. */
-  function handoverCopyLink() {
-    const url  = document.getElementById('handover-link-url')?.textContent || '';
-    const btn  = document.getElementById('handover-link-copy');
-    if (!url || !btn) return;
-    const done = () => {
-      btn.classList.add('copied');
-      btn.textContent = 'Copied!';
-      setTimeout(() => { btn.classList.remove('copied'); btn.textContent = 'Copy'; }, 1600);
-    };
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(url).then(done).catch(done);
-    } else {
-      // Fallback — select a hidden textarea
-      const ta = document.createElement('textarea');
-      ta.value = url; document.body.appendChild(ta);
-      ta.select(); try { document.execCommand('copy'); } catch(_) {}
-      document.body.removeChild(ta);
-      done();
-    }
-  }
+  /* Legacy no-op shims — the original modal-based step 1 (email + successor
+     + last-day + job title form that generated an invite link) has been
+     replaced by a single-select onboarding-style picker (page 10). Kept so
+     any stale external references don't throw. */
+  function handoverGenerateLink() { /* no-op */ }
+  function handoverCopyLink()     { /* no-op */ }
 
   /* "For yourself" — kick off the onboarding flow (page 1). */
   function pickNewAISelf() {
