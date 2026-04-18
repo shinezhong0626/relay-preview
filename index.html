@@ -2798,28 +2798,28 @@
     }
     .handover-intro-cards {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
       width: 100%;
     }
     .handover-intro-card {
       background: rgba(255,255,255,0.55);
       border: 1px solid rgba(7,25,30,0.06);
-      border-radius: 20px;
-      padding: 20px 22px 24px;
-      display: flex; flex-direction: column; gap: 12px;
+      border-radius: 18px;
+      padding: 18px 18px 22px;
+      display: flex; flex-direction: column; gap: 10px;
       backdrop-filter: blur(8px);
       box-shadow: 0 4px 14px rgba(7,25,30,0.04);
     }
     .handover-intro-card-art {
-      height: 160px;
+      height: 140px;
       background: rgba(255,255,255,0.55);
       border: 1px solid rgba(7,25,30,0.05);
-      border-radius: 14px;
+      border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
-    .handover-intro-card-art svg { width: 88px; height: 88px; }
+    .handover-intro-card-art svg { width: 80px; height: 80px; }
     .handover-intro-step-label {
       font-family: 'Poppins', sans-serif;
       font-size: 13px; font-weight: 400;
@@ -2828,67 +2828,16 @@
     }
     .handover-intro-card-title {
       font-family: 'Poppins', sans-serif;
-      font-size: 20px; font-weight: 600;
+      font-size: 17px; font-weight: 600;
       color: #07191e;
-      line-height: 26px;
+      line-height: 23px;
     }
     .handover-intro-card-desc {
       font-family: 'Poppins', sans-serif;
-      font-size: 14px; font-weight: 400;
+      font-size: 13px; font-weight: 400;
       color: #6b7280;
-      line-height: 22px;
+      line-height: 20px;
     }
-    /* Outcome block — what the user ends up with after the flow.
-       Visually distinct from step cards (brand-tinted pill cards). */
-    .handover-intro-outcomes {
-      width: 100%;
-      display: flex; flex-direction: column; align-items: center; gap: 14px;
-      padding-top: 8px;
-    }
-    .handover-intro-outcomes-label {
-      font-family: 'Poppins', sans-serif;
-      font-size: 12px; font-weight: 500;
-      color: #014261;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    .handover-intro-outcomes-grid {
-      display: grid; grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-      width: 100%;
-      max-width: 780px;
-    }
-    .handover-intro-outcome {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 18px;
-      background: rgba(176,228,254,0.32);
-      border: 1px solid rgba(1,66,97,0.14);
-      border-radius: 14px;
-    }
-    .handover-intro-outcome-icon {
-      width: 44px; height: 44px; flex-shrink: 0;
-      background: #fff;
-      border: 1px solid rgba(1,66,97,0.18);
-      border-radius: 11px;
-      display: flex; align-items: center; justify-content: center;
-      color: #014261;
-    }
-    .handover-intro-outcome-icon svg { width: 22px; height: 22px; }
-    .handover-intro-outcome-text {
-      display: flex; flex-direction: column; gap: 2px; min-width: 0;
-    }
-    .handover-intro-outcome-title {
-      font-family: 'Poppins', sans-serif;
-      font-size: 14px; font-weight: 600;
-      color: #07191e;
-    }
-    .handover-intro-outcome-desc {
-      font-family: 'Poppins', sans-serif;
-      font-size: 12px; font-weight: 400;
-      color: #6b7280;
-      line-height: 18px;
-    }
-
     /* Buttons centered below the cards; primary is intentionally wider than
        secondary so "Start handover" feels like the main CTA. */
     .handover-intro-actions {
@@ -5935,42 +5884,24 @@
             <div class="handover-intro-card-title">Create and pay.</div>
             <div class="handover-intro-card-desc">Review and confirm to create the AI, then complete payment.</div>
           </div>
-        </div>
 
-        <!-- Outcome: what the user walks away with when the flow is complete.
-             Deliberately framed as the "prize" after the 3 process steps. -->
-        <div class="handover-intro-outcomes">
-          <div class="handover-intro-outcomes-label">When it's ready, you'll have</div>
-          <div class="handover-intro-outcomes-grid">
-            <!-- Outcome 1: guided handover chat -->
-            <div class="handover-intro-outcome">
-              <div class="handover-intro-outcome-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                  <circle cx="9" cy="12" r="0.8" fill="currentColor"/>
-                  <circle cx="12" cy="12" r="0.8" fill="currentColor"/>
-                  <circle cx="15" cy="12" r="0.8" fill="currentColor"/>
-                </svg>
-              </div>
-              <div class="handover-intro-outcome-text">
-                <div class="handover-intro-outcome-title">A guided handover chat</div>
-                <div class="handover-intro-outcome-desc">A Relay assistant walks you both through each step.</div>
-              </div>
+          <!-- Step 4: Relay-guided handover chat where knowledge actually moves across. -->
+          <div class="handover-intro-card">
+            <div class="handover-intro-card-art">
+              <svg viewBox="0 0 88 88" fill="none" aria-hidden="true">
+                <!-- Chat bubble (Relay assistant guides both users) -->
+                <path d="M14 22h60c3 0 5 2 5 5v26c0 3-2 5-5 5H34l-10 10v-10h-10c-3 0-5-2-5-5V27c0-3 2-5 5-5z"
+                      fill="#B0E4FE" stroke="#014261" stroke-width="2" stroke-linejoin="round"/>
+                <!-- Relay sparkle / assistant mark in the bubble -->
+                <path d="M44 34l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5z" fill="#014261"/>
+                <!-- Two dots hinting at both participants -->
+                <circle cx="32" cy="48" r="2" fill="#014261"/>
+                <circle cx="56" cy="48" r="2" fill="#014261"/>
+              </svg>
             </div>
-            <!-- Outcome 2: AI self of departing teammate -->
-            <div class="handover-intro-outcome">
-              <div class="handover-intro-outcome-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="12" cy="8" r="4"/>
-                  <path d="M4 21c0-4 4-7 8-7s8 3 8 7"/>
-                  <path d="M18 4l0.8 1.8L20.6 6.6 18.8 7.4 18 9.2 17.2 7.4 15.4 6.6 17.2 5.8z" fill="currentColor" stroke="none"/>
-                </svg>
-              </div>
-              <div class="handover-intro-outcome-text">
-                <div class="handover-intro-outcome-title">Their AI self</div>
-                <div class="handover-intro-outcome-desc">A digital twin that preserves their knowledge for the team.</div>
-              </div>
-            </div>
+            <div class="handover-intro-step-label">Step 4</div>
+            <div class="handover-intro-card-title">Finish the handover in chat.</div>
+            <div class="handover-intro-card-desc">A Relay assistant guides both of you to transfer knowledge and launch the AI self.</div>
           </div>
         </div>
 
