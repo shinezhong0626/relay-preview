@@ -2736,6 +2736,20 @@
       text-align: left;
     }
 
+    /* White card that wraps the toggle + form + CTA on page 10 — groups
+       all the form interaction into one clean surface below the hero. */
+    .handover-form-card {
+      width: 100%;
+      background: #fff;
+      border: 1px solid rgba(7,25,30,0.06);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 4px 18px rgba(7,25,30,0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
     /* ── Mode toggle (pill segmented control) ── */
     .handover-mode-toggle {
       display: inline-flex;
@@ -6008,13 +6022,17 @@
         <div class="ob-step-sub">Initiate the digital asset preservation process for a departing employee.</div>
       </div>
 
-      <!-- Mode toggle: invite someone new, or pick from teammates already on Relay. -->
-      <div class="handover-mode-toggle" role="tablist" aria-label="Departing employee source">
-        <button type="button" class="handover-mode-tab active" role="tab" aria-selected="true" data-mode="invite" onclick="handoverSetMode('invite')">Invite by email</button>
-        <button type="button" class="handover-mode-tab" role="tab" aria-selected="false" data-mode="existing" onclick="handoverSetMode('existing')">Already joined</button>
-      </div>
+      <!-- White card groups all the step-1 interaction (mode toggle + form
+           + primary CTA) into one cohesive surface below the hero. -->
+      <div class="handover-form-card">
 
-      <div class="handover-form">
+        <!-- Mode toggle: invite someone new, or pick from teammates already on Relay. -->
+        <div class="handover-mode-toggle" role="tablist" aria-label="Departing employee source">
+          <button type="button" class="handover-mode-tab active" role="tab" aria-selected="true" data-mode="invite" onclick="handoverSetMode('invite')">Invite by email</button>
+          <button type="button" class="handover-mode-tab" role="tab" aria-selected="false" data-mode="existing" onclick="handoverSetMode('existing')">Already joined</button>
+        </div>
+
+        <div class="handover-form">
 
         <!-- Field 1: Departing Employee — switches between email input and teammate picker -->
         <div class="handover-form-field">
@@ -6063,15 +6081,36 @@
           </div>
           <div class="handover-form-field">
             <label class="handover-form-label" for="handover-job">Job Title</label>
-            <input class="role-select" id="handover-job" type="text" placeholder="e.g. Senior Product Designer" autocomplete="off" oninput="handoverRevalidate()"/>
+            <div class="role-select-wrap">
+              <select class="role-select" id="handover-job" onchange="handoverRevalidate()">
+                <option value="">Select a title…</option>
+                <option value="UI Designer">UI Designer</option>
+                <option value="UX Researcher">UX Researcher</option>
+                <option value="Product Manager">Product Manager</option>
+                <option value="Engineer">Engineer</option>
+                <option value="Data Analyst">Data Analyst</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Sales">Sales</option>
+                <option value="Operations">Operations</option>
+                <option value="HR">HR</option>
+                <option value="Finance">Finance</option>
+                <option value="Leadership">Leadership</option>
+                <option value="Other">Other</option>
+              </select>
+              <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M6 9l6 6 6-6" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
           </div>
         </div>
 
-      </div>
+        </div><!-- /.handover-form -->
 
-      <button class="step-continue-btn" id="handover-continue-btn" data-active="false" onclick="if(this.dataset.active==='true') handoverProceedToStep2();">
-        Continue <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
-      </button>
+        <button class="step-continue-btn" id="handover-continue-btn" data-active="false" onclick="if(this.dataset.active==='true') handoverProceedToStep2();">
+          Continue <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
+        </button>
+
+      </div><!-- /.handover-form-card -->
     </div>
   </div>
 
