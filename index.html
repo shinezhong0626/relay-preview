@@ -2731,7 +2731,7 @@
        job title?"). Container is widened + horizontal padding tightened so
        the longer heading stays on ONE line and the 4-field form breathes. */
     .handover-step-centered {
-      max-width: 720px;
+      max-width: 660px;
       padding: 40px 32px;
       gap: 18px;
     }
@@ -3692,17 +3692,23 @@
       gap: 24px;
       font-family: 'Poppins', sans-serif;
     }
+    /* Mirrors .av2-preview (page 4) — default is a grayscale-filtered
+       placeholder image on a white disc; .has-avatar removes the disc
+       background once the user makes a pick. */
     .p13-preview-wrap {
       display: flex; flex-direction: column; align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     .p13-preview {
       width: 96px; height: 96px;
       border-radius: 50%;
-      background: #ede9fe;
+      display: flex; align-items: center; justify-content: center;
       overflow: hidden;
-      display: inline-flex; align-items: center; justify-content: center;
+      transition: transform 0.22s;
+      background: #fff;
+      box-shadow: 0 -1px 0 rgba(0,0,0,0.06);
     }
+    .p13-preview.has-avatar { background: transparent; }
     .p13-preview img {
       width: 100%; height: 100%; object-fit: cover;
       border-radius: 50%;
@@ -3727,19 +3733,22 @@
       row-gap: 24px;
       width: 100%;
     }
+    /* Mirrors .av2-opt (page 4) — transparent tile with the selection
+       ring (inset -4px, 2px white border + 4px #89D2F8 glow) matching
+       the Build-AI-Self avatar picker exactly. */
     .p13-av-opt {
       width: 64px; height: 64px;
       border-radius: 50%;
       cursor: pointer;
       position: relative;
       transition: transform 0.18s;
-      overflow: hidden;
-      background: #ede9fe;
+      flex-shrink: 0;
     }
     .p13-av-opt img {
       width: 100%; height: 100%; object-fit: cover;
       border-radius: 50%;
       display: block;
+      overflow: hidden;
       pointer-events: none;
     }
     .p13-av-opt:hover { transform: scale(1.08); }
@@ -3749,7 +3758,7 @@
       inset: -4px;
       border-radius: 50%;
       border: 2px solid #fff;
-      box-shadow: 0 0 0 4px #89d2f8;
+      box-shadow: 0 0 0 4px #89D2F8;
       pointer-events: none;
     }
     /* Shares .step-continue-btn geometry so CTAs are consistent across steps. */
@@ -7039,9 +7048,11 @@
       <div class="p13-card">
         <div class="p13-preview-wrap">
           <div class="p13-preview" id="p13-preview">
-            <!-- src is set once the user picks an avatar; no default so the
-                 empty #ede9fe disc reads as a clear "choose me" state. -->
-            <img id="p13-preview-img" alt="" style="display:none;"/>
+            <!-- Default state mirrors page 4: grayscale+opacity-dimmed
+                 placeholder on a white disc until the user makes a pick.
+                 The src is copied from #av2-preview-src at runtime so we
+                 don't duplicate the base64 payload. -->
+            <img id="p13-preview-img" alt="avatar preview" style="display:block; filter:grayscale(1) opacity(0.55);"/>
           </div>
           <div class="p13-preview-name" id="p13-preview-name">Shawn AI</div>
         </div>
@@ -8365,12 +8376,23 @@
      to the dashboard so the circle closes cleanly. */
 
   /* Populate the page-13 avatar grid from the existing Build-AI-Self avatar
-     assets on page 4 (.av2-opt[data-src]). Kept lazy so we don't pay the DOM
-     cost until the user actually reaches step 3, and idempotent via a
-     dataset flag so repeat visits don't re-append. */
+     assets on page 4 (.av2-opt[data-src]). Also copies the default grayscale
+     placeholder image out of #av2-preview-src into #p13-preview-img so the
+     empty-state artwork matches page 4 exactly. Kept lazy so we don't pay
+     the DOM cost until the user actually reaches step 3, and idempotent via
+     a dataset flag so repeat visits don't re-append. */
   function buildHandoverAvatarGrid() {
     const grid = document.getElementById('p13-grid');
     if (!grid || grid.dataset.built === 'true') return;
+
+    // Seed the preview disc with the same placeholder image the build-AI-self
+    // flow uses. Filter is applied in markup so the swap is a pure src change.
+    const defaultPreviewSrc = (document.getElementById('av2-preview-src') || {}).src;
+    const p13Img = document.getElementById('p13-preview-img');
+    if (p13Img && defaultPreviewSrc && !p13Img.src) {
+      p13Img.src = defaultPreviewSrc;
+    }
+
     const sources = Array.from(document.querySelectorAll('#page4 .av2-opt'))
       .map(o => o.dataset.src)
       .filter(Boolean);
@@ -8391,8 +8413,9 @@
     });
     grid.dataset.built = 'true';
 
-    // Delegated click — toggle selection, mirror into the preview disc, and
-    // unlock the Continue button. Only one option selected at a time.
+    // Delegated click — toggle selection, mirror into the preview disc, drop
+    // the grayscale filter, and unlock the Continue button. One option at a
+    // time. Uses .has-avatar on the disc to flip the background transparent.
     grid.addEventListener('click', (e) => {
       const opt = e.target.closest('.p13-av-opt');
       if (!opt) return;
@@ -8403,10 +8426,13 @@
       opt.classList.add('selected');
       opt.setAttribute('aria-checked', 'true');
       const preview = document.getElementById('p13-preview-img');
+      const previewWrap = document.getElementById('p13-preview');
       if (preview) {
         preview.src = opt.dataset.src;
         preview.style.display = 'block';
+        preview.style.filter = 'none';
       }
+      if (previewWrap) previewWrap.classList.add('has-avatar');
       const btn = document.getElementById('p13-continue-btn');
       if (btn) btn.disabled = false;
     });
