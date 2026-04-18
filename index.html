@@ -2337,26 +2337,52 @@
     .admin-status-pill.idle { color: #9ca3af; }
     .admin-status-pill.idle::before { background: #9ca3af; }
 
-    /* Activity heatmap — full-width strip showing the last 30 days. Cells
-       stretch horizontally to fill the card while keeping a crisp square
-       look via aspect-ratio. */
+    /* Activity heatmap — rich terminal-style grid with stats header on top
+       and an hour axis below. Kept on the light palette; the numbers use
+       the GeistPixel numeral face to evoke the "monitor readout" feel of
+       the reference without adopting its dark theme. */
     .admin-activity-card {
       padding: 18px 22px 18px;
     }
     .admin-activity-head {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 14px;
+      gap: 16px;
     }
     .admin-activity-sub { font-size: 11px; color: #9ca3af; }
+    .admin-activity-stats {
+      display: inline-flex; align-items: center; gap: 14px;
+      font-family: 'GeistPixel', ui-monospace, monospace;
+      font-size: 12px;
+      color: #07191e;
+    }
+    .admin-activity-stats .admin-activity-day {
+      color: #6b7280; font-weight: 500;
+    }
+    .admin-activity-stats .admin-activity-sep {
+      width: 1px; height: 10px; background: #d1d5db;
+    }
+    .admin-activity-stats .admin-activity-stat {
+      color: #9ca3af; display: inline-flex; align-items: baseline; gap: 6px;
+    }
+    .admin-activity-stats .admin-activity-stat strong {
+      color: #0369a1; font-weight: 500;
+      font-family: 'GeistPixel', ui-monospace, monospace;
+    }
+    .admin-activity-stats .admin-activity-stat.idle strong {
+      color: #6b7280;
+    }
     .admin-activity-grid {
       display: grid;
-      grid-template-columns: repeat(30, 1fr);
-      gap: 6px;
+      grid-template-columns: repeat(40, 1fr);
+      grid-auto-rows: 1fr;
+      gap: 3px;
+      aspect-ratio: 40 / 6;
     }
     .admin-activity-cell {
       width: 100%;
       aspect-ratio: 1 / 1;
-      border-radius: 4px;
+      border-radius: 2px;
       background: #eef1f5;
       transition: transform 0.12s, filter 0.12s;
     }
@@ -2364,26 +2390,28 @@
     .admin-activity-cell[data-lvl="2"] { background: #89D2F8; }
     .admin-activity-cell[data-lvl="3"] { background: #3ba8e0; }
     .admin-activity-cell[data-lvl="4"] { background: #014261; }
-    .admin-activity-cell:hover { transform: scale(1.2); filter: brightness(1.08); }
-    /* Hidden remnants from the old week view — keep selectors so any stale
-       markup renders cleanly without a layout shift. */
+    .admin-activity-cell:hover { transform: scale(1.3); filter: brightness(1.08); }
+    /* Time axis below the grid. 8 equally-spaced hour labels covering the
+       working window 09:00 → 16:00. Monospaced to align with the pixel
+       aesthetic of the stats. */
+    .admin-activity-axis {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      margin-top: 10px;
+      font-family: 'GeistPixel', ui-monospace, monospace;
+      font-size: 10.5px;
+      color: #9ca3af;
+      letter-spacing: 0.02em;
+    }
+    .admin-activity-axis span { text-align: left; }
+    .admin-activity-axis span:last-child { text-align: right; }
+    /* Hidden remnants — keep so any stale markup renders cleanly. */
     .admin-activity-row-label,
     .admin-activity-days,
-    .admin-activity-day-label { display: none; }
-    .admin-activity-legend {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 11px; color: #9ca3af;
-      font-family: 'Poppins', sans-serif;
-    }
-    .admin-activity-legend-swatches { display: flex; gap: 3px; }
-    .admin-activity-legend-swatch {
-      width: 11px; height: 11px; border-radius: 2px;
-      background: #f3f5f9;
-    }
-    .admin-activity-legend-swatch[data-lvl="1"] { background: #d0eaff; }
-    .admin-activity-legend-swatch[data-lvl="2"] { background: #89D2F8; }
-    .admin-activity-legend-swatch[data-lvl="3"] { background: #3ba8e0; }
-    .admin-activity-legend-swatch[data-lvl="4"] { background: #014261; }
+    .admin-activity-day-label,
+    .admin-activity-legend,
+    .admin-activity-legend-swatches,
+    .admin-activity-legend-swatch { display: none; }
 
     /* ═══════════════════════════════════════════════════════════════
        New AI — kanban-style creation management board.
@@ -5351,11 +5379,19 @@
               <!-- ── Activity heatmap (full-width 30-day strip) ── -->
               <div class="admin-card admin-activity-card">
                 <div class="admin-activity-head">
-                  <div class="admin-card-title">Activity</div>
+                  <div class="admin-activity-stats">
+                    <span class="admin-activity-day" id="admin-activity-day">Today</span>
+                    <span class="admin-activity-sep"></span>
+                    <span class="admin-activity-stat">Active: <strong id="admin-activity-active">0</strong></span>
+                    <span class="admin-activity-stat idle">Idle: <strong id="admin-activity-idle">0</strong></span>
+                  </div>
                   <div class="admin-activity-sub">Last 30 days</div>
                 </div>
                 <div class="admin-activity-grid" id="admin-activity-grid">
-                  <!-- Populated by renderActivityHeatmap() — 30 cells -->
+                  <!-- Populated by renderActivityHeatmap() — dense grid -->
+                </div>
+                <div class="admin-activity-axis" aria-hidden="true">
+                  <span>09:00</span><span>10:00</span><span>11:00</span><span>12:00</span><span>13:00</span><span>14:00</span><span>15:00</span><span>16:00</span>
                 </div>
               </div>
 
@@ -6412,27 +6448,83 @@
     switchAdminTab('dashboard');
   }
 
-  /* Populate the admin Activity heatmap. 4 time buckets (rows) x 7 days
-     (columns). Each cell gets a data-lvl 0-4 which drives the color
-     intensity via CSS. Data is mocked but shaped to feel like a real
-     week of AI activity (busier mornings/afternoons on weekdays). */
+  /* Populate the admin Activity heatmap. Dense terminal-readout style
+     grid: 6 rows × 40 cols = 240 cells, where each cell represents a
+     ~12-minute activity bucket across an 8-hour window (09:00–17:00).
+     Values 0–4 map to CSS swatch colors. The pattern is mocked but
+     shaped so it reads as a real work day: quieter at the start, a
+     morning ramp, a lunch dip, and a busy afternoon. Stats (Active /
+     Idle) are derived from the same data for consistency. */
   function renderActivityHeatmap() {
     const grid = document.getElementById('admin-activity-grid');
     if (!grid) return;
-    // 30 days of mock activity, left-to-right, top-to-bottom. Values are 0–4
-    // mapped to the CSS swatch colors. This gives a calm rhythm: weekends
-    // slightly quieter, a build-up mid-month, and a couple of heavy days.
-    const days = [
-      1, 2, 1, 0, 2, 3, 1,
-      2, 3, 2, 1, 3, 4, 2,
-      3, 4, 3, 2, 4, 3, 1,
-      2, 3, 2, 3, 4, 2, 1,
-      3, 4
+    const ROWS = 6, COLS = 40, TOTAL = ROWS * COLS;
+
+    // Column "intensity profile" — roughly one peak per workday hour. The
+    // dip near index 20 is the lunch lull; the tail is afternoon heavy.
+    const profile = [
+      // 09:00
+      0.15, 0.18, 0.20, 0.25, 0.35,
+      // 10:00
+      0.55, 0.70, 0.80, 0.78, 0.72,
+      // 11:00
+      0.70, 0.75, 0.78, 0.82, 0.85,
+      // 12:00 (lunch dip)
+      0.55, 0.35, 0.18, 0.12, 0.15,
+      // 13:00
+      0.30, 0.45, 0.60, 0.65, 0.62,
+      // 14:00
+      0.78, 0.85, 0.88, 0.85, 0.80,
+      // 15:00
+      0.85, 0.90, 0.92, 0.88, 0.82,
+      // 16:00
+      0.70, 0.55, 0.42, 0.30, 0.22
     ];
-    grid.innerHTML = days.map((lvl, i) => {
-      const dayNum = i + 1;
-      return `<div class="admin-activity-cell" data-lvl="${lvl}" title="Day ${dayNum} · Level ${lvl}"></div>`;
-    }).join('');
+    // Deterministic PRNG so the pattern is stable across renders.
+    let seed = 1337;
+    const rand = () => {
+      seed = (seed * 9301 + 49297) % 233280;
+      return seed / 233280;
+    };
+
+    // Build cells row-by-row. For each cell, pick a level by sampling the
+    // column's target intensity with small jitter. Mid-rows tend slightly
+    // quieter than outer rows to give visual texture.
+    let active = 0, idle = 0;
+    const cells = [];
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const base = profile[c] ?? 0.2;
+        const jitter = (rand() - 0.5) * 0.35;
+        const rowBias = Math.abs(r - (ROWS - 1) / 2) / ((ROWS - 1) / 2); // 0 center, 1 edges
+        const v = Math.max(0, Math.min(1, base * (0.75 + rowBias * 0.35) + jitter));
+        // Map [0,1] → lvl 0..4 with a bias so empty cells still appear.
+        let lvl = 0;
+        if (v > 0.18) lvl = 1;
+        if (v > 0.42) lvl = 2;
+        if (v > 0.68) lvl = 3;
+        if (v > 0.88) lvl = 4;
+        if (lvl === 0) idle++; else active++;
+        cells.push(`<div class="admin-activity-cell" data-lvl="${lvl}"></div>`);
+      }
+    }
+    grid.innerHTML = cells.join('');
+
+    // Scale to realistic-looking "message count" numbers for the header.
+    // Active cells × ~220 makes the headline read like a real activity
+    // log (in the thousands), while idle cells stay in the low thousands.
+    const activeCount = Math.round(active * 220 + 510);
+    const idleCount   = Math.round(idle * 48 + 180);
+    const fmt = n => n.toLocaleString('en-US');
+    const dayEl   = document.getElementById('admin-activity-day');
+    const actEl   = document.getElementById('admin-activity-active');
+    const idleEl  = document.getElementById('admin-activity-idle');
+    if (dayEl) {
+      const weekday = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+      dayEl.textContent = weekday;
+    }
+    if (actEl)  actEl.textContent  = fmt(activeCount);
+    if (idleEl) idleEl.textContent = fmt(idleCount);
   }
 
   /* ── New AI kanban board ──
