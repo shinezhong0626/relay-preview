@@ -6829,31 +6829,28 @@
   </div>
 
   <!-- ═══════════ PAGE 12: Handover step 3 — Create Digital Employee ═══════════
-       Mirrors Figma wf4oXgT1jeCGBkBkqOg2K7 node 18:2706. Layout parallels
-       onboarding p6 (Create AI Employee) but uses the handover brand
-       surface and a 5-dot stepper fixed on step 3. -->
+       Mirrors Figma wf4oXgT1jeCGBkBkqOg2K7 node 18:2706. Chrome now matches
+       step 1/step 2: .ob-topbar with Back + 3-dot stepper, page-level
+       .step-heading with big GeistPixel title + .ob-step-sub (no "STEP 3"
+       eyebrow), then the white confirmation card below. -->
   <div class="screen" id="page12">
-    <div class="p12-page">
-      <div class="p12-topbar">
-        <button class="btn-back" type="button" onclick="goTo(11)">Back</button>
-        <div class="step-dots" aria-label="Step 3 of 3">
-          <div class="step-dot done"></div>
-          <div class="step-dot done"></div>
-          <div class="step-dot active"></div>
-        </div>
-        <div class="p12-topbar-spacer"></div>
+    <div class="ob-topbar">
+      <button class="btn-back" type="button" onclick="goTo(11)">Back</button>
+      <div class="step-dots" aria-label="Step 3 of 3">
+        <div class="step-dot done"></div>
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+      </div>
+      <div style="width:88px;"></div>
+    </div>
+
+    <div class="step-centered handover-step-centered">
+      <div class="step-heading">
+        <div class="ob-step-title handover-step-title">Create Digital Employee</div>
+        <div class="ob-step-sub">Data preparation complete. Confirm creation of the knowledge asset.</div>
       </div>
 
-      <div class="p12-main">
-        <div class="p12-heading">
-          <div class="p12-step-label">STEP 3</div>
-          <div class="p12-title">Create Digital Employee</div>
-          <div class="p12-sub">
-            Data preparation complete. Confirm creation of the knowledge asset.
-          </div>
-        </div>
-
-        <div class="p12-card">
+      <div class="p12-card">
           <div class="p12-inset">
             <div class="p12-identity">
               <div class="p12-avatar" aria-hidden="true">
@@ -6909,11 +6906,10 @@
           </div>
         </div>
 
-        <div class="p12-bottom">
-          <button class="p12-activate-btn" type="button" onclick="handoverActivateDigitalEmployee()">
-            Continue &amp; Activate Digital Employee
-          </button>
-        </div>
+      <div class="p12-bottom">
+        <button class="p12-activate-btn" type="button" onclick="handoverActivateDigitalEmployee()">
+          Continue &amp; Activate Digital Employee
+        </button>
       </div>
     </div>
   </div>
