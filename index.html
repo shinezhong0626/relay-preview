@@ -35,17 +35,21 @@
     /* ── Screen slide container ── */
     .screens {
       display: flex;
-      width: 800vw;
+      width: 1100vw;
       height: 100vh;
       transition: none;
     }
-    .screens.page2 { transform: translateX(-100vw); }
-    .screens.page3 { transform: translateX(-200vw); }
-    .screens.page4 { transform: translateX(-300vw); }
-    .screens.page5 { transform: translateX(-400vw); }
-    .screens.page6 { transform: translateX(-500vw); }
-    .screens.page7 { transform: translateX(-600vw); }
-    .screens.page8 { transform: translateX(-700vw); }
+    .screens.page2  { transform: translateX(-100vw); }
+    .screens.page3  { transform: translateX(-200vw); }
+    .screens.page4  { transform: translateX(-300vw); }
+    .screens.page5  { transform: translateX(-400vw); }
+    .screens.page6  { transform: translateX(-500vw); }
+    .screens.page7  { transform: translateX(-600vw); }
+    .screens.page8  { transform: translateX(-700vw); }
+    /* Handover secondary flow — opened from the right card on page 2. */
+    .screens.page9  { transform: translateX(-800vw); }
+    .screens.page10 { transform: translateX(-900vw); }
+    .screens.page11 { transform: translateX(-1000vw); }
 
     .screen {
       width: 100vw;
@@ -2708,30 +2712,30 @@
     .newai-invite-send:hover { background: #0a5d85; border-color: #0a5d85; }
 
     /* ═══════════════════════════════════════════════════════════════
-       Handover modal — "Preserve a departing teammate" flow.
-       Reuses .newai-create-overlay base styling (dim backdrop, centered
-       card) with extra structure for the 3-step intro, the invite form,
-       and the waiting state.
+       Handover secondary pages — "Preserve a departing teammate" flow.
+       Rendered as dedicated full-screen pages (page 9/10/11) so the
+       flow feels like the same secondary navigation as "Create your AI
+       self" (page 3+), instead of a modal overlay.
        ═══════════════════════════════════════════════════════════════ */
-    .handover-overlay {
-      position: fixed; inset: 0;
-      background: rgba(7,25,30,0.45);
-      backdrop-filter: blur(4px);
-      z-index: 720;
-      display: none;
-      align-items: center; justify-content: center;
-      padding: 24px;
+    .handover-page {
+      width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px 24px;
+      background: #ffffff;
+      overflow-y: auto;
     }
-    .handover-overlay.show { display: flex !important; }
+    .handover-page-back {
+      position: absolute; top: 28px; left: 32px;
+      z-index: 2;
+    }
     .handover-modal {
       width: 100%; max-width: 560px;
       background: #fff;
       border-radius: 20px;
       padding: 28px 28px 24px;
-      box-shadow: 0 24px 60px rgba(7,25,30,0.22);
+      box-shadow: 0 8px 30px rgba(7,25,30,0.08);
+      border: 1px solid #eef1f5;
       font-family: 'Poppins', sans-serif;
-      max-height: calc(100vh - 48px);
-      overflow-y: auto;
     }
     .handover-head {
       display: flex; align-items: flex-start; justify-content: space-between;
@@ -3785,13 +3789,13 @@
             <div class="choice-desc">Learns how you work — and handles your tasks, 24/7.</div>
           </div>
           <button class="card-btn blue-btn">
-            Start build
+            Start Create
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
           </button>
         </div>
 
         <!-- Right card -->
-        <div class="choice-card right" onclick="openHandoverModal()" style="cursor:pointer">
+        <div class="choice-card right" onclick="goTo(9)" style="cursor:pointer">
           <div class="card-icon peach">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M4 8V19C4 19.5304 4.21071 20.0391 4.58579 20.4142C4.96086 20.7893 5.46957 21 6 21H18C18.5304 21 19.0391 20.7893 19.4142 20.4142C19.7893 20.0391 20 19.5304 20 19V8M10 12H14M3 3H21C21.5523 3 22 3.44772 22 4V7C22 7.55228 21.5523 8 21 8H3C2.44772 8 2 7.55228 2 7V4C2 3.44772 2.44772 3 3 3Z" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -3801,7 +3805,7 @@
             <div class="choice-title">Preserve a departing teammate</div>
             <div class="choice-desc">Capture their knowledge before they go. Your team keeps working with them.</div>
           </div>
-          <button class="card-btn peach-btn" type="button" onclick="event.stopPropagation();openHandoverModal()">
+          <button class="card-btn peach-btn" type="button" onclick="event.stopPropagation();goTo(9)">
             Start handover
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
           </button>
@@ -5753,6 +5757,184 @@
     </div>
   </div>
 
+  <!-- ═══════════ PAGE 9: Handover intro — 3-step overview ═══════════ -->
+  <div class="screen" id="page9">
+    <div class="handover-page">
+      <div class="handover-modal" role="document">
+        <div class="handover-head">
+          <div>
+            <div class="handover-difficulty">Takes ~3 steps · co-operation needed</div>
+            <div class="handover-title" id="handover-title">Preserve a departing teammate</div>
+          </div>
+          <button class="handover-close" type="button" aria-label="Back to options" onclick="goTo(2)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="handover-sub">Capture their knowledge before they go. Here's how it works — this one needs the departing teammate to participate, so it's a bit more involved than building your own AI.</div>
+
+        <div class="handover-steps">
+          <div class="handover-step">
+            <div class="handover-step-num">1</div>
+            <div class="handover-step-body">
+              <div class="handover-step-title">Start the offboarding</div>
+              <div class="handover-step-desc">Enter their email, pick a successor, their last day, and job title. We'll send them an invite link.</div>
+            </div>
+          </div>
+          <div class="handover-step">
+            <div class="handover-step-num">2</div>
+            <div class="handover-step-body">
+              <div class="handover-step-title">They join Relay &amp; connect their apps</div>
+              <div class="handover-step-desc">They sign in and link their work tools so the AI can learn from the sources they've been using.</div>
+            </div>
+          </div>
+          <div class="handover-step">
+            <div class="handover-step-num">3</div>
+            <div class="handover-step-body">
+              <div class="handover-step-title">Review, deploy &amp; pay</div>
+              <div class="handover-step-desc">Confirm what's in scope, deploy the AI to your team, and settle up. You're done.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="handover-actions">
+          <button class="handover-btn-secondary" type="button" onclick="goTo(2)">Go back — build my own instead</button>
+          <button class="handover-btn-primary" type="button" onclick="goTo(10)">
+            Continue
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PAGE 10: Handover step 1 — invite form ═══════════ -->
+  <div class="screen" id="page10">
+    <div class="handover-page">
+      <div class="handover-modal" role="document">
+        <div class="handover-head">
+          <div>
+            <div class="handover-step-header">
+              Step 1 of 3
+              <span class="handover-step-dots">
+                <span class="dot active"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </span>
+            </div>
+            <div class="handover-title">Start the offboarding</div>
+          </div>
+          <button class="handover-close" type="button" aria-label="Back to options" onclick="goTo(2)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="handover-sub">Give us the basics and we'll generate an invite link you can send them.</div>
+
+        <form class="handover-form" id="handover-form" onsubmit="event.preventDefault();handoverGenerateLink();">
+          <div class="handover-field">
+            <label class="handover-label" for="handover-email">Departing teammate's email</label>
+            <input class="handover-input" id="handover-email" type="email" required placeholder="priya@company.com" autocomplete="off"/>
+          </div>
+          <div class="handover-field-row">
+            <div class="handover-field">
+              <label class="handover-label" for="handover-successor">Handover to</label>
+              <select class="handover-select" id="handover-successor" required>
+                <option value="">Pick a teammate</option>
+                <option value="you">You (ShineZhong)</option>
+                <option value="alex">Alex Kim · Design</option>
+                <option value="jamie">Jamie Rivera · Engineering</option>
+                <option value="maya">Maya Chen · Operations</option>
+                <option value="ravi">Ravi Shah · Product</option>
+              </select>
+            </div>
+            <div class="handover-field">
+              <label class="handover-label" for="handover-lastday">Last working day</label>
+              <input class="handover-input" id="handover-lastday" type="date" required/>
+            </div>
+          </div>
+          <div class="handover-field">
+            <label class="handover-label" for="handover-job">Their job title</label>
+            <input class="handover-input" id="handover-job" type="text" required placeholder="e.g. Senior Product Designer" autocomplete="off"/>
+          </div>
+
+          <!-- Generated invite link (hidden until generated) -->
+          <div class="handover-field" id="handover-link-field" hidden>
+            <label class="handover-label">Invite link</label>
+            <div class="handover-link-box">
+              <span class="handover-link-url" id="handover-link-url">—</span>
+              <button class="handover-link-copy" type="button" id="handover-link-copy" onclick="handoverCopyLink()">Copy</button>
+            </div>
+          </div>
+
+          <div class="handover-actions">
+            <button class="handover-btn-secondary" type="button" onclick="goTo(9)">Back</button>
+            <button class="handover-btn-primary" type="submit" id="handover-primary-btn">
+              Generate invite link
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PAGE 11: Handover step 2 — waiting ═══════════ -->
+  <div class="screen" id="page11">
+    <div class="handover-page">
+      <div class="handover-modal" role="document">
+        <div class="handover-head">
+          <div>
+            <div class="handover-step-header">
+              Step 2 of 3
+              <span class="handover-step-dots">
+                <span class="dot done"></span>
+                <span class="dot active"></span>
+                <span class="dot"></span>
+              </span>
+            </div>
+            <div class="handover-title">Waiting for them to join</div>
+          </div>
+          <button class="handover-close" type="button" aria-label="Back to options" onclick="goTo(2)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <div class="handover-waiting">
+          <div class="handover-pulse" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5 12 13l8-5.5"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+          </div>
+          <div class="handover-waiting-title" id="handover-waiting-title">Invite sent to <span id="handover-waiting-email">them</span></div>
+          <div class="handover-waiting-sub">We'll ping you as soon as they sign in and start connecting their apps. You can safely close this — we'll track progress on the New AI board.</div>
+
+          <div class="handover-waiting-card">
+            <div class="handover-waiting-row">
+              <span class="handover-waiting-label">Departing</span>
+              <span class="handover-waiting-value" id="handover-waiting-who">—</span>
+            </div>
+            <div class="handover-waiting-row">
+              <span class="handover-waiting-label">Handover to</span>
+              <span class="handover-waiting-value" id="handover-waiting-succ">—</span>
+            </div>
+            <div class="handover-waiting-row">
+              <span class="handover-waiting-label">Last day</span>
+              <span class="handover-waiting-value" id="handover-waiting-lastday">—</span>
+            </div>
+            <div class="handover-waiting-row">
+              <span class="handover-waiting-label">Status</span>
+              <span class="handover-waiting-value" style="color:#b45309;">Waiting to accept</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="handover-actions">
+          <button class="handover-btn-secondary" type="button" onclick="goTo(10)">Back</button>
+          <button class="handover-btn-primary" type="button" onclick="goTo(2)">
+            Close for now
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /#screens — close the transformed container so modals below are positioned relative to the viewport, not to translateX(-N*100vw) -->
 
     <!-- Link Apps modal — opened from the "Link tools to Relay" bar on p8 -->
@@ -5938,186 +6120,6 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       Handover modal — opened from the "Preserve a departing teammate"
-       card / Start handover button on page 2. Three internal views:
-         intro  → 3-step overview + difficulty pill
-         step1  → invite form (email, handover person, last day, title)
-         step2  → waiting for the teammate to join + connect apps
-       ═══════════════════════════════════════════════════════════════ -->
-  <div class="handover-overlay" id="handover-overlay" onclick="if(event.target===this)closeHandoverModal()" role="dialog" aria-modal="true" aria-labelledby="handover-title">
-
-    <div class="handover-modal" role="document">
-
-      <!-- ── Intro view ── -->
-      <div id="handover-view-intro">
-        <div class="handover-head">
-          <div>
-            <div class="handover-difficulty">Takes ~3 steps · co-operation needed</div>
-            <div class="handover-title" id="handover-title">Preserve a departing teammate</div>
-          </div>
-          <button class="handover-close" type="button" aria-label="Close" onclick="closeHandoverModal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-        <div class="handover-sub">Capture their knowledge before they go. Here's how it works — this one needs the departing teammate to participate, so it's a bit more involved than building your own AI.</div>
-
-        <div class="handover-steps">
-          <div class="handover-step">
-            <div class="handover-step-num">1</div>
-            <div class="handover-step-body">
-              <div class="handover-step-title">Start the offboarding</div>
-              <div class="handover-step-desc">Enter their email, pick a successor, their last day, and job title. We'll send them an invite link.</div>
-            </div>
-          </div>
-          <div class="handover-step">
-            <div class="handover-step-num">2</div>
-            <div class="handover-step-body">
-              <div class="handover-step-title">They join Relay & connect their apps</div>
-              <div class="handover-step-desc">They sign in and link their work tools so the AI can learn from the sources they've been using.</div>
-            </div>
-          </div>
-          <div class="handover-step">
-            <div class="handover-step-num">3</div>
-            <div class="handover-step-body">
-              <div class="handover-step-title">Review, deploy & pay</div>
-              <div class="handover-step-desc">Confirm what's in scope, deploy the AI to your team, and settle up. You're done.</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="handover-actions">
-          <button class="handover-btn-secondary" type="button" onclick="closeHandoverModal()">Go back — build my own instead</button>
-          <button class="handover-btn-primary" type="button" onclick="handoverShowStep1()">
-            Continue
-            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- ── Step 1: invite form ── -->
-      <div id="handover-view-step1" hidden>
-        <div class="handover-head">
-          <div>
-            <div class="handover-step-header">
-              Step 1 of 3
-              <span class="handover-step-dots">
-                <span class="dot active"></span>
-                <span class="dot"></span>
-                <span class="dot"></span>
-              </span>
-            </div>
-            <div class="handover-title">Start the offboarding</div>
-          </div>
-          <button class="handover-close" type="button" aria-label="Close" onclick="closeHandoverModal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-        <div class="handover-sub">Give us the basics and we'll generate an invite link you can send them.</div>
-
-        <form class="handover-form" id="handover-form" onsubmit="event.preventDefault();handoverGenerateLink();">
-          <div class="handover-field">
-            <label class="handover-label" for="handover-email">Departing teammate's email</label>
-            <input class="handover-input" id="handover-email" type="email" required placeholder="priya@company.com" autocomplete="off"/>
-          </div>
-          <div class="handover-field-row">
-            <div class="handover-field">
-              <label class="handover-label" for="handover-successor">Handover to</label>
-              <select class="handover-select" id="handover-successor" required>
-                <option value="">Pick a teammate</option>
-                <option value="you">You (ShineZhong)</option>
-                <option value="alex">Alex Kim · Design</option>
-                <option value="jamie">Jamie Rivera · Engineering</option>
-                <option value="maya">Maya Chen · Operations</option>
-                <option value="ravi">Ravi Shah · Product</option>
-              </select>
-            </div>
-            <div class="handover-field">
-              <label class="handover-label" for="handover-lastday">Last working day</label>
-              <input class="handover-input" id="handover-lastday" type="date" required/>
-            </div>
-          </div>
-          <div class="handover-field">
-            <label class="handover-label" for="handover-job">Their job title</label>
-            <input class="handover-input" id="handover-job" type="text" required placeholder="e.g. Senior Product Designer" autocomplete="off"/>
-          </div>
-
-          <!-- Generated invite link (hidden until generated) -->
-          <div class="handover-field" id="handover-link-field" hidden>
-            <label class="handover-label">Invite link</label>
-            <div class="handover-link-box">
-              <span class="handover-link-url" id="handover-link-url">—</span>
-              <button class="handover-link-copy" type="button" id="handover-link-copy" onclick="handoverCopyLink()">Copy</button>
-            </div>
-          </div>
-
-          <div class="handover-actions">
-            <button class="handover-btn-secondary" type="button" onclick="handoverShowIntro()">Back</button>
-            <button class="handover-btn-primary" type="submit" id="handover-primary-btn">
-              Generate invite link
-              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <!-- ── Step 2: waiting ── -->
-      <div id="handover-view-step2" hidden>
-        <div class="handover-head">
-          <div>
-            <div class="handover-step-header">
-              Step 2 of 3
-              <span class="handover-step-dots">
-                <span class="dot done"></span>
-                <span class="dot active"></span>
-                <span class="dot"></span>
-              </span>
-            </div>
-            <div class="handover-title">Waiting for them to join</div>
-          </div>
-          <button class="handover-close" type="button" aria-label="Close" onclick="closeHandoverModal()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-
-        <div class="handover-waiting">
-          <div class="handover-pulse" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5 12 13l8-5.5"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
-          </div>
-          <div class="handover-waiting-title" id="handover-waiting-title">Invite sent to <span id="handover-waiting-email">them</span></div>
-          <div class="handover-waiting-sub">We'll ping you as soon as they sign in and start connecting their apps. You can safely close this — we'll track progress on the New AI board.</div>
-
-          <div class="handover-waiting-card">
-            <div class="handover-waiting-row">
-              <span class="handover-waiting-label">Departing</span>
-              <span class="handover-waiting-value" id="handover-waiting-who">—</span>
-            </div>
-            <div class="handover-waiting-row">
-              <span class="handover-waiting-label">Handover to</span>
-              <span class="handover-waiting-value" id="handover-waiting-succ">—</span>
-            </div>
-            <div class="handover-waiting-row">
-              <span class="handover-waiting-label">Last day</span>
-              <span class="handover-waiting-value" id="handover-waiting-lastday">—</span>
-            </div>
-            <div class="handover-waiting-row">
-              <span class="handover-waiting-label">Status</span>
-              <span class="handover-waiting-value" style="color:#b45309;">Waiting to accept</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="handover-actions">
-          <button class="handover-btn-secondary" type="button" onclick="handoverShowStep1()">Back</button>
-          <button class="handover-btn-primary" type="button" onclick="closeHandoverModal()">
-            Close for now
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
   <!-- OAuth modal – Claude Connectors style -->
   <div id="oauth-overlay" style="display:none;position:fixed;inset:0;background:rgba(7,25,30,0.42);backdrop-filter:blur(5px);z-index:200;align-items:center;justify-content:center;" hidden>
     <div style="background:#fff;border-radius:22px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,0.2);overflow:hidden;font-family:'Poppins',sans-serif;">
@@ -6148,7 +6150,7 @@
   const screens = document.getElementById('screens');
 
   function goTo(page) {
-    screens.classList.remove('page2','page3','page4','page5','page6','page7','page8');
+    screens.classList.remove('page2','page3','page4','page5','page6','page7','page8','page9','page10','page11');
     if (page === 2) screens.classList.add('page2');
     if (page === 3) screens.classList.add('page3');
     if (page === 4) screens.classList.add('page4');
@@ -6165,6 +6167,14 @@
     }
     if (page === 7) screens.classList.add('page7');
     if (page === 8) screens.classList.add('page8');
+    // Handover secondary flow — pages 9/10/11. Reset any stale form state when
+    // entering the intro so the flow feels fresh each time.
+    if (page === 9) {
+      screens.classList.add('page9');
+      if (typeof resetHandoverForm === 'function') resetHandoverForm();
+    }
+    if (page === 10) screens.classList.add('page10');
+    if (page === 11) screens.classList.add('page11');
     // Leaving page 7 — stop shimmer cycle + auto-advance timer + scramble timers
     if (page !== 7) {
       if (window._p7ShimmerIv) { clearInterval(window._p7ShimmerIv); window._p7ShimmerIv = null; }
@@ -7081,37 +7091,25 @@
   }
   function _newaiEscHandler(e) { if (e.key === 'Escape') closeCreateAIModal(); }
 
-  /* ── Handover modal ──
-     Opens the "Preserve a departing teammate" flow as a 3-view modal.
-     View 1 (intro)  → overview of the 3 steps and what's required.
-     View 2 (step1)  → form to collect invite details and generate link.
-     View 3 (step2)  → waiting-for-teammate confirmation + summary. */
-  function _handoverSetView(name) {
-    ['intro', 'step1', 'step2'].forEach(v => {
-      const el = document.getElementById('handover-view-' + v);
-      if (el) el.hidden = (v !== name);
-    });
-    // Reset scroll position on the modal body when switching views so long
-    // forms always start at the top.
-    const modal = document.querySelector('.handover-modal');
-    if (modal) modal.scrollTop = 0;
+  /* ── Handover flow ──
+     "Preserve a departing teammate" renders across 3 dedicated screen
+     pages (9 = intro, 10 = form, 11 = waiting). Navigation is handled
+     via goTo(); this block only handles form reset + back-compat shims
+     so older call sites don't throw. */
+  function resetHandoverForm() {
+    const linkField = document.getElementById('handover-link-field');
+    const btn       = document.getElementById('handover-primary-btn');
+    if (linkField) linkField.hidden = true;
+    if (btn) {
+      btn.innerHTML = 'Generate invite link <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>';
+    }
   }
-  function openHandoverModal() {
-    const overlay = document.getElementById('handover-overlay');
-    if (!overlay) return;
-    _handoverSetView('intro');
-    overlay.classList.add('show');
-    document.addEventListener('keydown', _handoverEscHandler);
-  }
-  function closeHandoverModal() {
-    const overlay = document.getElementById('handover-overlay');
-    if (overlay) overlay.classList.remove('show');
-    document.removeEventListener('keydown', _handoverEscHandler);
-  }
-  function _handoverEscHandler(e) { if (e.key === 'Escape') closeHandoverModal(); }
-  function handoverShowIntro() { _handoverSetView('intro'); }
-  function handoverShowStep1() { _handoverSetView('step1'); }
-  function handoverShowStep2() { _handoverSetView('step2'); }
+  /* Back-compat shims — in case any stale onclick still points here. */
+  function openHandoverModal() { goTo(9); }
+  function closeHandoverModal() { goTo(2); }
+  function handoverShowIntro() { goTo(9); }
+  function handoverShowStep1() { goTo(10); }
+  function handoverShowStep2() { goTo(11); }
 
   /* Build a short, readable invite token from the email so the link looks
      real. Not cryptographically random — this is a demo. */
@@ -7153,7 +7151,7 @@
           lastEl.textContent = isNaN(d) ? lastday : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         } catch (_) { lastEl.textContent = lastday; }
       }
-      handoverShowStep2();
+      goTo(11);
       return;
     }
 
