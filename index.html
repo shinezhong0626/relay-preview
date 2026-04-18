@@ -2737,43 +2737,53 @@
     }
 
     /* White card that wraps the toggle + form + CTA on page 10 — groups
-       all the form interaction into one clean surface below the hero. */
+       all the form interaction into one clean surface below the hero.
+       Figma tokens: 16px radius, 32px padding, 24px internal gap. */
     .handover-form-card {
       width: 100%;
       background: #fff;
       border: 1px solid rgba(7,25,30,0.06);
-      border-radius: 20px;
-      padding: 24px;
+      border-radius: 16px;
+      padding: 32px;
       box-shadow: 0 4px 18px rgba(7,25,30,0.04);
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 24px;
     }
 
-    /* ── Mode toggle (pill segmented control) ── */
+    /* ── Mode toggle (pill segmented control) ──
+       Figma tokens: 44px overall height, #f3f4f6 track, #99a1af inactive
+       text, white active chip with subtle shadow. Icons sit inline with
+       the label (18px for visual balance against the 14/15px body copy). */
     .handover-mode-toggle {
       display: inline-flex;
       padding: 4px;
-      background: rgba(7,25,30,0.06);
+      background: #f3f4f6;
       border-radius: 12px;
-      gap: 2px;
-      margin-top: 2px;
-      margin-bottom: 2px;
-      align-self: flex-start;
+      gap: 4px;
+      align-self: stretch;
+      height: 44px;
+      box-sizing: border-box;
     }
     .handover-mode-tab {
       appearance: none;
       border: 0;
       background: transparent;
-      color: #6b7280;
-      padding: 8px 16px;
+      color: #99a1af;
+      padding: 0 16px;
       border-radius: 9px;
       font-family: 'Poppins', sans-serif;
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      transition: background 0.18s, color 0.18s;
+      transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex: 1;
     }
+    .handover-mode-tab svg { width: 18px; height: 18px; }
     .handover-mode-tab:hover { color: #07191e; }
     .handover-mode-tab.active {
       background: #fff;
@@ -2795,6 +2805,13 @@
       gap: 6px;
       flex: 1;
       min-width: 0;
+    }
+    /* Inside a form-field the select wrap shouldn't carry the onboarding
+       margin-top — the field's gap already handles label→control spacing,
+       and the extra 6px was pushing the Job Title control below the
+       plain Last Working Day input. */
+    .handover-form-field .role-select-wrap {
+      margin-top: 0;
     }
     .handover-form-label {
       font-size: 13px;
@@ -6029,23 +6046,41 @@
            + primary CTA) into one cohesive surface below the hero. -->
       <div class="handover-form-card">
 
-        <!-- Mode toggle: invite someone new, or pick from teammates already on Relay. -->
+        <!-- Mode toggle: per Figma (node 1794:4750) — "Invite via Link" +
+             "Add Existing User", with Add Existing User as the default
+             active state. Icons sit inline with the label. -->
         <div class="handover-mode-toggle" role="tablist" aria-label="Departing employee source">
-          <button type="button" class="handover-mode-tab active" role="tab" aria-selected="true" data-mode="invite" onclick="handoverSetMode('invite')">Invite by email</button>
-          <button type="button" class="handover-mode-tab" role="tab" aria-selected="false" data-mode="existing" onclick="handoverSetMode('existing')">Already joined</button>
+          <button type="button" class="handover-mode-tab" role="tab" aria-selected="false" data-mode="invite" onclick="handoverSetMode('invite')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 1 0-7.07-7.07L11 5"/>
+              <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 1 0 7.07 7.07L13 19"/>
+            </svg>
+            Invite via Link
+          </button>
+          <button type="button" class="handover-mode-tab active" role="tab" aria-selected="true" data-mode="existing" onclick="handoverSetMode('existing')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M19 8v6"/>
+              <path d="M22 11h-6"/>
+            </svg>
+            Add Existing User
+          </button>
         </div>
 
         <div class="handover-form">
 
-        <!-- Field 1: Departing Employee — switches between email input and teammate picker -->
+        <!-- Field 1: Departing Employee — switches between email input
+             (Invite via Link) and teammate picker (Add Existing User).
+             Label copy swaps with the mode per Figma. -->
         <div class="handover-form-field">
-          <label class="handover-form-label" for="handover-email">Departing Employee Email</label>
-          <!-- Invite-by-email input -->
-          <input class="role-select" id="handover-email" type="email" placeholder="priya@company.com" autocomplete="off" data-mode="invite" oninput="handoverRevalidate()"/>
-          <!-- Already-joined member dropdown (hidden by default) -->
-          <div class="role-select-wrap" data-mode="existing" hidden>
+          <label class="handover-form-label" id="handover-emp-label" for="handover-member">Select an employee already registered in Relay:</label>
+          <!-- Invite-via-Link email input (hidden by default — existing is the default mode) -->
+          <input class="role-select" id="handover-email" type="email" placeholder="priya@company.com" autocomplete="off" data-mode="invite" oninput="handoverRevalidate()" hidden/>
+          <!-- Add Existing User teammate dropdown (visible by default) -->
+          <div class="role-select-wrap" data-mode="existing">
             <select class="role-select" id="handover-member" onchange="handoverMemberChange(this)">
-              <option value="">Select a teammate…</option>
+              <option value="">Select employee</option>
               <option value="priya" data-email="priya.menon@company.com" data-title="Senior Product Designer">Priya Menon · Senior Product Designer</option>
               <option value="daniel" data-email="daniel.rossi@company.com" data-title="Growth Marketing Lead">Daniel Rossi · Growth Marketing Lead</option>
               <option value="maya" data-email="maya.chen@company.com" data-title="Operations Manager">Maya Chen · Operations Manager</option>
@@ -6063,7 +6098,7 @@
           <label class="handover-form-label" for="handover-receiver">Handover Receivers <span class="optional">(Optional)</span></label>
           <div class="role-select-wrap">
             <select class="role-select" id="handover-receiver">
-              <option value="">Select a teammate…</option>
+              <option value="">Add Receivers</option>
               <option value="you">You (ShineZhong)</option>
               <option value="alex">Alex Kim · Engineering Manager</option>
               <option value="jamie">Jamie Rivera · Engineering</option>
@@ -6086,7 +6121,7 @@
             <label class="handover-form-label" for="handover-job">Job Title</label>
             <div class="role-select-wrap">
               <select class="role-select" id="handover-job" onchange="handoverRevalidate()">
-                <option value="">Select a title…</option>
+                <option value="">Select title</option>
                 <option value="UI Designer">UI Designer</option>
                 <option value="UX Researcher">UX Researcher</option>
                 <option value="Product Manager">Product Manager</option>
@@ -6110,7 +6145,7 @@
         </div><!-- /.handover-form -->
 
         <button class="step-continue-btn" id="handover-continue-btn" data-active="false" onclick="if(this.dataset.active==='true') handoverProceedToStep2();">
-          Continue <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
+          Generate Offboarding Invitation <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
         </button>
 
       </div><!-- /.handover-form-card -->
@@ -7328,11 +7363,11 @@
      pages (9 = intro, 10 = form, 11 = waiting). Navigation is handled
      via goTo(); this block only handles form reset + back-compat shims
      so older call sites don't throw. */
-  /* Page 10 (handover step 1) has two modes — "Invite by email" (type a
-     brand-new email) and "Already joined" (pick from existing teammates).
-     Track it here so the primary-button validator knows which field is
-     authoritative for the departing employee. */
-  let _handoverMode = 'invite';
+  /* Page 10 (handover step 1) has two modes per Figma — "Invite via Link"
+     (type a brand-new email) and "Add Existing User" (pick from teammates
+     already registered in Relay). Default is 'existing' to match the
+     Figma source of truth. */
+  let _handoverMode = 'existing';
 
   function resetHandoverForm() {
     const email = document.getElementById('handover-email');
@@ -7347,13 +7382,15 @@
     if (day)   day.value = '';
     if (job)   job.value = '';
     if (btn) { btn.classList.remove('active'); btn.dataset.active = 'false'; }
-    handoverSetMode('invite');
+    handoverSetMode('existing');
   }
 
   /* Flip the segmented control, swap which Departing-Employee field is
-     visible, and re-run the validator. */
+     visible + its label copy, and re-run the validator. Label copy is
+     authored per Figma: existing → "Select an employee already registered
+     in Relay:", invite → "Departing Employee Email". */
   function handoverSetMode(mode) {
-    _handoverMode = (mode === 'existing') ? 'existing' : 'invite';
+    _handoverMode = (mode === 'invite') ? 'invite' : 'existing';
     document.querySelectorAll('.handover-mode-tab').forEach(tab => {
       const on = tab.dataset.mode === _handoverMode;
       tab.classList.toggle('active', on);
@@ -7363,6 +7400,16 @@
       if (node.classList.contains('handover-mode-tab')) return; // skip the tabs themselves
       node.hidden = (node.dataset.mode !== _handoverMode);
     });
+    const lbl = document.getElementById('handover-emp-label');
+    if (lbl) {
+      if (_handoverMode === 'existing') {
+        lbl.textContent = 'Select an employee already registered in Relay:';
+        lbl.setAttribute('for', 'handover-member');
+      } else {
+        lbl.textContent = 'Departing Employee Email';
+        lbl.setAttribute('for', 'handover-email');
+      }
+    }
     handoverRevalidate();
   }
 
