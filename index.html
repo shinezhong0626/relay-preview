@@ -2725,14 +2725,92 @@
     }
 
     /* Page 10 uses the onboarding step layout (same as page 3 "What's your
-       job title?") — but our heading "Select a departing employee" is longer
-       than the onboarding one, so allow it to wrap and widen the container. */
+       job title?"). Container is widened + horizontal padding tightened so
+       the longer heading stays on ONE line and the 4-field form breathes. */
     .handover-step-centered {
-      max-width: 560px;
+      max-width: 720px;
+      padding: 40px 32px;
+      gap: 18px;
     }
     .handover-step-title {
-      white-space: normal !important;
       text-align: left;
+    }
+
+    /* ── Mode toggle (pill segmented control) ── */
+    .handover-mode-toggle {
+      display: inline-flex;
+      padding: 4px;
+      background: rgba(7,25,30,0.06);
+      border-radius: 12px;
+      gap: 2px;
+      margin-top: 2px;
+      margin-bottom: 2px;
+      align-self: flex-start;
+    }
+    .handover-mode-tab {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: #6b7280;
+      padding: 8px 16px;
+      border-radius: 9px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+    }
+    .handover-mode-tab:hover { color: #07191e; }
+    .handover-mode-tab.active {
+      background: #fff;
+      color: #07191e;
+      box-shadow: 0 1px 2px rgba(7,25,30,0.08);
+    }
+
+    /* ── Form fields (re-uses .role-select + .role-select-wrap for
+       visual consistency with page 3) ── */
+    .handover-form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+    }
+    .handover-form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+    .handover-form-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+      font-family: 'Poppins', sans-serif;
+    }
+    .handover-form-label .optional {
+      color: #9ca3af;
+      font-weight: 400;
+      margin-left: 2px;
+    }
+    .handover-form-row {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+    /* Native date input needs a touch more tweaking to feel like .role-select */
+    .role-select[type="date"],
+    .role-select[type="email"],
+    .role-select[type="text"] {
+      height: 52px;
+      cursor: text;
+    }
+    .role-select[type="date"] {
+      cursor: pointer;
+      color: #07191e;
+    }
+    .role-select[type="date"]:invalid {
+      color: #9ca3af;
     }
 
     .handover-page {
@@ -5929,19 +6007,68 @@
         <div class="ob-step-title handover-step-title">Select a departing employee</div>
         <div class="ob-step-sub">Initiate the digital asset preservation process for a departing employee.</div>
       </div>
-      <div class="role-select-wrap">
-        <select class="role-select" id="handover-employee" onchange="handoverEmployeeChange(this)">
-          <option value="">Select a teammate…</option>
-          <option value="priya" data-email="priya.menon@company.com" data-title="Senior Product Designer">Priya Menon · Senior Product Designer</option>
-          <option value="daniel" data-email="daniel.rossi@company.com" data-title="Growth Marketing Lead">Daniel Rossi · Growth Marketing Lead</option>
-          <option value="maya" data-email="maya.chen@company.com" data-title="Operations Manager">Maya Chen · Operations Manager</option>
-          <option value="alex" data-email="alex.kim@company.com" data-title="Engineering Manager">Alex Kim · Engineering Manager</option>
-          <option value="ravi" data-email="ravi.shah@company.com" data-title="Product Lead">Ravi Shah · Product Lead</option>
-        </select>
-        <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path d="M6 9l6 6 6-6" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+
+      <!-- Mode toggle: invite someone new, or pick from teammates already on Relay. -->
+      <div class="handover-mode-toggle" role="tablist" aria-label="Departing employee source">
+        <button type="button" class="handover-mode-tab active" role="tab" aria-selected="true" data-mode="invite" onclick="handoverSetMode('invite')">Invite by email</button>
+        <button type="button" class="handover-mode-tab" role="tab" aria-selected="false" data-mode="existing" onclick="handoverSetMode('existing')">Already joined</button>
       </div>
+
+      <div class="handover-form">
+
+        <!-- Field 1: Departing Employee — switches between email input and teammate picker -->
+        <div class="handover-form-field">
+          <label class="handover-form-label" for="handover-email">Departing Employee Email</label>
+          <!-- Invite-by-email input -->
+          <input class="role-select" id="handover-email" type="email" placeholder="priya@company.com" autocomplete="off" data-mode="invite" oninput="handoverRevalidate()"/>
+          <!-- Already-joined member dropdown (hidden by default) -->
+          <div class="role-select-wrap" data-mode="existing" hidden>
+            <select class="role-select" id="handover-member" onchange="handoverMemberChange(this)">
+              <option value="">Select a teammate…</option>
+              <option value="priya" data-email="priya.menon@company.com" data-title="Senior Product Designer">Priya Menon · Senior Product Designer</option>
+              <option value="daniel" data-email="daniel.rossi@company.com" data-title="Growth Marketing Lead">Daniel Rossi · Growth Marketing Lead</option>
+              <option value="maya" data-email="maya.chen@company.com" data-title="Operations Manager">Maya Chen · Operations Manager</option>
+              <option value="alex" data-email="alex.kim@company.com" data-title="Engineering Manager">Alex Kim · Engineering Manager</option>
+              <option value="ravi" data-email="ravi.shah@company.com" data-title="Product Lead">Ravi Shah · Product Lead</option>
+            </select>
+            <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Field 2: Handover Receivers (optional) -->
+        <div class="handover-form-field">
+          <label class="handover-form-label" for="handover-receiver">Handover Receivers <span class="optional">(Optional)</span></label>
+          <div class="role-select-wrap">
+            <select class="role-select" id="handover-receiver">
+              <option value="">Select a teammate…</option>
+              <option value="you">You (ShineZhong)</option>
+              <option value="alex">Alex Kim · Engineering Manager</option>
+              <option value="jamie">Jamie Rivera · Engineering</option>
+              <option value="maya">Maya Chen · Operations Manager</option>
+              <option value="ravi">Ravi Shah · Product Lead</option>
+            </select>
+            <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M6 9l6 6 6-6" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Fields 3 & 4: Last Working Day + Job Title -->
+        <div class="handover-form-row">
+          <div class="handover-form-field">
+            <label class="handover-form-label" for="handover-lastday">Last Working Day</label>
+            <input class="role-select" id="handover-lastday" type="date" required oninput="handoverRevalidate()"/>
+          </div>
+          <div class="handover-form-field">
+            <label class="handover-form-label" for="handover-job">Job Title</label>
+            <input class="role-select" id="handover-job" type="text" placeholder="e.g. Senior Product Designer" autocomplete="off" oninput="handoverRevalidate()"/>
+          </div>
+        </div>
+
+      </div>
+
       <button class="step-continue-btn" id="handover-continue-btn" data-active="false" onclick="if(this.dataset.active==='true') handoverProceedToStep2();">
         Continue <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
       </button>
@@ -7159,48 +7286,87 @@
      pages (9 = intro, 10 = form, 11 = waiting). Navigation is handled
      via goTo(); this block only handles form reset + back-compat shims
      so older call sites don't throw. */
+  /* Page 10 (handover step 1) has two modes — "Invite by email" (type a
+     brand-new email) and "Already joined" (pick from existing teammates).
+     Track it here so the primary-button validator knows which field is
+     authoritative for the departing employee. */
+  let _handoverMode = 'invite';
+
   function resetHandoverForm() {
-    // Legacy modal form (removed) — reset the new step 1 picker instead.
-    const sel = document.getElementById('handover-employee');
-    const btn = document.getElementById('handover-continue-btn');
-    if (sel) sel.value = '';
-    if (btn) {
-      btn.classList.remove('active');
-      btn.dataset.active = 'false';
-    }
+    const email = document.getElementById('handover-email');
+    const mem   = document.getElementById('handover-member');
+    const recv  = document.getElementById('handover-receiver');
+    const day   = document.getElementById('handover-lastday');
+    const job   = document.getElementById('handover-job');
+    const btn   = document.getElementById('handover-continue-btn');
+    if (email) email.value = '';
+    if (mem)   mem.value = '';
+    if (recv)  recv.value = '';
+    if (day)   day.value = '';
+    if (job)   job.value = '';
+    if (btn) { btn.classList.remove('active'); btn.dataset.active = 'false'; }
+    handoverSetMode('invite');
   }
 
-  /* Page 10 – Select a departing employee.
-     Enable the primary Continue button only once a teammate is chosen,
-     matching the page 3 "What's your job title?" interaction model. */
-  function handoverEmployeeChange(sel) {
-    const btn = document.getElementById('handover-continue-btn');
+  /* Flip the segmented control, swap which Departing-Employee field is
+     visible, and re-run the validator. */
+  function handoverSetMode(mode) {
+    _handoverMode = (mode === 'existing') ? 'existing' : 'invite';
+    document.querySelectorAll('.handover-mode-tab').forEach(tab => {
+      const on = tab.dataset.mode === _handoverMode;
+      tab.classList.toggle('active', on);
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    document.querySelectorAll('[data-mode="invite"],[data-mode="existing"]').forEach(node => {
+      if (node.classList.contains('handover-mode-tab')) return; // skip the tabs themselves
+      node.hidden = (node.dataset.mode !== _handoverMode);
+    });
+    handoverRevalidate();
+  }
+
+  function handoverMemberChange(_sel) { handoverRevalidate(); }
+
+  /* Primary button is active when we have: a departing employee (email
+     or picked teammate, depending on mode), a last working day, and a
+     job title. Handover receivers is optional. */
+  function handoverRevalidate() {
+    const btn  = document.getElementById('handover-continue-btn');
     if (!btn) return;
-    if (sel && sel.value) {
-      btn.classList.add('active');
-      btn.dataset.active = 'true';
-    } else {
-      btn.classList.remove('active');
-      btn.dataset.active = 'false';
-    }
+    const email = (document.getElementById('handover-email')?.value || '').trim();
+    const mem   = document.getElementById('handover-member')?.value || '';
+    const day   = document.getElementById('handover-lastday')?.value || '';
+    const job   = (document.getElementById('handover-job')?.value || '').trim();
+    const hasEmp = (_handoverMode === 'existing') ? !!mem : /\S+@\S+\.\S+/.test(email);
+    const ok = hasEmp && !!day && !!job;
+    btn.classList.toggle('active', ok);
+    btn.dataset.active = ok ? 'true' : 'false';
   }
 
-  /* Stash the selected teammate into the page-11 waiting summary, then
-     advance. Uses data-email / data-title attributes on the option so we
-     don't need a separate lookup map. */
+  /* Gather whichever fields are relevant for the current mode, populate
+     page 11's waiting summary, and advance. */
   function handoverProceedToStep2() {
-    const sel = document.getElementById('handover-employee');
-    if (!sel || !sel.value) return;
-    const opt = sel.options[sel.selectedIndex];
-    const label = (opt && opt.textContent) || '';
-    const email = (opt && opt.dataset.email) || '';
-    const title = (opt && opt.dataset.title) || '';
-    const name  = label.split('·')[0].trim() || label;
+    const btn = document.getElementById('handover-continue-btn');
+    if (!btn || btn.dataset.active !== 'true') return;
+
+    let email = '';
+    let name  = '';
+    if (_handoverMode === 'existing') {
+      const sel = document.getElementById('handover-member');
+      const opt = sel ? sel.options[sel.selectedIndex] : null;
+      const label = (opt && opt.textContent) || '';
+      email = (opt && opt.dataset.email) || '';
+      name  = label.split('·')[0].trim() || label;
+    } else {
+      email = (document.getElementById('handover-email')?.value || '').trim();
+      // Derive a friendly name from the local-part of the email.
+      name = email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+    const job = (document.getElementById('handover-job')?.value || '').trim();
 
     const emailEl = document.getElementById('handover-waiting-email');
     const whoEl   = document.getElementById('handover-waiting-who');
-    if (emailEl) emailEl.textContent = email;
-    if (whoEl)   whoEl.textContent   = title ? `${name} · ${title}` : name;
+    if (emailEl) emailEl.textContent = email || 'them';
+    if (whoEl)   whoEl.textContent   = job ? `${name} · ${job}` : name;
     goTo(11);
   }
   /* Back-compat shims — in case any stale onclick still points here. */
