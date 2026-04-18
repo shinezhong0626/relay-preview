@@ -2946,9 +2946,12 @@
 
     /* Buttons centered below the cards; primary is intentionally wider than
        secondary so "Start handover" feels like the main CTA. */
+    /* Actions row spans the full 3-card width — Back flush left, Start
+       handover flush right — so the combined button row feels anchored
+       to the same grid as the step cards above. */
     .handover-intro-actions {
       width: 100%;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; align-items: center; justify-content: space-between;
       gap: 12px;
       margin-top: 8px;
     }
