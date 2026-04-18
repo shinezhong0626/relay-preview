@@ -3305,7 +3305,166 @@
     .handover-link-copy:hover { background: #e0f2fe; }
     .handover-link-copy.copied { background: #d1fae5; border-color: #6ee7b7; color: #065f46; }
 
-    /* Step 2 waiting state */
+    /* ── Step 2 success card (Figma node 2075:36645) ──
+       Full 596px white card: green check header, share-text row,
+       copyable invite link, and a blurred-apps banner that hints at
+       upcoming data-coverage work. */
+    .handover-success-page {
+      width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 40px 24px;
+      overflow-y: auto;
+    }
+    .handover-success-card {
+      width: 100%;
+      max-width: 660px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      font-family: 'Poppins', sans-serif;
+      position: relative;
+    }
+    .handover-success-close {
+      position: absolute; top: 20px; right: 20px;
+      width: 32px; height: 32px;
+      border: 0; background: transparent;
+      color: #6b7280;
+      border-radius: 8px; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .handover-success-close:hover { background: #f3f5f9; color: #07191e; }
+    .handover-success-close svg { width: 18px; height: 18px; }
+    .handover-success-header {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px;
+      padding: 0 8px;
+    }
+    .handover-success-check {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: #00bc7d;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .handover-success-check svg { width: 24px; height: 24px; color: #fff; }
+    .handover-success-title {
+      font-size: 20px; font-weight: 500;
+      color: #07191e; line-height: 24px;
+      text-align: center;
+    }
+    .handover-share {
+      display: flex; flex-direction: column; gap: 12px;
+      width: 100%;
+    }
+    .handover-share-text {
+      font-size: 16px; font-weight: 400;
+      color: #07191e; line-height: 18px;
+    }
+    .handover-share-text strong { font-weight: 700; }
+    .handover-link-row {
+      background: #f8f9fb;
+      border-radius: 14px;
+      padding: 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+    }
+    .handover-link-text {
+      font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+      color: #07191e;
+      line-height: 20px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+    .handover-link-copy-btn {
+      width: 24px; height: 24px;
+      border: 0; background: transparent;
+      color: #6b7280;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 6px;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+    .handover-link-copy-btn:hover { background: rgba(7,25,30,0.06); color: #07191e; }
+    .handover-link-copy-btn.copied { color: #00bc7d; }
+    .handover-link-copy-btn svg { width: 18px; height: 18px; }
+
+    /* Banner — gradient background + 2 rows of frosted app-icon tiles +
+       centered coverage message near the bottom. */
+    .handover-banner {
+      position: relative;
+      width: 100%;
+      height: 210px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #f8fdff 28.571%, #eef9ff 100%);
+      overflow: hidden;
+    }
+    .handover-banner-icons {
+      position: absolute;
+      left: 0; right: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      padding-top: 18px;
+      align-items: center;
+      mask-image: linear-gradient(180deg, #000 0%, #000 60%, transparent 100%);
+      -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 60%, transparent 100%);
+    }
+    .handover-banner-icons-row {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      justify-content: center;
+    }
+    .handover-banner-icons-row.shift { margin-left: 36px; }
+    .handover-app-tile {
+      width: 36px; height: 36px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid #fff;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px; font-weight: 600;
+      color: #07191e;
+      letter-spacing: 0.2px;
+    }
+    .handover-banner-text {
+      position: absolute;
+      left: 40px; right: 40px;
+      bottom: 26px;
+      display: flex; flex-direction: column; gap: 4px;
+      align-items: center;
+      text-align: center;
+    }
+    .handover-banner-text-primary {
+      font-size: 14px; font-weight: 500;
+      color: #014261; line-height: 18px;
+    }
+    .handover-banner-text-secondary {
+      font-size: 12px; font-weight: 500;
+      color: #99a1af; line-height: 16px;
+    }
+
+    /* Actions row under the success card. */
+    .handover-success-actions {
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    /* Legacy waiting state (not used after step 2 redesign, kept for any
+       back-compat paths still referencing these classes). */
     .handover-waiting {
       display: flex; flex-direction: column; align-items: center;
       padding: 10px 0 6px;
@@ -6251,18 +6410,18 @@
            + primary CTA) into one cohesive surface below the hero. -->
       <div class="handover-form-card">
 
-        <!-- Mode toggle: per Figma (node 1794:4750) — "Invite via Link" +
-             "Add Existing User", with Add Existing User as the default
-             active state. Icons sit inline with the label. -->
+        <!-- Mode toggle: "Invite via Link" is the default active state;
+             "Add Existing User" flips the input to a teammate picker.
+             Icons sit inline with the label. -->
         <div class="handover-mode-toggle" role="tablist" aria-label="Departing employee source">
-          <button type="button" class="handover-mode-tab" role="tab" aria-selected="false" data-mode="invite" onclick="handoverSetMode('invite')">
+          <button type="button" class="handover-mode-tab active" role="tab" aria-selected="true" data-mode="invite" onclick="handoverSetMode('invite')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 1 0-7.07-7.07L11 5"/>
               <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 1 0 7.07 7.07L13 19"/>
             </svg>
             Invite via Link
           </button>
-          <button type="button" class="handover-mode-tab active" role="tab" aria-selected="true" data-mode="existing" onclick="handoverSetMode('existing')">
+          <button type="button" class="handover-mode-tab" role="tab" aria-selected="false" data-mode="existing" onclick="handoverSetMode('existing')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
               <circle cx="9" cy="7" r="4"/>
@@ -6276,14 +6435,14 @@
         <div class="handover-form">
 
         <!-- Field 1: Departing Employee — switches between email input
-             (Invite via Link) and teammate picker (Add Existing User).
-             Label copy swaps with the mode per Figma. -->
+             (Invite via Link, default) and teammate picker (Add Existing
+             User). Label copy swaps with the mode. -->
         <div class="handover-form-field">
-          <label class="handover-form-label" id="handover-emp-label" for="handover-member">Select an employee already registered in Relay:</label>
-          <!-- Invite-via-Link email input (hidden by default — existing is the default mode) -->
-          <input class="role-select" id="handover-email" type="email" placeholder="priya@company.com" autocomplete="off" data-mode="invite" oninput="handoverRevalidate()" hidden/>
-          <!-- Add Existing User teammate dropdown (visible by default) -->
-          <div class="role-select-wrap" data-mode="existing">
+          <label class="handover-form-label" id="handover-emp-label" for="handover-email">Departing Employee Email</label>
+          <!-- Invite-via-Link email input (visible by default) -->
+          <input class="role-select" id="handover-email" type="email" placeholder="priya@company.com" autocomplete="off" data-mode="invite" oninput="handoverRevalidate()"/>
+          <!-- Add Existing User teammate dropdown (hidden by default) -->
+          <div class="role-select-wrap" data-mode="existing" hidden>
             <select class="role-select" id="handover-member" onchange="handoverMemberChange(this)">
               <option value="">Select employee</option>
               <option value="priya" data-email="priya.menon@company.com" data-title="Senior Product Designer">Priya Menon · Senior Product Designer</option>
@@ -6371,51 +6530,76 @@
     </div>
   </div>
 
-  <!-- ═══════════ PAGE 11: Handover step 2 — waiting ═══════════ -->
+  <!-- ═══════════ PAGE 11: Handover step 2 — success / pending join ═══════════
+       Mirrors Figma node 2075:36645 — big success card with green check,
+       copyable invite link, and an app-coverage banner. -->
   <div class="screen" id="page11">
-    <div class="handover-page">
-      <div class="handover-modal" role="document">
-        <div class="handover-head">
-          <div>
-            <div class="handover-step-header">
-              Step 2 of 3
-              <span class="handover-step-dots">
-                <span class="dot done"></span>
-                <span class="dot active"></span>
-                <span class="dot"></span>
-              </span>
-            </div>
-            <div class="handover-title">Waiting for them to join</div>
-          </div>
-          <button class="handover-close" type="button" aria-label="Back to options" onclick="goTo(2)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
+    <div class="handover-success-page">
+      <div class="handover-success-card" role="document">
+        <button class="handover-success-close" type="button" aria-label="Back to options" onclick="goTo(2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
 
-        <div class="handover-waiting">
-          <div class="handover-pulse" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5 12 13l8-5.5"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+        <div class="handover-success-header">
+          <div class="handover-success-check" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12l4 4 10-10"/>
+            </svg>
           </div>
-          <div class="handover-waiting-title" id="handover-waiting-title">Invite sent to <span id="handover-waiting-email">them</span></div>
-          <div class="handover-waiting-sub">We'll ping you as soon as they sign in and start connecting their apps. You can safely close this — we'll track progress on the New AI board.</div>
-
-          <div class="handover-waiting-card">
-            <div class="handover-waiting-row">
-              <span class="handover-waiting-label">Departing</span>
-              <span class="handover-waiting-value" id="handover-waiting-who">—</span>
-            </div>
-            <div class="handover-waiting-row">
-              <span class="handover-waiting-label">Status</span>
-              <span class="handover-waiting-value" style="color:#b45309;">Waiting to accept</span>
-            </div>
+          <div class="handover-success-title">Pending Join &amp; Link</div>
+          <div class="handover-banner-text-secondary" style="text-align:center;max-width:480px;">
+            Waiting for the leaver to accept the invitation and link data sources
           </div>
         </div>
 
-        <div class="handover-actions">
-          <button class="handover-btn-secondary" type="button" onclick="goTo(10)">Back</button>
-          <button class="handover-btn-primary" type="button" onclick="goTo(2)">
-            Close for now
-          </button>
+        <div class="handover-share">
+          <p class="handover-share-text">
+            Share this link with <strong id="handover-share-name">them</strong> to join in Relay
+          </p>
+          <div class="handover-link-row">
+            <span class="handover-link-text" id="handover-share-link">https://relay.app/invite/offboard-</span>
+            <button class="handover-link-copy-btn" type="button" aria-label="Copy invite link" onclick="handoverCopyInviteLink(this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="handover-banner" aria-hidden="true">
+          <div class="handover-banner-icons">
+            <div class="handover-banner-icons-row">
+              <span class="handover-app-tile">Nt</span>
+              <span class="handover-app-tile">Sl</span>
+              <span class="handover-app-tile">Gm</span>
+              <span class="handover-app-tile">Hb</span>
+              <span class="handover-app-tile">OD</span>
+              <span class="handover-app-tile">Ts</span>
+              <span class="handover-app-tile">Dc</span>
+              <span class="handover-app-tile">Ok</span>
+              <span class="handover-app-tile">Zm</span>
+            </div>
+            <div class="handover-banner-icons-row shift">
+              <span class="handover-app-tile">SG</span>
+              <span class="handover-app-tile">Ln</span>
+              <span class="handover-app-tile">At</span>
+              <span class="handover-app-tile">Mx</span>
+              <span class="handover-app-tile">Jr</span>
+              <span class="handover-app-tile">GH</span>
+              <span class="handover-app-tile">Hs</span>
+              <span class="handover-app-tile">Mc</span>
+              <span class="handover-app-tile">GL</span>
+            </div>
+          </div>
+          <div class="handover-banner-text">
+            <div class="handover-banner-text-primary">
+              Data coverage affects digital employee quality and pricing
+            </div>
+            <div class="handover-banner-text-secondary">
+              Make sure the leaver has connected all relevant work data before continuing
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -7582,11 +7766,10 @@
      pages (9 = intro, 10 = form, 11 = waiting). Navigation is handled
      via goTo(); this block only handles form reset + back-compat shims
      so older call sites don't throw. */
-  /* Page 10 (handover step 1) has two modes per Figma — "Invite via Link"
-     (type a brand-new email) and "Add Existing User" (pick from teammates
-     already registered in Relay). Default is 'existing' to match the
-     Figma source of truth. */
-  let _handoverMode = 'existing';
+  /* Page 10 (handover step 1) has two modes — "Invite via Link" (type a
+     brand-new email, default) and "Add Existing User" (pick from teammates
+     already registered in Relay). */
+  let _handoverMode = 'invite';
 
   function resetHandoverForm() {
     const email = document.getElementById('handover-email');
@@ -7600,7 +7783,7 @@
     if (job)   job.value = '';
     if (btn) { btn.classList.remove('active'); btn.dataset.active = 'false'; }
     if (typeof receiverReset === 'function') receiverReset();
-    handoverSetMode('existing');
+    handoverSetMode('invite');
   }
 
   /* Flip the segmented control, swap which Departing-Employee field is
@@ -7650,7 +7833,8 @@
   }
 
   /* Gather whichever fields are relevant for the current mode, populate
-     page 11's waiting summary, and advance. */
+     page 11's success card (Figma 2075:36645) with the departing person's
+     name and a generated share link, and advance. */
   function handoverProceedToStep2() {
     const btn = document.getElementById('handover-continue-btn');
     if (!btn || btn.dataset.active !== 'true') return;
@@ -7668,13 +7852,41 @@
       // Derive a friendly name from the local-part of the email.
       name = email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     }
-    const job = (document.getElementById('handover-job')?.value || '').trim();
 
-    const emailEl = document.getElementById('handover-waiting-email');
-    const whoEl   = document.getElementById('handover-waiting-who');
-    if (emailEl) emailEl.textContent = email || 'them';
-    if (whoEl)   whoEl.textContent   = job ? `${name} · ${job}` : name;
+    const slug = _handoverSlug(email || name);
+    const link = `https://relay.app/invite/offboard-${slug}`;
+    const nameEl = document.getElementById('handover-share-name');
+    const linkEl = document.getElementById('handover-share-link');
+    if (nameEl) nameEl.textContent = name || 'them';
+    if (linkEl) linkEl.textContent = link;
     goTo(11);
+  }
+
+  /* Copy the displayed invite link to the clipboard and flash a
+     "copied" state on the button icon. */
+  function handoverCopyInviteLink(btn) {
+    const linkEl = document.getElementById('handover-share-link');
+    const text = linkEl ? linkEl.textContent.trim() : '';
+    if (!text) return;
+    const done = () => {
+      if (!btn) return;
+      btn.classList.add('copied');
+      setTimeout(() => btn.classList.remove('copied'), 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, done);
+    } else {
+      // Fallback for older browsers.
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      } catch(_) {}
+      done();
+    }
   }
   /* Back-compat shims — in case any stale onclick still points here. */
   function openHandoverModal() { goTo(9); }
