@@ -325,7 +325,9 @@
     /* ════════════════════════════════════════════
        PAGE 3 — PICK AN AVATAR
     ════════════════════════════════════════════ */
-    /* #page3 (avatar) uses same blue→peach gradient — defined with #page3 rule below. */
+    #page3 {
+      background: linear-gradient(to bottom, #eef7ff 53%, #ffe4d5 100%);
+    }
 
     .ob-topbar {
       width: 100%;
@@ -2718,7 +2720,9 @@
     /* Handover pages share the same diffuse blue→peach gradient as the
        Create flow (page 2/3) — they're just a secondary path, not a
        separate product surface. */
-    #page9, #page10, #page11 { background: linear-gradient(to bottom, #eef7ff 53%, #ffe4d5 100%); }
+    #page9, #page10, #page11 {
+      background: linear-gradient(to bottom, #eef7ff 53%, #ffe4d5 100%);
+    }
     .handover-page {
       width: 100vw; height: 100vh;
       display: flex; align-items: center; justify-content: center;
