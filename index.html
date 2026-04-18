@@ -2721,7 +2721,7 @@
     /* Handover pages share the same diffuse blue→peach gradient as the
        Create flow (page 2/3) — they're just a secondary path, not a
        separate product surface. */
-    #page9, #page10, #page11 {
+    #page9, #page10, #page11, #page12 {
       background: linear-gradient(to bottom, #eef7ff 53%, #ffe4d5 100%);
     }
 
@@ -3318,12 +3318,11 @@
     }
     .handover-success-card {
       width: 100%;
-      max-width: 660px;
       background: #fff;
-      border: 1px solid #e5e7eb;
+      border: 1px solid rgba(7,25,30,0.06);
       border-radius: 16px;
       padding: 32px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 18px rgba(7,25,30,0.04);
       display: flex;
       flex-direction: column;
       gap: 24px;
@@ -3510,8 +3509,7 @@
        brand (soft blue wash + white card) instead of the warm peach
        gradient used on the Build-AI-Self confirmation page. */
     .p12-page {
-      width: 100vw; min-height: 100vh;
-      background: linear-gradient(to bottom, #f7fbff 0%, #eef6fd 100%);
+      width: 100%; min-height: 100%;
       display: flex; flex-direction: column;
       font-family: 'Poppins', sans-serif;
     }
@@ -6739,27 +6737,30 @@
     </div>
   </div>
 
-  <!-- ═══════════ PAGE 11: Handover step 2 — success / pending join ═══════════
-       Mirrors Figma node 2075:36645 — big success card with green check,
-       copyable invite link, and an app-coverage banner. -->
+  <!-- ═══════════ PAGE 11: Handover step 2 — pending join & link ═══════════
+       Re-skinned to match page 10 (step 1) — onboarding-style topbar with
+       Back button + 3-dot stepper (step 2 active), title/subtitle on the
+       outside-left, and a single white card that holds the share-link
+       row + coverage banner + disabled "Waiting…" CTA. 5s auto-advance
+       to step 3 is wired in goTo(11). -->
   <div class="screen" id="page11">
-    <div class="handover-success-page">
+    <div class="ob-topbar">
+      <button class="btn-back" id="backbtn11" onclick="goTo(10)">Back</button>
+      <div class="step-dots" aria-label="Step 2 of 3">
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+      </div>
+      <div style="width:88px;"></div>
+    </div>
+
+    <div class="step-centered handover-step-centered">
+      <div class="step-heading">
+        <div class="ob-step-title handover-step-title">Pending Join &amp; Link</div>
+        <div class="ob-step-sub">Waiting for the leaver to accept the invitation and link data sources.</div>
+      </div>
+
       <div class="handover-success-card" role="document">
-        <!-- No close button on step 2 by design: the flow auto-advances
-             to step 3 after ~5s (see handoverProceedToStep2 / goTo(11)). -->
-
-        <div class="handover-success-header">
-          <div class="handover-success-check" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12l4 4 10-10"/>
-            </svg>
-          </div>
-          <div class="handover-success-title">Pending Join &amp; Link</div>
-          <div class="handover-success-subtitle">
-            Waiting for the leaver to accept the invitation and link data sources
-          </div>
-        </div>
-
         <div class="handover-share">
           <p class="handover-share-text">
             Share this link with <strong id="handover-share-name">them</strong> to join in Relay
@@ -6811,8 +6812,8 @@
         </div>
 
         <!-- Disabled "Waiting…" CTA. Purely a visual affordance —
-             `handoverProceedToStep2()` sets a 5s timer that advances
-             the preview to page 12 (Create Digital Employee). -->
+             goTo(11) sets a 5s timer that advances to page 12
+             (Create Digital Employee). -->
         <button class="handover-wait-btn" type="button" disabled aria-live="polite">
           <span class="handover-wait-spinner" aria-hidden="true"></span>
           Waiting for leaver to join &amp; link data…
@@ -6829,12 +6830,10 @@
     <div class="p12-page">
       <div class="p12-topbar">
         <button class="btn-back" type="button" onclick="goTo(11)">Back</button>
-        <div class="step-dots" aria-label="Step 3 of 5">
+        <div class="step-dots" aria-label="Step 3 of 3">
           <div class="step-dot done"></div>
           <div class="step-dot done"></div>
           <div class="step-dot active"></div>
-          <div class="step-dot"></div>
-          <div class="step-dot"></div>
         </div>
         <div class="p12-topbar-spacer"></div>
       </div>
