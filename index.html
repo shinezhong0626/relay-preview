@@ -35,7 +35,7 @@
     /* ── Screen slide container ── */
     .screens {
       display: flex;
-      width: 1100vw;
+      width: 1200vw;
       height: 100vh;
       transition: none;
     }
@@ -50,6 +50,7 @@
     .screens.page9  { transform: translateX(-800vw); }
     .screens.page10 { transform: translateX(-900vw); }
     .screens.page11 { transform: translateX(-1000vw); }
+    .screens.page12 { transform: translateX(-1100vw); }
 
     .screen {
       width: 100vw;
@@ -3357,6 +3358,45 @@
       color: #07191e; line-height: 24px;
       text-align: center;
     }
+    /* Secondary line directly under the big green-check title. The old
+       markup re-used `.handover-banner-text-secondary` (12px / #99a1af)
+       which was tuned for the gradient banner below and read as almost
+       invisible here. This dedicated class bumps weight and contrast so
+       the "Waiting for the leaver…" line is legible next to the title. */
+    .handover-success-subtitle {
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px; font-weight: 400;
+      color: #6d7574; line-height: 22px;
+      text-align: center;
+      max-width: 520px;
+    }
+    /* Disabled, pulsing "Waiting…" CTA appended below the app-coverage
+       banner on page 11. Non-interactive by design — it's there to signal
+       that the flow is paused on the leaver's acceptance, and a 5-second
+       timer auto-advances the preview to step 3 (page 12). */
+    .handover-wait-btn {
+      width: 100%;
+      height: 52px;
+      background: #eef0f4;
+      color: #6d7574;
+      border: 0;
+      border-radius: 14px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px; font-weight: 500;
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 10px;
+      cursor: default;
+      opacity: 0.9;
+    }
+    .handover-wait-btn:hover { opacity: 0.9; }
+    .handover-wait-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(7,25,30,0.14);
+      border-top-color: #6d7574;
+      border-radius: 50%;
+      animation: handoverWaitSpin 0.9s linear infinite;
+    }
+    @keyframes handoverWaitSpin { to { transform: rotate(360deg); } }
     .handover-share {
       display: flex; flex-direction: column; gap: 12px;
       width: 100%;
@@ -3462,6 +3502,175 @@
       gap: 10px;
       margin-top: 4px;
     }
+
+    /* ── Handover Step 3 — "Create Digital Employee" (page 12) ──
+       Mirrors Figma wf4oXgT1jeCGBkBkqOg2K7 node 18:2706. Structurally
+       the same layout as onboarding p6 (`.p6-main / .p6-card`), but
+       namespaced with a `.p12-` prefix and re-tinted to the handover
+       brand (soft blue wash + white card) instead of the warm peach
+       gradient used on the Build-AI-Self confirmation page. */
+    .p12-page {
+      width: 100vw; min-height: 100vh;
+      background: linear-gradient(to bottom, #f7fbff 0%, #eef6fd 100%);
+      display: flex; flex-direction: column;
+      font-family: 'Poppins', sans-serif;
+    }
+    .p12-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 32px 10px;
+    }
+    .p12-topbar-spacer { width: 88px; }
+    .p12-main {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 28px 48px 40px;
+      gap: 22px;
+    }
+    .p12-heading {
+      width: 100%; max-width: 640px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .p12-step-label {
+      font-size: 12px; font-weight: 600;
+      color: #014261; letter-spacing: 1.4px;
+      text-transform: uppercase;
+    }
+    .p12-title {
+      font-size: 24px; font-weight: 500;
+      color: #07191e; line-height: 32px;
+      letter-spacing: -0.2px;
+    }
+    .p12-sub {
+      font-size: 14px; color: #6d7574;
+      line-height: 22px;
+    }
+    .p12-card {
+      width: 100%;
+      max-width: 660px;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
+      padding: 28px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      display: flex; flex-direction: column; gap: 20px;
+    }
+    /* Inner soft-gray sub-card holding the Digital-Employee identity
+       and description sections. Separates the chrome (white card) from
+       the semantic content (gray inset). */
+    .p12-inset {
+      background: #f7f8fb;
+      border-radius: 14px;
+      padding: 22px;
+      display: flex; flex-direction: column; gap: 18px;
+    }
+    .p12-identity {
+      display: flex; align-items: center; gap: 14px;
+    }
+    .p12-avatar {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: #b0e4fe;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: #014261;
+      flex-shrink: 0;
+    }
+    .p12-avatar svg { width: 26px; height: 26px; }
+    .p12-identity-text {
+      display: flex; flex-direction: column; gap: 4px;
+      min-width: 0;
+    }
+    .p12-identity-name {
+      font-size: 18px; font-weight: 600;
+      color: #07191e; letter-spacing: -0.2px;
+    }
+    .p12-identity-meta {
+      font-size: 13px; color: #6d7574; line-height: 1.5;
+    }
+    .p12-identity-meta .dot-sep { margin: 0 8px; color: #99a1af; }
+    .p12-section { display: flex; flex-direction: column; gap: 8px; }
+    .p12-section-label {
+      font-size: 11.5px; font-weight: 600;
+      color: #014261; letter-spacing: 1.3px;
+      text-transform: uppercase;
+    }
+    .p12-section-body {
+      font-size: 14px; color: #6d7574; line-height: 1.6;
+    }
+    .p12-bullets {
+      display: flex; flex-direction: column; gap: 8px;
+      padding-left: 2px;
+    }
+    .p12-bullet {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14px; color: #6d7574; line-height: 1.55;
+    }
+    .p12-bullet::before {
+      content: '';
+      flex-shrink: 0;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #b0e4fe;
+      margin-top: 9px;
+    }
+    /* Price row lives outside the gray inset — matches Figma where
+       pricing sits in the white card below the description block. */
+    .p12-price-box {
+      display: flex; flex-wrap: wrap;
+      gap: 32px 40px;
+      padding: 6px 4px 4px;
+    }
+    .p12-price-col {
+      display: flex; flex-direction: column; gap: 8px; min-width: 0;
+    }
+    .p12-price-label {
+      font-size: 11.5px; font-weight: 600;
+      color: #014261; letter-spacing: 1.3px;
+      text-transform: uppercase;
+    }
+    .p12-price-row {
+      display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    }
+    .p12-price-value {
+      font-size: 28px; font-weight: 600;
+      color: #07191e; line-height: 1; letter-spacing: -0.5px;
+    }
+    .p12-beta-badge {
+      background: #ddf2ff; color: #014261;
+      font-size: 10.5px; font-weight: 600;
+      padding: 3px 9px; border-radius: 999px;
+      letter-spacing: 0.5px;
+    }
+    .p12-future-strike {
+      text-decoration: line-through; color: #99a1af; font-size: 13px;
+    }
+    .p12-future-unit { color: #6d7574; font-size: 13px; }
+    .p12-off-pill {
+      background: #ffe4d5; color: #07191e;
+      font-size: 10.5px; font-weight: 600;
+      padding: 3px 9px; border-radius: 999px;
+      letter-spacing: 0.4px;
+    }
+    .p12-bottom {
+      width: 100%; max-width: 660px;
+      display: flex; flex-direction: column; gap: 10px;
+      margin-top: 4px;
+    }
+    .p12-activate-btn {
+      width: 100%;
+      padding: 20px 24px;
+      background: #b0e4fe;
+      color: #014261;
+      border: 0;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px; font-weight: 500;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .p12-activate-btn:hover { opacity: 0.9; }
+    .p12-activate-btn:active { transform: scale(0.995); }
 
     /* Legacy waiting state (not used after step 2 redesign, kept for any
        back-compat paths still referencing these classes). */
@@ -6536,9 +6745,8 @@
   <div class="screen" id="page11">
     <div class="handover-success-page">
       <div class="handover-success-card" role="document">
-        <button class="handover-success-close" type="button" aria-label="Back to options" onclick="goTo(2)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-        </button>
+        <!-- No close button on step 2 by design: the flow auto-advances
+             to step 3 after ~5s (see handoverProceedToStep2 / goTo(11)). -->
 
         <div class="handover-success-header">
           <div class="handover-success-check" aria-hidden="true">
@@ -6547,7 +6755,7 @@
             </svg>
           </div>
           <div class="handover-success-title">Pending Join &amp; Link</div>
-          <div class="handover-banner-text-secondary" style="text-align:center;max-width:480px;">
+          <div class="handover-success-subtitle">
             Waiting for the leaver to accept the invitation and link data sources
           </div>
         </div>
@@ -6600,6 +6808,106 @@
               Make sure the leaver has connected all relevant work data before continuing
             </div>
           </div>
+        </div>
+
+        <!-- Disabled "Waiting…" CTA. Purely a visual affordance —
+             `handoverProceedToStep2()` sets a 5s timer that advances
+             the preview to page 12 (Create Digital Employee). -->
+        <button class="handover-wait-btn" type="button" disabled aria-live="polite">
+          <span class="handover-wait-spinner" aria-hidden="true"></span>
+          Waiting for leaver to join &amp; link data…
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PAGE 12: Handover step 3 — Create Digital Employee ═══════════
+       Mirrors Figma wf4oXgT1jeCGBkBkqOg2K7 node 18:2706. Layout parallels
+       onboarding p6 (Create AI Employee) but uses the handover brand
+       surface and a 5-dot stepper fixed on step 3. -->
+  <div class="screen" id="page12">
+    <div class="p12-page">
+      <div class="p12-topbar">
+        <button class="btn-back" type="button" onclick="goTo(11)">Back</button>
+        <div class="step-dots" aria-label="Step 3 of 5">
+          <div class="step-dot done"></div>
+          <div class="step-dot done"></div>
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+          <div class="step-dot"></div>
+        </div>
+        <div class="p12-topbar-spacer"></div>
+      </div>
+
+      <div class="p12-main">
+        <div class="p12-heading">
+          <div class="p12-step-label">STEP 3</div>
+          <div class="p12-title">Create Digital Employee</div>
+          <div class="p12-sub">
+            Data preparation complete. Confirm creation of the knowledge asset.
+          </div>
+        </div>
+
+        <div class="p12-card">
+          <div class="p12-inset">
+            <div class="p12-identity">
+              <div class="p12-avatar" aria-hidden="true">
+                <!-- Briefcase / knowledge icon — brand blue on #b0e4fe. -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 7h-3V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1Z"/>
+                  <path d="M9 7V5h6v2"/>
+                  <path d="M3 12h18"/>
+                </svg>
+              </div>
+              <div class="p12-identity-text">
+                <div class="p12-identity-name">Digital Employee</div>
+                <div class="p12-identity-meta">
+                  <span id="p12-tier">Lead Tier</span><span class="dot-sep">·</span><span id="p12-kb-name">Shawn Guo Knowledge Base</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="p12-section">
+              <div class="p12-section-label">What is it?</div>
+              <div class="p12-section-body">
+                A Digital Employee is a persistent AI asset that preserves the work memory and decision logic of your team members.
+              </div>
+            </div>
+
+            <div class="p12-section">
+              <div class="p12-section-label">What can it do?</div>
+              <div class="p12-bullets">
+                <div class="p12-bullet">Query institutional knowledge instantly</div>
+                <div class="p12-bullet">Understand deep decision logic from archives</div>
+                <div class="p12-bullet">Maintain project continuity after handover</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p12-price-box">
+            <div class="p12-price-col">
+              <div class="p12-price-label">Current Price</div>
+              <div class="p12-price-row">
+                <div class="p12-price-value">FREE</div>
+                <span class="p12-beta-badge">BETA</span>
+              </div>
+            </div>
+            <div class="p12-price-col">
+              <div class="p12-price-label">Future Price</div>
+              <div class="p12-price-row">
+                <div class="p12-price-value">$149.5</div>
+                <span class="p12-future-strike">$299</span>
+                <span class="p12-future-unit">/ one-time</span>
+                <span class="p12-off-pill">50% OFF FOR BETA USERS</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p12-bottom">
+          <button class="p12-activate-btn" type="button" onclick="handoverActivateDigitalEmployee()">
+            Continue &amp; Activate Digital Employee
+          </button>
         </div>
       </div>
     </div>
@@ -6820,7 +7128,7 @@
   const screens = document.getElementById('screens');
 
   function goTo(page) {
-    screens.classList.remove('page2','page3','page4','page5','page6','page7','page8','page9','page10','page11');
+    screens.classList.remove('page2','page3','page4','page5','page6','page7','page8','page9','page10','page11','page12');
     if (page === 2) screens.classList.add('page2');
     if (page === 3) screens.classList.add('page3');
     if (page === 4) screens.classList.add('page4');
@@ -6837,19 +7145,32 @@
     }
     if (page === 7) screens.classList.add('page7');
     if (page === 8) screens.classList.add('page8');
-    // Handover secondary flow — pages 9/10/11. Reset any stale form state when
+    // Handover secondary flow — pages 9/10/11/12. Reset any stale form state when
     // entering the intro so the flow feels fresh each time.
     if (page === 9) {
       screens.classList.add('page9');
       if (typeof resetHandoverForm === 'function') resetHandoverForm();
     }
     if (page === 10) screens.classList.add('page10');
-    if (page === 11) screens.classList.add('page11');
+    if (page === 11) {
+      screens.classList.add('page11');
+      // Kick off the auto-advance to step 3. Clear any prior timer so back-and-
+      // forth navigation doesn't double-fire.
+      if (window._handoverToStep3Timer) clearTimeout(window._handoverToStep3Timer);
+      window._handoverToStep3Timer = setTimeout(() => { goTo(12); }, 5000);
+    }
+    if (page === 12) screens.classList.add('page12');
     // Leaving page 7 — stop shimmer cycle + auto-advance timer + scramble timers
     if (page !== 7) {
       if (window._p7ShimmerIv) { clearInterval(window._p7ShimmerIv); window._p7ShimmerIv = null; }
       if (window._p7ToP8Timer) { clearTimeout(window._p7ToP8Timer); window._p7ToP8Timer = null; }
       if (window._p7Timers) { window._p7Timers.forEach(t => clearTimeout(t)); window._p7Timers = []; }
+    }
+    // Leaving page 11 — cancel the step-2 → step-3 auto-advance timer so the
+    // user's own navigation (e.g. back to step 1) wins over the countdown.
+    if (page !== 11 && window._handoverToStep3Timer) {
+      clearTimeout(window._handoverToStep3Timer);
+      window._handoverToStep3Timer = null;
     }
   }
 
@@ -7887,12 +8208,24 @@
       done();
     }
   }
+  /* Step 3 "Continue & Activate Digital Employee" button. The real flow
+     would kick off billing + provisioning; for the preview we route back
+     to the dashboard so the circle closes cleanly. */
+  function handoverActivateDigitalEmployee() {
+    if (window._handoverToStep3Timer) {
+      clearTimeout(window._handoverToStep3Timer);
+      window._handoverToStep3Timer = null;
+    }
+    goTo(2);
+  }
+
   /* Back-compat shims — in case any stale onclick still points here. */
   function openHandoverModal() { goTo(9); }
   function closeHandoverModal() { goTo(2); }
   function handoverShowIntro() { goTo(9); }
   function handoverShowStep1() { goTo(10); }
   function handoverShowStep2() { goTo(11); }
+  function handoverShowStep3() { goTo(12); }
 
   /* Build a short, readable invite token from the email so the link looks
      real. Not cryptographically random — this is a demo. */
