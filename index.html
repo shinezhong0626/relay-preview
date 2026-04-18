@@ -2813,6 +2813,210 @@
     .handover-form-field .role-select-wrap {
       margin-top: 0;
     }
+
+    /* ── Handover Receivers multi-select picker (Figma node 1794:5033) ──
+       Custom control: chip-row trigger (selected teammates as avatar + name
+       pills) + popover with search + checkbox list. Replaces the native
+       <select> so we get avatars, multi-select, and the exact Figma chrome.
+       Works anywhere we render a .receiver-select (scoped so we could reuse
+       it elsewhere later). */
+    .receiver-select {
+      position: relative;
+      width: 100%;
+      font-family: 'Poppins', sans-serif;
+    }
+    .receiver-trigger {
+      width: 100%;
+      min-height: 46px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 6px 12px 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .receiver-trigger:hover { border-color: #c9d1d9; }
+    .receiver-trigger:focus-visible,
+    .receiver-select.open .receiver-trigger {
+      outline: none;
+      border-color: #b0e4fe;
+      box-shadow: 0 0 0 3px rgba(176,228,254,0.35);
+    }
+    .receiver-placeholder {
+      color: #99a1af;
+      font-size: 14px;
+      font-weight: 400;
+      padding: 4px 4px;
+      flex: 1;
+    }
+    .receiver-chips {
+      display: contents; /* chips sit directly inside the flex trigger */
+    }
+    .receiver-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #f3f3f4;
+      border-radius: 24px;
+      padding: 4px 8px 4px 4px;
+      max-width: 100%;
+    }
+    .receiver-chip-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      flex-shrink: 0;
+    }
+    .receiver-chip-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #07191e;
+      line-height: 22px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .receiver-chip-remove {
+      border: 0;
+      background: transparent;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 0 2px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 4px;
+      line-height: 1;
+    }
+    .receiver-chip-remove:hover { color: #07191e; background: rgba(7,25,30,0.06); }
+    .receiver-chevron {
+      margin-left: auto;
+      color: #6b7280;
+      flex-shrink: 0;
+      transition: transform 0.18s;
+    }
+    .receiver-select.open .receiver-chevron { transform: rotate(180deg); }
+
+    /* Popover */
+    .receiver-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0; right: 0;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 12px 32px rgba(7,25,30,0.08);
+      max-height: 304px;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 40;
+    }
+    .receiver-select.open .receiver-popover { display: flex; }
+    .receiver-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .receiver-search svg { color: #99a1af; flex-shrink: 0; }
+    .receiver-search input {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      flex: 1;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      color: #07191e;
+      padding: 0;
+      outline: none;
+    }
+    .receiver-search input::placeholder { color: #99a1af; }
+    .receiver-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .receiver-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid #e5e7eb;
+      transition: background 0.12s;
+    }
+    .receiver-row:last-child { border-bottom: 0; }
+    .receiver-row:hover { background: #f3f3f4; }
+    .receiver-checkbox {
+      width: 20px; height: 20px;
+      border-radius: 4px;
+      border: 1.5px solid #d1d5db;
+      background: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .receiver-row.selected .receiver-checkbox {
+      background: #b0e4fe;
+      border-color: #b0e4fe;
+    }
+    .receiver-checkbox svg {
+      opacity: 0;
+      transition: opacity 0.12s;
+      color: #014261;
+    }
+    .receiver-row.selected .receiver-checkbox svg { opacity: 1; }
+    .receiver-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      flex-shrink: 0;
+    }
+    .receiver-person {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .receiver-person-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: #07191e;
+      line-height: 22px;
+    }
+    .receiver-person-email {
+      font-size: 12px;
+      font-weight: 400;
+      color: #99a1af;
+      line-height: 20px;
+    }
+    .receiver-empty {
+      padding: 20px 16px;
+      color: #99a1af;
+      font-size: 13px;
+      text-align: center;
+    }
     .handover-form-label {
       font-size: 13px;
       font-weight: 500;
@@ -2963,34 +3167,35 @@
 
     /* Buttons centered below the cards; primary is intentionally wider than
        secondary so "Start handover" feels like the main CTA. */
-    /* Actions row spans the full 3-card width — Back flush left, Start
-       handover flush right — so the combined button row feels anchored
-       to the same grid as the step cards above. */
+    /* Actions row sits centered below the 3-card grid. Both buttons share
+       the same footprint (equal padding + min-width) so the pair reads as
+       a balanced choice, and the group is horizontally centered under
+       the cards. */
     .handover-intro-actions {
       width: 100%;
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: center;
       gap: 12px;
       margin-top: 8px;
     }
-    .handover-intro-primary {
-      background: #07191e; color: #fff;
-      border: 1px solid #07191e;
-      padding: 13px 44px; border-radius: 12px;
-      min-width: 220px;
+    .handover-intro-primary,
+    .handover-intro-secondary {
+      padding: 13px 28px;
+      border-radius: 12px;
+      min-width: 200px;
       font-family: 'Poppins', sans-serif;
       font-size: 14px; font-weight: 500;
       cursor: pointer; transition: all 0.15s;
       display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    }
+    .handover-intro-primary {
+      background: #07191e; color: #fff;
+      border: 1px solid #07191e;
     }
     .handover-intro-primary:hover { background: #014261; border-color: #014261; }
     .handover-intro-primary svg { width: 14px; height: 14px; }
     .handover-intro-secondary {
       background: transparent; color: #07191e;
       border: 1px solid rgba(7,25,30,0.2);
-      padding: 13px 20px; border-radius: 12px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 14px; font-weight: 500;
-      cursor: pointer; transition: all 0.15s;
     }
     .handover-intro-secondary:hover { background: #f7f8fb; }
     .handover-actions {
@@ -6093,22 +6298,36 @@
           </div>
         </div>
 
-        <!-- Field 2: Handover Receivers (optional) -->
+        <!-- Field 2: Handover Receivers (optional) — custom multi-select per
+             Figma (node 1794:5033). Chips-in-trigger + search + checkbox list
+             populated from the Relay org roster. Hidden <select multiple>
+             keeps the value accessible to any existing form code. -->
         <div class="handover-form-field">
           <label class="handover-form-label" for="handover-receiver">Handover Receivers <span class="optional">(Optional)</span></label>
-          <div class="role-select-wrap">
-            <select class="role-select" id="handover-receiver">
-              <option value="">Add Receivers</option>
-              <option value="you">You (ShineZhong)</option>
-              <option value="alex">Alex Kim · Engineering Manager</option>
-              <option value="jamie">Jamie Rivera · Engineering</option>
-              <option value="maya">Maya Chen · Operations Manager</option>
-              <option value="ravi">Ravi Shah · Product Lead</option>
-            </select>
-            <svg class="select-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none">
-              <path d="M6 9l6 6 6-6" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+          <div class="receiver-select" id="handover-receiver-select">
+            <div class="receiver-trigger" role="combobox" tabindex="0" aria-haspopup="listbox" aria-expanded="false" onclick="receiverToggleOpen(event)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();receiverToggleOpen(event)}">
+              <span class="receiver-placeholder" id="handover-receiver-placeholder">Add Receivers</span>
+              <span class="receiver-chips" id="handover-receiver-chips"></span>
+              <svg class="receiver-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="receiver-popover" role="listbox" aria-multiselectable="true">
+              <div class="receiver-search">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                  <path d="m21 21-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input type="text" id="handover-receiver-search" placeholder="Search name" oninput="receiverFilter(this.value)" onclick="event.stopPropagation()"/>
+              </div>
+              <div class="receiver-list" id="handover-receiver-list">
+                <!-- Rows injected by renderReceiverList() -->
+              </div>
+            </div>
           </div>
+          <!-- Hidden input mirrors the selected IDs for back-compat with any
+               form code that reads #handover-receiver. -->
+          <input type="hidden" id="handover-receiver" value=""/>
         </div>
 
         <!-- Fields 3 & 4: Last Working Day + Job Title -->
@@ -7372,16 +7591,15 @@
   function resetHandoverForm() {
     const email = document.getElementById('handover-email');
     const mem   = document.getElementById('handover-member');
-    const recv  = document.getElementById('handover-receiver');
     const day   = document.getElementById('handover-lastday');
     const job   = document.getElementById('handover-job');
     const btn   = document.getElementById('handover-continue-btn');
     if (email) email.value = '';
     if (mem)   mem.value = '';
-    if (recv)  recv.value = '';
     if (day)   day.value = '';
     if (job)   job.value = '';
     if (btn) { btn.classList.remove('active'); btn.dataset.active = 'false'; }
+    if (typeof receiverReset === 'function') receiverReset();
     handoverSetMode('existing');
   }
 
@@ -7479,6 +7697,146 @@
      any stale external references don't throw. */
   function handoverGenerateLink() { /* no-op */ }
   function handoverCopyLink()     { /* no-op */ }
+
+  /* ── Handover Receivers picker (Figma node 1794:5033) ──
+     Custom multi-select: shows teammates already in the Relay org as
+     rows with avatar + name + email. Selections surface as avatar chips
+     inside the trigger. Hidden #handover-receiver input mirrors the
+     selected IDs (comma-joined) so legacy form-reset code keeps working. */
+  const _HANDOVER_ROSTER = [
+    { id: 'koko',   name: 'Koko Lv',     email: 'koko@tanka.ai',      initials: 'KL', color: '#7008e7' },
+    { id: 'mike',   name: 'Mike Li',     email: 'mikeli@tanka.ai',    initials: 'ML', color: '#a16207' },
+    { id: 'jordan', name: 'Jordan Wu',   email: 'jordanwu@tanka.ai',  initials: 'JW', color: '#0069a8' },
+    { id: 'rachel', name: 'Rachel Lin',  email: 'rachel@tanka.ai',    initials: 'RL', color: '#00786f' },
+    { id: 'alex',   name: 'Alex Kim',    email: 'alex.kim@tanka.ai',  initials: 'AK', color: '#b45309' },
+    { id: 'jamie',  name: 'Jamie Rivera', email: 'jamie@tanka.ai',    initials: 'JR', color: '#7e22ce' },
+    { id: 'maya',   name: 'Maya Chen',   email: 'maya.chen@tanka.ai', initials: 'MC', color: '#0ea5e9' },
+    { id: 'ravi',   name: 'Ravi Shah',   email: 'ravi.shah@tanka.ai', initials: 'RS', color: '#15803d' },
+  ];
+  let _handoverReceivers = [];      // array of ids
+  let _handoverReceiverFilter = ''; // lowercased search string
+
+  function renderReceiverList() {
+    const list = document.getElementById('handover-receiver-list');
+    if (!list) return;
+    const q = _handoverReceiverFilter;
+    const rows = _HANDOVER_ROSTER.filter(p =>
+      !q || p.name.toLowerCase().includes(q) || p.email.toLowerCase().includes(q)
+    );
+    if (rows.length === 0) {
+      list.innerHTML = '<div class="receiver-empty">No matching teammates.</div>';
+      return;
+    }
+    list.innerHTML = rows.map(p => {
+      const selected = _handoverReceivers.indexOf(p.id) >= 0;
+      return `
+        <div class="receiver-row${selected ? ' selected' : ''}" role="option" aria-selected="${selected}" data-id="${p.id}" onclick="receiverRowClick('${p.id}')">
+          <span class="receiver-checkbox" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M5 12l4 4 10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="receiver-avatar" style="background:${p.color}">${p.initials}</span>
+          <span class="receiver-person">
+            <span class="receiver-person-name">${p.name}</span>
+            <span class="receiver-person-email">${p.email}</span>
+          </span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderReceiverChips() {
+    const chips = document.getElementById('handover-receiver-chips');
+    const placeholder = document.getElementById('handover-receiver-placeholder');
+    const hidden = document.getElementById('handover-receiver');
+    if (!chips || !placeholder || !hidden) return;
+    if (_handoverReceivers.length === 0) {
+      chips.innerHTML = '';
+      placeholder.style.display = '';
+      hidden.value = '';
+      return;
+    }
+    placeholder.style.display = 'none';
+    chips.innerHTML = _handoverReceivers.map(id => {
+      const p = _HANDOVER_ROSTER.find(x => x.id === id);
+      if (!p) return '';
+      return `
+        <span class="receiver-chip" data-id="${p.id}">
+          <span class="receiver-chip-avatar" style="background:${p.color}">${p.initials}</span>
+          <span class="receiver-chip-name">${p.name}</span>
+          <button type="button" class="receiver-chip-remove" aria-label="Remove ${p.name}" onclick="receiverRemove(event,'${p.id}')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </span>
+      `;
+    }).join('');
+    hidden.value = _handoverReceivers.join(',');
+  }
+
+  function receiverToggleOpen(event) {
+    event?.stopPropagation();
+    const wrap = document.getElementById('handover-receiver-select');
+    if (!wrap) return;
+    const open = wrap.classList.toggle('open');
+    const trigger = wrap.querySelector('.receiver-trigger');
+    if (trigger) trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) {
+      renderReceiverList();
+      setTimeout(() => document.getElementById('handover-receiver-search')?.focus(), 0);
+    }
+  }
+
+  function receiverClose() {
+    const wrap = document.getElementById('handover-receiver-select');
+    if (!wrap) return;
+    wrap.classList.remove('open');
+    const trigger = wrap.querySelector('.receiver-trigger');
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+  }
+
+  function receiverRowClick(id) {
+    const i = _handoverReceivers.indexOf(id);
+    if (i >= 0) _handoverReceivers.splice(i, 1);
+    else        _handoverReceivers.push(id);
+    renderReceiverList();
+    renderReceiverChips();
+  }
+
+  function receiverRemove(event, id) {
+    event?.stopPropagation();
+    const i = _handoverReceivers.indexOf(id);
+    if (i >= 0) _handoverReceivers.splice(i, 1);
+    renderReceiverChips();
+    // Keep the list's checkbox state in sync if the popover is open.
+    const wrap = document.getElementById('handover-receiver-select');
+    if (wrap && wrap.classList.contains('open')) renderReceiverList();
+  }
+
+  function receiverFilter(text) {
+    _handoverReceiverFilter = (text || '').toLowerCase().trim();
+    renderReceiverList();
+  }
+
+  function receiverReset() {
+    _handoverReceivers = [];
+    _handoverReceiverFilter = '';
+    const search = document.getElementById('handover-receiver-search');
+    if (search) search.value = '';
+    receiverClose();
+    renderReceiverChips();
+  }
+
+  // Close on outside click.
+  document.addEventListener('click', (e) => {
+    const wrap = document.getElementById('handover-receiver-select');
+    if (!wrap || !wrap.classList.contains('open')) return;
+    if (!wrap.contains(e.target)) receiverClose();
+  });
+  // Close on Escape.
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const wrap = document.getElementById('handover-receiver-select');
+    if (wrap && wrap.classList.contains('open')) receiverClose();
+  });
 
   /* "For yourself" — kick off the onboarding flow (page 1). */
   function pickNewAISelf() {
