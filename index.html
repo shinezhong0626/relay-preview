@@ -2838,29 +2838,30 @@
       color: #6b7280;
       line-height: 22px;
     }
-    /* Buttons live at the bottom-right of the container like a wizard/installer:
-       secondary (ghost) on the left, primary (filled) on the right. */
+    /* Buttons centered below the cards; primary is intentionally wider than
+       secondary so "Start handover" feels like the main CTA. */
     .handover-intro-actions {
       width: 100%;
-      display: flex; align-items: center; justify-content: flex-end;
+      display: flex; align-items: center; justify-content: center;
       gap: 12px;
       margin-top: 8px;
     }
     .handover-intro-primary {
       background: #07191e; color: #fff;
       border: 1px solid #07191e;
-      padding: 12px 22px; border-radius: 12px;
+      padding: 13px 44px; border-radius: 12px;
+      min-width: 220px;
       font-family: 'Poppins', sans-serif;
       font-size: 14px; font-weight: 500;
       cursor: pointer; transition: all 0.15s;
-      display: inline-flex; align-items: center; gap: 7px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
     }
     .handover-intro-primary:hover { background: #014261; border-color: #014261; }
     .handover-intro-primary svg { width: 14px; height: 14px; }
     .handover-intro-secondary {
       background: transparent; color: #07191e;
       border: 1px solid rgba(7,25,30,0.2);
-      padding: 12px 22px; border-radius: 12px;
+      padding: 13px 20px; border-radius: 12px;
       font-family: 'Poppins', sans-serif;
       font-size: 14px; font-weight: 500;
       cursor: pointer; transition: all 0.15s;
@@ -5833,13 +5834,19 @@
         </div>
 
         <div class="handover-intro-cards">
-          <!-- Step 1: kick off the handover -->
+          <!-- Step 1: kick off the handover — person + envelope = invite -->
           <div class="handover-intro-card">
             <div class="handover-intro-card-art">
               <svg viewBox="0 0 88 88" fill="none" aria-hidden="true">
-                <circle cx="44" cy="32" r="12" stroke="#07191e" stroke-width="2"/>
-                <path d="M22 66c0-10 10-16 22-16s22 6 22 16" stroke="#07191e" stroke-width="2" stroke-linecap="round"/>
-                <path d="M60 24l6-6M66 18h-6M66 18v6" stroke="#014261" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Departing teammate on the left -->
+                <circle cx="22" cy="28" r="8" stroke="#07191e" stroke-width="2"/>
+                <path d="M8 58c0-7 6-11 14-11s14 4 14 11" stroke="#07191e" stroke-width="2" stroke-linecap="round"/>
+                <!-- Invite envelope on the right -->
+                <rect x="44" y="38" width="36" height="26" rx="3" fill="#B0E4FE" stroke="#014261" stroke-width="2"/>
+                <path d="M44 40l18 13 18-13" stroke="#014261" stroke-width="2" stroke-linejoin="round" fill="none"/>
+                <!-- Small motion dot/spark to suggest sending -->
+                <circle cx="39" cy="28" r="1.6" fill="#014261"/>
+                <circle cx="44" cy="22" r="1.2" fill="#014261"/>
               </svg>
             </div>
             <div class="handover-intro-step-label">Step 1</div>
