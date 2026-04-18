@@ -2735,12 +2735,6 @@
       padding: 40px 32px;
       gap: 18px;
     }
-    /* Step 2 (page 11) carries longer body copy + a long invite link
-       than step 1. Give it extra breathing room so the subtitle, share
-       text, link row, and banner copy all stay on a single line. */
-    #page11 .handover-step-centered {
-      max-width: 900px;
-    }
     .handover-step-title {
       text-align: left;
     }
@@ -3381,22 +3375,25 @@
        banner on page 11. Non-interactive by design — it's there to signal
        that the flow is paused on the leaver's acceptance, and a 5-second
        timer auto-advances the preview to step 3 (page 12). */
+    /* Shares step 1's `.step-continue-btn` geometry (48px, 14px/600,
+       radius 14px) — any handover CTA should feel like a single system. */
     .handover-wait-btn {
       width: 100%;
-      padding: 20px 24px;
+      height: 48px;
       background: #b0e4fe;
       color: #014261;
       border: 0;
-      border-radius: 12px;
+      border-radius: 14px;
       font-family: 'Poppins', sans-serif;
-      font-size: 18px; font-weight: 500;
+      font-size: 14px; font-weight: 600;
       display: inline-flex; align-items: center; justify-content: center;
-      gap: 10px;
+      gap: 8px;
       cursor: default;
+      margin-top: 8px;
     }
     .handover-wait-btn:hover { opacity: 1; }
     .handover-wait-spinner {
-      width: 18px; height: 18px;
+      width: 14px; height: 14px;
       border: 2px solid rgba(1,66,97,0.22);
       border-top-color: #014261;
       border-radius: 50%;
@@ -3549,15 +3546,15 @@
       font-size: 14px; color: #6d7574;
       line-height: 22px;
     }
+    /* Mirrors .handover-form-card tokens so step 4 chrome matches step 1. */
     .p12-card {
       width: 100%;
-      max-width: 660px;
       background: #ffffff;
       border-radius: 16px;
-      border: 1px solid #e5e7eb;
-      padding: 28px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      display: flex; flex-direction: column; gap: 20px;
+      border: 1px solid rgba(7,25,30,0.06);
+      padding: 32px;
+      box-shadow: 0 4px 18px rgba(7,25,30,0.04);
+      display: flex; flex-direction: column; gap: 24px;
     }
     /* Inner soft-gray sub-card holding the Digital-Employee identity
        and description sections. Separates the chrome (white card) from
@@ -3660,21 +3657,23 @@
       display: flex; flex-direction: column; gap: 10px;
       margin-top: 4px;
     }
+    /* Shares .step-continue-btn geometry so CTAs are consistent across steps. */
     .p12-activate-btn {
       width: 100%;
-      padding: 20px 24px;
+      height: 48px;
       background: #b0e4fe;
       color: #014261;
       border: 0;
-      border-radius: 12px;
+      border-radius: 14px;
       font-family: 'Poppins', sans-serif;
-      font-size: 18px; font-weight: 500;
+      font-size: 14px; font-weight: 600;
       cursor: pointer;
       display: inline-flex; align-items: center; justify-content: center;
-      gap: 8px;
+      gap: 7px;
+      margin-top: 8px;
       transition: opacity 0.15s, transform 0.15s;
     }
-    .p12-activate-btn:hover { opacity: 0.9; }
+    .p12-activate-btn:hover { opacity: 0.85; }
     .p12-activate-btn:active { transform: scale(0.995); }
 
     /* ── Handover Step 3 — "Choose your avatar" (page 13) ──
@@ -3753,22 +3752,24 @@
       box-shadow: 0 0 0 4px #89d2f8;
       pointer-events: none;
     }
+    /* Shares .step-continue-btn geometry so CTAs are consistent across steps. */
     .p13-continue-btn {
       width: 100%;
-      padding: 20px 24px;
+      height: 48px;
       background: #b0e4fe;
       color: #014261;
       border: 0;
-      border-radius: 12px;
+      border-radius: 14px;
       font-family: 'Poppins', sans-serif;
-      font-size: 18px; font-weight: 500;
+      font-size: 14px; font-weight: 600;
       cursor: pointer;
+      margin-top: 8px;
       transition: opacity 0.15s, transform 0.15s;
     }
-    .p13-continue-btn:hover { opacity: 0.9; }
+    .p13-continue-btn:hover { opacity: 0.85; }
     .p13-continue-btn:active { transform: scale(0.995); }
     .p13-continue-btn:disabled {
-      opacity: 0.5; cursor: default;
+      opacity: 0.4; cursor: default;
     }
 
     /* Legacy waiting state (not used after step 2 redesign, kept for any
