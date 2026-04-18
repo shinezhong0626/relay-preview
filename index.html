@@ -2779,7 +2779,7 @@
     }
     .handover-intro-hero {
       text-align: center;
-      max-width: 720px;
+      max-width: 960px;
       display: flex; flex-direction: column; gap: 12px;
     }
     .handover-intro-title {
@@ -2794,6 +2794,7 @@
       font-weight: 400;
       font-size: 15px; line-height: 24px;
       color: #6b7280;
+      white-space: nowrap;
     }
     .handover-intro-cards {
       display: grid;
@@ -2837,8 +2838,12 @@
       color: #6b7280;
       line-height: 22px;
     }
+    /* Buttons live at the bottom-right of the container like a wizard/installer:
+       secondary (ghost) on the left, primary (filled) on the right. */
     .handover-intro-actions {
-      display: inline-flex; align-items: center; gap: 12px;
+      width: 100%;
+      display: flex; align-items: center; justify-content: flex-end;
+      gap: 12px;
       margin-top: 8px;
     }
     .handover-intro-primary {
