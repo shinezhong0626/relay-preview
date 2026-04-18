@@ -2772,7 +2772,7 @@
        Intentionally sits on top of the page gradient, so its own
        container has no bg — only the cards do. */
     .handover-intro {
-      width: min(1100px, 100%);
+      width: min(1460px, 100%);
       display: flex; flex-direction: column; align-items: center;
       gap: 40px;
       padding: 8px 32px;
@@ -2796,32 +2796,34 @@
       color: #6b7280;
       white-space: nowrap;
     }
-    /* Flow row: 3 step cards -> arrow -> outcome card (all same height). */
+    /* Flow row: 3 step cards -> arrow -> outcome card (all same height).
+       Each column is 1fr so step cards stay at their original width; the
+       outer container widens to 1460px to make room for the arrow + outcome. */
     .handover-intro-cards {
       display: grid;
-      grid-template-columns: repeat(3, 1fr) 36px 1.25fr;
-      gap: 14px;
+      grid-template-columns: repeat(3, 1fr) 36px 1fr;
+      gap: 18px;
       width: 100%;
       align-items: stretch;
     }
     .handover-intro-card {
       background: rgba(255,255,255,0.55);
       border: 1px solid rgba(7,25,30,0.06);
-      border-radius: 18px;
-      padding: 18px 18px 22px;
-      display: flex; flex-direction: column; gap: 10px;
+      border-radius: 20px;
+      padding: 20px 22px 24px;
+      display: flex; flex-direction: column; gap: 12px;
       backdrop-filter: blur(8px);
       box-shadow: 0 4px 14px rgba(7,25,30,0.04);
     }
     .handover-intro-card-art {
-      height: 140px;
+      height: 160px;
       background: rgba(255,255,255,0.55);
       border: 1px solid rgba(7,25,30,0.05);
-      border-radius: 12px;
+      border-radius: 14px;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
-    .handover-intro-card-art svg { width: 80px; height: 80px; }
+    .handover-intro-card-art svg { width: 88px; height: 88px; }
     .handover-intro-step-label {
       font-family: 'Poppins', sans-serif;
       font-size: 13px; font-weight: 400;
@@ -2830,15 +2832,15 @@
     }
     .handover-intro-card-title {
       font-family: 'Poppins', sans-serif;
-      font-size: 17px; font-weight: 600;
+      font-size: 20px; font-weight: 600;
       color: #07191e;
-      line-height: 23px;
+      line-height: 26px;
     }
     .handover-intro-card-desc {
       font-family: 'Poppins', sans-serif;
-      font-size: 13px; font-weight: 400;
+      font-size: 14px; font-weight: 400;
       color: #6b7280;
-      line-height: 20px;
+      line-height: 22px;
     }
 
     /* Arrow between the last step card and the outcome card. */
