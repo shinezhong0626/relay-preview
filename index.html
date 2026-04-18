@@ -35,7 +35,7 @@
     /* ── Screen slide container ── */
     .screens {
       display: flex;
-      width: 1200vw;
+      width: 1300vw;
       height: 100vh;
       transition: none;
     }
@@ -46,11 +46,13 @@
     .screens.page6  { transform: translateX(-500vw); }
     .screens.page7  { transform: translateX(-600vw); }
     .screens.page8  { transform: translateX(-700vw); }
-    /* Handover secondary flow — opened from the right card on page 2. */
+    /* Handover secondary flow — opened from the right card on page 2.
+       Flow order: 9 intro → 10 invite → 11 waiting → 13 avatar → 12 create. */
     .screens.page9  { transform: translateX(-800vw); }
     .screens.page10 { transform: translateX(-900vw); }
     .screens.page11 { transform: translateX(-1000vw); }
     .screens.page12 { transform: translateX(-1100vw); }
+    .screens.page13 { transform: translateX(-1200vw); }
 
     .screen {
       width: 100vw;
@@ -2721,7 +2723,7 @@
     /* Handover pages share the same diffuse blue→peach gradient as the
        Create flow (page 2/3) — they're just a secondary path, not a
        separate product surface. */
-    #page9, #page10, #page11, #page12 {
+    #page9, #page10, #page11, #page12, #page13 {
       background: linear-gradient(to bottom, #eef7ff 53%, #ffe4d5 100%);
     }
 
@@ -3381,23 +3383,22 @@
        timer auto-advances the preview to step 3 (page 12). */
     .handover-wait-btn {
       width: 100%;
-      height: 52px;
-      background: #eef0f4;
-      color: #6d7574;
+      padding: 20px 24px;
+      background: #b0e4fe;
+      color: #014261;
       border: 0;
-      border-radius: 14px;
+      border-radius: 12px;
       font-family: 'Poppins', sans-serif;
-      font-size: 15px; font-weight: 500;
+      font-size: 18px; font-weight: 500;
       display: inline-flex; align-items: center; justify-content: center;
       gap: 10px;
       cursor: default;
-      opacity: 0.9;
     }
-    .handover-wait-btn:hover { opacity: 0.9; }
+    .handover-wait-btn:hover { opacity: 1; }
     .handover-wait-spinner {
-      width: 16px; height: 16px;
-      border: 2px solid rgba(7,25,30,0.14);
-      border-top-color: #6d7574;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(1,66,97,0.22);
+      border-top-color: #014261;
       border-radius: 50%;
       animation: handoverWaitSpin 0.9s linear infinite;
     }
@@ -3675,6 +3676,100 @@
     }
     .p12-activate-btn:hover { opacity: 0.9; }
     .p12-activate-btn:active { transform: scale(0.995); }
+
+    /* ── Handover Step 3 — "Choose your avatar" (page 13) ──
+       Mirrors Figma node 2573:4631. Reuses the pixel-art avatar
+       artwork from the Build-AI-Self flow (.av2-opt data-src bank on
+       page 4) — the grid is rendered dynamically from that source of
+       truth by buildHandoverAvatarGrid(). */
+    .p13-card {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid rgba(7,25,30,0.06);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 18px rgba(7,25,30,0.04);
+      display: flex; flex-direction: column; align-items: center;
+      gap: 24px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .p13-preview-wrap {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 8px;
+    }
+    .p13-preview {
+      width: 96px; height: 96px;
+      border-radius: 50%;
+      background: #ede9fe;
+      overflow: hidden;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .p13-preview img {
+      width: 100%; height: 100%; object-fit: cover;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .p13-preview-name {
+      font-size: 20px; font-weight: 500;
+      color: #07191e; line-height: 24px;
+      text-align: center;
+    }
+    .p13-select-label {
+      align-self: flex-start;
+      font-size: 16px; font-weight: 500;
+      color: #07191e; line-height: 18px;
+    }
+    /* 6-column grid that stretches the card width so spacing between
+       avatars matches Figma's 592px-wide reference layout. */
+    .p13-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 64px);
+      justify-content: space-between;
+      row-gap: 24px;
+      width: 100%;
+    }
+    .p13-av-opt {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.18s;
+      overflow: hidden;
+      background: #ede9fe;
+    }
+    .p13-av-opt img {
+      width: 100%; height: 100%; object-fit: cover;
+      border-radius: 50%;
+      display: block;
+      pointer-events: none;
+    }
+    .p13-av-opt:hover { transform: scale(1.08); }
+    .p13-av-opt.selected::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 4px #89d2f8;
+      pointer-events: none;
+    }
+    .p13-continue-btn {
+      width: 100%;
+      padding: 20px 24px;
+      background: #b0e4fe;
+      color: #014261;
+      border: 0;
+      border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px; font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .p13-continue-btn:hover { opacity: 0.9; }
+    .p13-continue-btn:active { transform: scale(0.995); }
+    .p13-continue-btn:disabled {
+      opacity: 0.5; cursor: default;
+    }
 
     /* Legacy waiting state (not used after step 2 redesign, kept for any
        back-compat paths still referencing these classes). */
@@ -6605,8 +6700,9 @@
   <div class="screen" id="page10">
     <div class="ob-topbar">
       <button class="btn-back" id="backbtn10" onclick="goTo(9)">Back</button>
-      <div class="step-dots">
+      <div class="step-dots" aria-label="Step 1 of 4">
         <div class="step-dot active"></div>
+        <div class="step-dot"></div>
         <div class="step-dot"></div>
         <div class="step-dot"></div>
       </div>
@@ -6747,14 +6843,15 @@
        Re-skinned to match page 10 (step 1) — onboarding-style topbar with
        Back button + 3-dot stepper (step 2 active), title/subtitle on the
        outside-left, and a single white card that holds the share-link
-       row + coverage banner + disabled "Waiting…" CTA. 5s auto-advance
-       to step 3 is wired in goTo(11). -->
+       row + coverage banner + highlighted "Waiting…" CTA. 5s auto-advance
+       to the avatar picker (page 13) is wired in goTo(11). -->
   <div class="screen" id="page11">
     <div class="ob-topbar">
       <button class="btn-back" id="backbtn11" onclick="goTo(10)">Back</button>
-      <div class="step-dots" aria-label="Step 2 of 3">
+      <div class="step-dots" aria-label="Step 2 of 4">
         <div class="step-dot done"></div>
         <div class="step-dot active"></div>
+        <div class="step-dot"></div>
         <div class="step-dot"></div>
       </div>
       <div style="width:88px;"></div>
@@ -6817,26 +6914,28 @@
           </div>
         </div>
 
-        <!-- Disabled "Waiting…" CTA. Purely a visual affordance —
-             goTo(11) sets a 5s timer that advances to page 12
-             (Create Digital Employee). -->
+        <!-- Highlighted "Waiting…" CTA. Purely a visual affordance —
+             goTo(11) sets a 5s timer that advances to page 13 (avatar
+             picker) which then leads into page 12 (Create Digital Employee). -->
         <button class="handover-wait-btn" type="button" disabled aria-live="polite">
           <span class="handover-wait-spinner" aria-hidden="true"></span>
-          Waiting for leaver to join &amp; link data…
+          Waiting…
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════ PAGE 12: Handover step 3 — Create Digital Employee ═══════════
-       Mirrors Figma wf4oXgT1jeCGBkBkqOg2K7 node 18:2706. Chrome now matches
-       step 1/step 2: .ob-topbar with Back + 3-dot stepper, page-level
-       .step-heading with big GeistPixel title + .ob-step-sub (no "STEP 3"
-       eyebrow), then the white confirmation card below. -->
+  <!-- ═══════════ PAGE 12: Handover step 4 — Create Digital Employee ═══════════
+       Mirrors Figma wf4oXgT1jeCGBkBkqOg2K7 node 18:2706. Final step in the
+       4-step flow (Invite → Waiting → Avatar → Create). Chrome matches
+       step 1/2/3: .ob-topbar with Back + 4-dot stepper, page-level
+       .step-heading with big GeistPixel title + .ob-step-sub, then the
+       white confirmation card below. -->
   <div class="screen" id="page12">
     <div class="ob-topbar">
-      <button class="btn-back" type="button" onclick="goTo(11)">Back</button>
-      <div class="step-dots" aria-label="Step 3 of 3">
+      <button class="btn-back" type="button" onclick="goTo(13)">Back</button>
+      <div class="step-dots" aria-label="Step 4 of 4">
+        <div class="step-dot done"></div>
         <div class="step-dot done"></div>
         <div class="step-dot done"></div>
         <div class="step-dot active"></div>
@@ -6909,6 +7008,50 @@
       <div class="p12-bottom">
         <button class="p12-activate-btn" type="button" onclick="handoverActivateDigitalEmployee()">
           Continue &amp; Activate Digital Employee
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PAGE 13: Handover step 3 — Choose your avatar ═══════════
+       Mirrors Figma node 2573:4631. Reuses the pixel-art avatar assets
+       from the Build-AI-Self onboarding flow (.av2-opt on page 4) —
+       the grid below is populated at runtime by buildHandoverAvatarGrid(). -->
+  <div class="screen" id="page13">
+    <div class="ob-topbar">
+      <button class="btn-back" type="button" onclick="goTo(11)">Back</button>
+      <div class="step-dots" aria-label="Step 3 of 4">
+        <div class="step-dot done"></div>
+        <div class="step-dot done"></div>
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+      </div>
+      <div style="width:88px;"></div>
+    </div>
+
+    <div class="step-centered handover-step-centered">
+      <div class="step-heading">
+        <div class="ob-step-title handover-step-title">Choose your avatar</div>
+        <div class="ob-step-sub">Choose an avatar for the departing employee.</div>
+      </div>
+
+      <div class="p13-card">
+        <div class="p13-preview-wrap">
+          <div class="p13-preview" id="p13-preview">
+            <!-- src is set once the user picks an avatar; no default so the
+                 empty #ede9fe disc reads as a clear "choose me" state. -->
+            <img id="p13-preview-img" alt="" style="display:none;"/>
+          </div>
+          <div class="p13-preview-name" id="p13-preview-name">Shawn AI</div>
+        </div>
+
+        <div class="p13-select-label">Select Avatar</div>
+
+        <!-- Populated at page load from .av2-opt data-src values. -->
+        <div class="p13-grid" id="p13-grid" role="radiogroup" aria-label="Avatar choices"></div>
+
+        <button class="p13-continue-btn" id="p13-continue-btn" type="button" disabled onclick="handoverConfirmAvatar()">
+          Continue
         </button>
       </div>
     </div>
@@ -7129,7 +7272,7 @@
   const screens = document.getElementById('screens');
 
   function goTo(page) {
-    screens.classList.remove('page2','page3','page4','page5','page6','page7','page8','page9','page10','page11','page12');
+    screens.classList.remove('page2','page3','page4','page5','page6','page7','page8','page9','page10','page11','page12','page13');
     if (page === 2) screens.classList.add('page2');
     if (page === 3) screens.classList.add('page3');
     if (page === 4) screens.classList.add('page4');
@@ -7155,12 +7298,19 @@
     if (page === 10) screens.classList.add('page10');
     if (page === 11) {
       screens.classList.add('page11');
-      // Kick off the auto-advance to step 3. Clear any prior timer so back-and-
-      // forth navigation doesn't double-fire.
+      // Kick off the auto-advance to the avatar picker (step 3). Clear any prior
+      // timer so back-and-forth navigation doesn't double-fire.
       if (window._handoverToStep3Timer) clearTimeout(window._handoverToStep3Timer);
-      window._handoverToStep3Timer = setTimeout(() => { goTo(12); }, 5000);
+      window._handoverToStep3Timer = setTimeout(() => { goTo(13); }, 5000);
     }
     if (page === 12) screens.classList.add('page12');
+    if (page === 13) {
+      screens.classList.add('page13');
+      // Lazy-populate the avatar grid from the Build-AI-Self assets so we don't
+      // duplicate the base64 PNG payload. First visit builds; subsequent visits
+      // are a no-op (guarded by dataset.built).
+      if (typeof buildHandoverAvatarGrid === 'function') buildHandoverAvatarGrid();
+    }
     // Leaving page 7 — stop shimmer cycle + auto-advance timer + scramble timers
     if (page !== 7) {
       if (window._p7ShimmerIv) { clearInterval(window._p7ShimmerIv); window._p7ShimmerIv = null; }
@@ -8212,6 +8362,60 @@
   /* Step 3 "Continue & Activate Digital Employee" button. The real flow
      would kick off billing + provisioning; for the preview we route back
      to the dashboard so the circle closes cleanly. */
+
+  /* Populate the page-13 avatar grid from the existing Build-AI-Self avatar
+     assets on page 4 (.av2-opt[data-src]). Kept lazy so we don't pay the DOM
+     cost until the user actually reaches step 3, and idempotent via a
+     dataset flag so repeat visits don't re-append. */
+  function buildHandoverAvatarGrid() {
+    const grid = document.getElementById('p13-grid');
+    if (!grid || grid.dataset.built === 'true') return;
+    const sources = Array.from(document.querySelectorAll('#page4 .av2-opt'))
+      .map(o => o.dataset.src)
+      .filter(Boolean);
+    grid.innerHTML = '';
+    sources.forEach((src, i) => {
+      const opt = document.createElement('div');
+      opt.className = 'p13-av-opt';
+      opt.setAttribute('role', 'radio');
+      opt.setAttribute('aria-checked', 'false');
+      opt.setAttribute('tabindex', '-1');
+      opt.dataset.src = src;
+      opt.dataset.index = String(i);
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = '';
+      opt.appendChild(img);
+      grid.appendChild(opt);
+    });
+    grid.dataset.built = 'true';
+
+    // Delegated click — toggle selection, mirror into the preview disc, and
+    // unlock the Continue button. Only one option selected at a time.
+    grid.addEventListener('click', (e) => {
+      const opt = e.target.closest('.p13-av-opt');
+      if (!opt) return;
+      grid.querySelectorAll('.p13-av-opt.selected').forEach(el => {
+        el.classList.remove('selected');
+        el.setAttribute('aria-checked', 'false');
+      });
+      opt.classList.add('selected');
+      opt.setAttribute('aria-checked', 'true');
+      const preview = document.getElementById('p13-preview-img');
+      if (preview) {
+        preview.src = opt.dataset.src;
+        preview.style.display = 'block';
+      }
+      const btn = document.getElementById('p13-continue-btn');
+      if (btn) btn.disabled = false;
+    });
+  }
+
+  /* Step 3 → Step 4: advance once the user has locked in an avatar. */
+  function handoverConfirmAvatar() {
+    goTo(12);
+  }
+
   function handoverActivateDigitalEmployee() {
     if (window._handoverToStep3Timer) {
       clearTimeout(window._handoverToStep3Timer);
