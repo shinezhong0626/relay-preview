@@ -2772,7 +2772,7 @@
        Intentionally sits on top of the page gradient, so its own
        container has no bg — only the cards do. */
     .handover-intro {
-      width: min(1460px, 100%);
+      width: min(1100px, 100%);
       display: flex; flex-direction: column; align-items: center;
       gap: 40px;
       padding: 8px 32px;
@@ -2796,13 +2796,10 @@
       color: #6b7280;
       white-space: nowrap;
     }
-    /* Flow row: 3 step cards -> arrow -> outcome card (all same height).
-       Each column is 1fr so step cards stay at their original width; the
-       outer container widens to 1460px to make room for the arrow + outcome. */
     .handover-intro-cards {
       display: grid;
-      grid-template-columns: repeat(3, 1fr) 36px 1fr;
-      gap: 18px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
       width: 100%;
       align-items: stretch;
     }
@@ -2843,92 +2840,6 @@
       line-height: 22px;
     }
 
-    /* Arrow between the last step card and the outcome card. */
-    .handover-intro-arrow {
-      display: flex; align-items: center; justify-content: center;
-      color: #014261;
-    }
-    .handover-intro-arrow svg { width: 28px; height: 28px; }
-
-    /* Outcome card — identical surface style to step cards (translucent
-       white, same border/radius/shadow). Visual distinction comes from
-       the stacked inner layout, not from color. */
-    .handover-intro-outcome-card {
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(7,25,30,0.06);
-      border-radius: 20px;
-      padding: 20px 22px 24px;
-      display: flex; flex-direction: column; gap: 12px;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 4px 14px rgba(7,25,30,0.04);
-    }
-    /* Hand-drawn illustration slot at the top of the outcome card.
-       Matches the step card art slot in look, but holds a sketchy scene
-       that tells the "Relay guides a handover group chat" story. */
-    .handover-intro-outcome-art {
-      width: 100%;
-      height: 160px;
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(7,25,30,0.05);
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      padding: 10px;
-      overflow: hidden;
-    }
-    .handover-intro-outcome-art svg {
-      width: 100%; height: 100%;
-    }
-    .handover-intro-outcome-header {
-      font-family: 'Poppins', sans-serif;
-      font-size: 13px; font-weight: 400;
-      color: #9ca3af;
-      margin-top: 4px;
-    }
-    .handover-intro-outcome-list {
-      flex: 1;
-      display: flex; flex-direction: column;
-      justify-content: center;
-      gap: 12px;
-    }
-    .handover-intro-outcome-item {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 12px 14px;
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(7,25,30,0.06);
-      border-radius: 12px;
-    }
-    .handover-intro-outcome-item-icon {
-      width: 38px; height: 38px; flex-shrink: 0;
-      background: rgba(7,25,30,0.04);
-      color: #07191e;
-      border: 1px solid rgba(7,25,30,0.06);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .handover-intro-outcome-item-icon svg { width: 20px; height: 20px; }
-    /* Relay avatar (purple "R" circle) — no wrapper bg/border, SVG fills box. */
-    .handover-intro-outcome-item-icon.is-relay {
-      background: transparent;
-      border: none;
-      border-radius: 50%;
-      overflow: hidden;
-    }
-    .handover-intro-outcome-item-icon.is-relay svg { width: 38px; height: 38px; }
-    .handover-intro-outcome-item-text {
-      display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1;
-    }
-    .handover-intro-outcome-item-title {
-      font-family: 'Poppins', sans-serif;
-      font-size: 15px; font-weight: 600;
-      color: #07191e;
-      line-height: 20px;
-    }
-    .handover-intro-outcome-item-desc {
-      font-family: 'Poppins', sans-serif;
-      font-size: 13px; font-weight: 400;
-      color: #6b7280;
-      line-height: 19px;
-    }
     /* Buttons centered below the cards; primary is intentionally wider than
        secondary so "Start handover" feels like the main CTA. */
     .handover-intro-actions {
@@ -5976,92 +5887,6 @@
             <div class="handover-intro-card-desc">Review and confirm to create the AI, then complete payment.</div>
           </div>
 
-          <!-- Arrow leading from the last step into the outcome card. -->
-          <div class="handover-intro-arrow" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 12h14"/>
-              <path d="m13 6 6 6-6 6"/>
-            </svg>
-          </div>
-
-          <!-- Outcome card: same height as step cards, two stacked deliverables
-               (handover chat + AI self) plus a hand-drawn illustration at the
-               top that shows Relay guiding the group chat handover scenario. -->
-          <div class="handover-intro-outcome-card">
-            <div class="handover-intro-outcome-art">
-              <!-- Hand-drawn sketch: chat window with Relay assistant (purple R)
-                   leading a conversation between two participants. Round caps
-                   + slight curves keep the line feel loose and illustrative. -->
-              <svg viewBox="0 0 280 140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <!-- Chat window frame with tail (hand-drawn wobble via soft Q curves) -->
-                <path d="M14 14 Q14 8 20 8 L258 8 Q266 8 266 14 L266 112 Q266 120 258 120 L62 120 L50 130 L52 120 L20 120 Q14 120 14 112 Z"
-                      stroke="#07191e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="#fff"/>
-
-                <!-- Participants row in header: Relay (purple R) + 2 users -->
-                <circle cx="30" cy="25" r="7" fill="#7B5DD6"/>
-                <text x="30" y="28.5" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="700" font-size="9" fill="#fff">R</text>
-                <circle cx="48" cy="25" r="6" fill="#fff" stroke="#07191e" stroke-width="1.6"/>
-                <circle cx="62" cy="25" r="6" fill="#fff" stroke="#07191e" stroke-width="1.6"/>
-                <!-- "Handover group" sketchy label line -->
-                <path d="M78 23 Q108 21 138 23" stroke="#07191e" stroke-width="1.4" stroke-linecap="round" opacity="0.55" fill="none"/>
-
-                <!-- Soft divider -->
-                <path d="M16 40 L264 40" stroke="#07191e" stroke-width="0.8" stroke-linecap="round" opacity="0.15"/>
-
-                <!-- Bubble 1: Relay speaks (tinted purple-ish, left) -->
-                <path d="M32 54 Q32 48 38 48 L172 48 Q178 48 178 54 L178 70 Q178 76 172 76 L42 76 L36 82 L38 76 Q32 76 32 70 Z"
-                      stroke="#07191e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="#F3EEFC"/>
-                <path d="M44 58 Q100 56 162 58" stroke="#07191e" stroke-width="1.4" stroke-linecap="round" opacity="0.55" fill="none"/>
-                <path d="M44 67 Q90 65 142 67" stroke="#07191e" stroke-width="1.4" stroke-linecap="round" opacity="0.55" fill="none"/>
-
-                <!-- Bubble 2: a user replies (plain, right) -->
-                <path d="M104 92 Q104 86 110 86 L244 86 Q250 86 250 92 L250 108 Q250 114 244 114 L240 114 L244 120 L234 114 L110 114 Q104 114 104 108 Z"
-                      stroke="#07191e" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="#fff"/>
-                <path d="M116 97 Q170 95 236 97" stroke="#07191e" stroke-width="1.4" stroke-linecap="round" opacity="0.55" fill="none"/>
-                <path d="M116 106 Q156 104 212 106" stroke="#07191e" stroke-width="1.4" stroke-linecap="round" opacity="0.55" fill="none"/>
-
-                <!-- Small sparkle by Relay's bubble to hint at "guidance" -->
-                <path d="M186 56 l1.8 3.6 3.6 1.8-3.6 1.8-1.8 3.6-1.8-3.6-3.6-1.8 3.6-1.8z" fill="#7B5DD6"/>
-              </svg>
-            </div>
-            <div class="handover-intro-outcome-header">You'll have</div>
-            <div class="handover-intro-outcome-list">
-              <!-- Deliverable 1: Relay-guided handover chat (Relay avatar) -->
-              <div class="handover-intro-outcome-item">
-                <div class="handover-intro-outcome-item-icon is-relay">
-                  <svg viewBox="0 0 40 40" aria-hidden="true">
-                    <defs>
-                      <linearGradient id="relay-avatar-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#A88FE8"/>
-                        <stop offset="100%" stop-color="#7B5DD6"/>
-                      </linearGradient>
-                    </defs>
-                    <circle cx="20" cy="20" r="20" fill="url(#relay-avatar-grad)"/>
-                    <text x="20" y="27" text-anchor="middle"
-                          font-family="Poppins, sans-serif" font-weight="700" font-size="22" fill="#fff">R</text>
-                  </svg>
-                </div>
-                <div class="handover-intro-outcome-item-text">
-                  <div class="handover-intro-outcome-item-title">A handover chat with Relay</div>
-                  <div class="handover-intro-outcome-item-desc">Relay's assistant guides you both through the transition.</div>
-                </div>
-              </div>
-              <!-- Deliverable 2: AI self of departing teammate -->
-              <div class="handover-intro-outcome-item">
-                <div class="handover-intro-outcome-item-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="8" r="4"/>
-                    <path d="M4 21c0-4 4-7 8-7s8 3 8 7"/>
-                    <path d="M18 3.5l0.7 1.8L20.5 6l-1.8 0.7L18 8.5l-0.7-1.8L15.5 6l1.8-0.7z" fill="currentColor" stroke="none"/>
-                  </svg>
-                </div>
-                <div class="handover-intro-outcome-item-text">
-                  <div class="handover-intro-outcome-item-title">Their AI self</div>
-                  <div class="handover-intro-outcome-item-desc">A digital twin that preserves their knowledge for your team.</div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <div class="handover-intro-actions">
