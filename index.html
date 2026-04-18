@@ -2717,11 +2717,16 @@
        flow feels like the same secondary navigation as "Create your AI
        self" (page 3+), instead of a modal overlay.
        ═══════════════════════════════════════════════════════════════ */
+    /* Handover pages share the same diffuse blue→peach gradient as the
+       Create flow (page 2/3) — they're just a secondary path, not a
+       separate product surface. */
+    #page9, #page10, #page11 {
+      background: linear-gradient(to bottom, #eef7ff 53%, #ffe4d5 100%);
+    }
     .handover-page {
       width: 100vw; height: 100vh;
       display: flex; align-items: center; justify-content: center;
       padding: 40px 24px;
-      background: #ffffff;
       overflow-y: auto;
     }
     .handover-page-back {
@@ -2733,8 +2738,8 @@
       background: #fff;
       border-radius: 20px;
       padding: 28px 28px 24px;
-      box-shadow: 0 8px 30px rgba(7,25,30,0.08);
-      border: 1px solid #eef1f5;
+      box-shadow: 0 18px 48px rgba(7,25,30,0.10);
+      border: 1px solid rgba(255,255,255,0.7);
       font-family: 'Poppins', sans-serif;
     }
     .handover-head {
