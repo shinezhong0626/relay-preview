@@ -2765,48 +2765,102 @@
       margin-bottom: 18px;
     }
 
-    /* Intro view — 3 numbered steps + difficulty pill */
-    .handover-difficulty {
-      display: inline-flex; align-items: center; gap: 7px;
-      font-size: 11px; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.06em;
-      color: #b45309; background: #fff7ed;
-      border: 1px solid #fde68a;
-      padding: 5px 11px; border-radius: 999px;
-      margin-bottom: 14px;
+    /* ── Handover intro (page 9) ──
+       Claude-installer-style: centered hero at the top, 3 horizontal
+       "Step N" cards below (each with an illustration slot + label +
+       title + description), primary + secondary buttons at the bottom.
+       Intentionally sits on top of the page gradient, so its own
+       container has no bg — only the cards do. */
+    .handover-intro {
+      width: min(1100px, 100%);
+      display: flex; flex-direction: column; align-items: center;
+      gap: 40px;
+      padding: 8px 32px;
     }
-    .handover-difficulty::before {
-      content: ''; width: 6px; height: 6px; border-radius: 50%;
-      background: #d97706;
+    .handover-intro-hero {
+      text-align: center;
+      max-width: 720px;
+      display: flex; flex-direction: column; gap: 12px;
     }
-    .handover-steps {
-      display: flex; flex-direction: column; gap: 10px;
-      margin-bottom: 18px;
-    }
-    .handover-step {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 14px 14px;
-      border: 1px solid #eef1f5;
-      border-radius: 12px;
-      background: #fafbfc;
-    }
-    .handover-step-num {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: #014261; color: #fff;
+    .handover-intro-title {
       font-family: 'Poppins', sans-serif;
-      font-size: 13px; font-weight: 600;
+      font-weight: 600;
+      font-size: 36px; line-height: 44px;
+      color: #07191e;
+      letter-spacing: -0.01em;
+    }
+    .handover-intro-sub {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 400;
+      font-size: 15px; line-height: 24px;
+      color: #6b7280;
+    }
+    .handover-intro-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 100%;
+    }
+    .handover-intro-card {
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(7,25,30,0.06);
+      border-radius: 20px;
+      padding: 20px 22px 24px;
+      display: flex; flex-direction: column; gap: 12px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(7,25,30,0.04);
+    }
+    .handover-intro-card-art {
+      height: 160px;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(7,25,30,0.05);
+      border-radius: 14px;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+      overflow: hidden;
     }
-    .handover-step-body { flex: 1; min-width: 0; }
-    .handover-step-title {
-      font-size: 14px; font-weight: 600; color: #07191e;
-      line-height: 1.35;
+    .handover-intro-card-art svg { width: 88px; height: 88px; }
+    .handover-intro-step-label {
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 400;
+      color: #9ca3af;
+      margin-top: 4px;
     }
-    .handover-step-desc {
-      font-size: 12.5px; color: #6b7280; line-height: 1.5;
-      margin-top: 3px;
+    .handover-intro-card-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 20px; font-weight: 600;
+      color: #07191e;
+      line-height: 26px;
     }
+    .handover-intro-card-desc {
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px; font-weight: 400;
+      color: #6b7280;
+      line-height: 22px;
+    }
+    .handover-intro-actions {
+      display: inline-flex; align-items: center; gap: 12px;
+      margin-top: 8px;
+    }
+    .handover-intro-primary {
+      background: #07191e; color: #fff;
+      border: 1px solid #07191e;
+      padding: 12px 22px; border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+      display: inline-flex; align-items: center; gap: 7px;
+    }
+    .handover-intro-primary:hover { background: #014261; border-color: #014261; }
+    .handover-intro-primary svg { width: 14px; height: 14px; }
+    .handover-intro-secondary {
+      background: transparent; color: #07191e;
+      border: 1px solid rgba(7,25,30,0.2);
+      padding: 12px 22px; border-radius: 12px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .handover-intro-secondary:hover { background: #f7f8fb; }
     .handover-actions {
       display: flex; align-items: center; justify-content: space-between;
       gap: 10px; margin-top: 4px;
@@ -5765,46 +5819,65 @@
   <!-- ═══════════ PAGE 9: Handover intro — 3-step overview ═══════════ -->
   <div class="screen" id="page9">
     <div class="handover-page">
-      <div class="handover-modal" role="document">
-        <div class="handover-head">
-          <div>
-            <div class="handover-difficulty">Takes ~3 steps · co-operation needed</div>
-            <div class="handover-title" id="handover-title">Preserve a departing teammate</div>
-          </div>
-          <button class="handover-close" type="button" aria-label="Back to options" onclick="goTo(2)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
-          </button>
-        </div>
-        <div class="handover-sub">Capture their knowledge before they go. Here's how it works — this one needs the departing teammate to participate, so it's a bit more involved than building your own AI.</div>
-
-        <div class="handover-steps">
-          <div class="handover-step">
-            <div class="handover-step-num">1</div>
-            <div class="handover-step-body">
-              <div class="handover-step-title">Start the offboarding</div>
-              <div class="handover-step-desc">Enter their email, pick a successor, their last day, and job title. We'll send them an invite link.</div>
-            </div>
-          </div>
-          <div class="handover-step">
-            <div class="handover-step-num">2</div>
-            <div class="handover-step-body">
-              <div class="handover-step-title">They join Relay &amp; connect their apps</div>
-              <div class="handover-step-desc">They sign in and link their work tools so the AI can learn from the sources they've been using.</div>
-            </div>
-          </div>
-          <div class="handover-step">
-            <div class="handover-step-num">3</div>
-            <div class="handover-step-body">
-              <div class="handover-step-title">Review, deploy &amp; pay</div>
-              <div class="handover-step-desc">Confirm what's in scope, deploy the AI to your team, and settle up. You're done.</div>
-            </div>
-          </div>
+      <!-- Claude-installer-style intro: centered hero + 3-step card grid + CTA.
+           Each card has its own illustration slot (art), step label, title, subtitle. -->
+      <div class="handover-intro" role="document">
+        <div class="handover-intro-hero">
+          <div class="handover-intro-title" id="handover-title">Preserve a departing teammate</div>
+          <div class="handover-intro-sub">This flow requires participation from your departing teammate and may take some time to complete.</div>
         </div>
 
-        <div class="handover-actions">
-          <button class="handover-btn-secondary" type="button" onclick="goTo(2)">Go back — build my own instead</button>
-          <button class="handover-btn-primary" type="button" onclick="goTo(10)">
-            Continue
+        <div class="handover-intro-cards">
+          <!-- Step 1: kick off the handover -->
+          <div class="handover-intro-card">
+            <div class="handover-intro-card-art">
+              <svg viewBox="0 0 88 88" fill="none" aria-hidden="true">
+                <circle cx="44" cy="32" r="12" stroke="#07191e" stroke-width="2"/>
+                <path d="M22 66c0-10 10-16 22-16s22 6 22 16" stroke="#07191e" stroke-width="2" stroke-linecap="round"/>
+                <path d="M60 24l6-6M66 18h-6M66 18v6" stroke="#014261" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="handover-intro-step-label">Step 1</div>
+            <div class="handover-intro-card-title">Start the departure handover.</div>
+            <div class="handover-intro-card-desc">Identify the teammate who is leaving and begin the setup.</div>
+          </div>
+
+          <!-- Step 2: invitee joins & connects apps -->
+          <div class="handover-intro-card">
+            <div class="handover-intro-card-art">
+              <svg viewBox="0 0 88 88" fill="none" aria-hidden="true">
+                <rect x="14" y="18" width="24" height="24" rx="5" stroke="#07191e" stroke-width="2"/>
+                <rect x="50" y="18" width="24" height="24" rx="5" stroke="#07191e" stroke-width="2"/>
+                <rect x="14" y="46" width="24" height="24" rx="5" stroke="#07191e" stroke-width="2"/>
+                <rect x="50" y="46" width="24" height="24" rx="5" fill="#B0E4FE" stroke="#014261" stroke-width="2"/>
+                <path d="M38 30h12M38 58h12M26 42v4M62 42v4" stroke="#014261" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="handover-intro-step-label">Step 2</div>
+            <div class="handover-intro-card-title">Wait for them to join Relay and link their work apps.</div>
+            <div class="handover-intro-card-desc">They'll need to complete this step before the handover can be prepared.</div>
+          </div>
+
+          <!-- Step 3: create the AI + pay -->
+          <div class="handover-intro-card">
+            <div class="handover-intro-card-art">
+              <svg viewBox="0 0 88 88" fill="none" aria-hidden="true">
+                <rect x="16" y="26" width="56" height="36" rx="6" stroke="#07191e" stroke-width="2"/>
+                <path d="M16 36h56" stroke="#07191e" stroke-width="2"/>
+                <path d="M26 52h10" stroke="#014261" stroke-width="2" stroke-linecap="round"/>
+                <path d="M58 18l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#B0E4FE" stroke="#014261" stroke-width="1.6" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="handover-intro-step-label">Step 3</div>
+            <div class="handover-intro-card-title">Create and pay.</div>
+            <div class="handover-intro-card-desc">Review and confirm to create the AI, then complete payment.</div>
+          </div>
+        </div>
+
+        <div class="handover-intro-actions">
+          <button class="handover-intro-secondary" type="button" onclick="goTo(2)">Back to options</button>
+          <button class="handover-intro-primary" type="button" onclick="goTo(10)">
+            Start handover
             <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>
           </button>
         </div>
