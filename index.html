@@ -238,6 +238,10 @@
       background: #fff;
       border: none;
       border-radius: 20px;
+      /* 1px inner stroke — rendered via inset box-shadow so it doesn't
+         affect the box model. Hover state preserves the stroke and
+         layers the lift-shadow on top. */
+      box-shadow: inset 0 0 0 1px #E7EAED;
       padding: 28px 28px 28px;
       display: flex;
       flex-direction: column;
@@ -246,15 +250,15 @@
       transition: background 0.22s, border-color 0.22s, box-shadow 0.22s, transform 0.18s;
     }
 
-    /* Hover: background fill, subtle lift */
+    /* Hover: background fill, subtle lift (stroke is preserved) */
     .choice-card.left:hover {
       background: #DDF2FF;
-      box-shadow: 0 8px 28px rgba(1,66,97,0.09);
+      box-shadow: inset 0 0 0 1px #E7EAED, 0 8px 28px rgba(1,66,97,0.09);
       transform: translateY(-2px);
     }
     .choice-card.right:hover {
       background: #FFE4D5;
-      box-shadow: 0 8px 28px rgba(180,90,50,0.09);
+      box-shadow: inset 0 0 0 1px #E7EAED, 0 8px 28px rgba(180,90,50,0.09);
       transform: translateY(-2px);
     }
 
