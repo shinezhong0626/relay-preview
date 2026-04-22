@@ -2234,6 +2234,13 @@
     .p8-main.shine-chat-tab .p8-admin-body .admin-wrap { display: none; }
     .p8-main.shine-chat-tab .p8-chat-body  { display: flex; }
     .p8-main.shine-chat-tab .p8-input-area { display: flex; }
+    /* The .p8-admin-body sits AFTER .p8-chat-body in the DOM, so in the
+       default document flow the tabs would render below the chat. Flex
+       `order` reshuffles them visually: topNav → admin-body (tabs) →
+       chat-body. input-area is position:absolute and unaffected. */
+    .p8-main.shine-chat-tab .p8-main-nav   { order: 1; }
+    .p8-main.shine-chat-tab .p8-admin-body { order: 2; }
+    .p8-main.shine-chat-tab .p8-chat-body  { order: 3; }
     .admin-wrap {
       max-width: 960px; width: 100%;
       margin: 0 auto;
@@ -7228,7 +7235,9 @@
       adminBody.hidden = false;
       if (newaiBody) newaiBody.hidden = true;
       if (inputArea) inputArea.hidden = true;
-      if (topNav)    topNav.hidden = true;
+      // Keep the Shine AI topNav (avatar + name + job title) visible in the
+      // Shine AI page — the Profile/Chat tabs sit BELOW it, not replacing it.
+      if (topNav)    topNav.hidden = false;
       syncAdminView();
       // Default to Profile tab when entering the Avatar Admin view.
       // openShineAI() calls switchAvatarTab('chat') right after this, so
