@@ -1519,8 +1519,13 @@
       position: relative;
       min-height: 0;
     }
+    /* Heading, card, and bottom button column share the same max-width so
+       they stay vertically aligned. 640 was sized for the old two-column
+       pricing row (Current + Future); with Future removed, 480 sits the
+       card in the middle of the viewport with balanced left/right margins
+       so the whitespace doesn't pool on the right. */
     .p6-heading {
-      width: 100%; max-width: 640px;
+      width: 100%; max-width: 480px;
       text-align: left;
     }
     .p6-heading .ob-step-title { white-space: normal; text-align: left; }
@@ -1531,7 +1536,7 @@
     }
     .p6-card {
       width: 100%;
-      max-width: 640px;
+      max-width: 480px;
       background: #ffffff;
       border-radius: 22px;
       padding: 24px 28px 26px;
@@ -1630,7 +1635,7 @@
     }
     .p6-bottom {
       width: 100%;
-      max-width: 640px;
+      max-width: 480px;
       margin-top: 20px;
       display: flex; flex-direction: column; align-items: center; gap: 10px;
     }
