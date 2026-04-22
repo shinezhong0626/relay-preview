@@ -1060,8 +1060,17 @@
       background: #F3F3F4;
       border-color: rgba(7,25,30,0.07);
     }
+    /* Header row: icon+name on the left, Link/Unlink chip pinned to the right. */
+    #app-list .app-card-header {
+      display: flex; align-items: center; gap: 12px;
+      width: 100%; min-width: 0;
+    }
     #app-list .app-card-top {
       display: flex; align-items: center; gap: 12px; min-width: 0;
+      flex: 1; /* grows to push .app-card-right to the right edge */
+    }
+    #app-list .app-card-right {
+      flex-shrink: 0;
     }
     #app-list .app-icon {
       /* Each icon SVG ships its own white tile + gray stroke, so the container
@@ -8267,7 +8276,9 @@
     var right = on
       ? '<div class="app-card-right"><div class="app-tag">✓ Linked</div><button class="app-unlink" type="button">Unlink</button></div>'
       : '<div class="app-card-right"><div class="app-tag">' + LINK_ICON_SVG + '<span>Link</span></div></div>';
-    card.innerHTML = top + desc + right;
+    // Header puts icon+name (left) and the Link chip (right) on the same row.
+    // Description drops beneath the header.
+    card.innerHTML = '<div class="app-card-header">' + top + right + '</div>' + desc;
     if (on) {
       card.querySelector('.app-unlink').addEventListener('click', function(e) {
         e.stopPropagation();
