@@ -1528,7 +1528,9 @@
        card in the middle of the viewport with balanced left/right margins
        so the whitespace doesn't pool on the right. */
     .p6-heading {
-      width: 100%; max-width: 480px;
+      /* Heading block sizes to its widest child (the subtitle) so the
+         nowrap subtitle isn't clipped by the 480px card-width cap. */
+      width: auto;
       text-align: left;
     }
     .p6-heading .ob-step-title { white-space: normal; text-align: left; }
@@ -1536,6 +1538,10 @@
       font-size: 14px; color: #6b7280;
       text-align: left; margin-top: 10px;
       line-height: 1.6;
+      /* Keep the subtitle on a single line — the card below is still
+         capped at 480px, so the heading's max-width doesn't matter for
+         layout and we let the sub grow wider when needed. */
+      white-space: nowrap;
     }
     .p6-card {
       width: 100%;
