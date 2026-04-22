@@ -1337,7 +1337,9 @@
       padding: 14px 18px;
       background: #FFFAF4; /* very subtle warm tint — just enough to separate from white cards below */
       border-radius: 16px;
-      border: 1.5px solid rgba(255,189,158,0.18);
+      /* Deeper warm-orange stroke: keeps the peach family but reads clearly
+         against the near-white card fill. */
+      border: 1.5px solid rgba(255,149,110,0.55);
       box-shadow: 0 2px 10px rgba(1,66,97,0.04);
     }
     .p5-profile-avatar {
@@ -6284,7 +6286,8 @@
     if (page === 5) {
       screens.classList.add('page5');
       if (typeof resetFilterButton === 'function') resetFilterButton();
-      filteredApps = APPS.slice();
+      // Step-3 grid is curated: 8 recommended apps only.
+      filteredApps = (typeof _p5SortedApps === 'function') ? _p5SortedApps() : APPS.slice();
       renderAppGrid(filteredApps);
       updateP5Status();
     }
@@ -6754,11 +6757,27 @@
   /* When non-null, this id is rendered first in the onboarding Step-3 grid. */
   let _p5PinnedAppId = null;
 
+  /* Onboarding Step-3 shows only the curated "Recommended" 8 apps in the
+     #app-list grid. All 113 apps only appear inside the "Explore all apps"
+     modal. If the user just linked a non-recommended app from that modal,
+     we bubble it to the top of the Step-3 grid so they see their pick. */
   function _p5SortedApps() {
-    if (!_p5PinnedAppId) return APPS.slice();
+    const recIds = (typeof RECOMMENDED_APP_IDS !== 'undefined')
+      ? RECOMMENDED_APP_IDS
+      : ['slack','gdrive','notion','jira','linear','zoom','outlook','gmail'];
+    const recApps = recIds
+      .map(id => APPS.find(a => a.id === id))
+      .filter(Boolean);
+    const recSet = new Set(recIds);
+    if (!_p5PinnedAppId) return recApps;
     const pinned = APPS.find(a => a.id === _p5PinnedAppId);
-    if (!pinned) return APPS.slice();
-    return [pinned, ...APPS.filter(a => a.id !== _p5PinnedAppId)];
+    if (!pinned) return recApps;
+    if (recSet.has(_p5PinnedAppId)) {
+      // Pinned is already in the recommended list — just float it to top.
+      return [pinned, ...recApps.filter(a => a.id !== _p5PinnedAppId)];
+    }
+    // Non-recommended pick (user chose from "Explore all apps"): prepend it.
+    return [pinned, ...recApps];
   }
 
   /* Rebuild the right-hand side of a modal app-card to match onboarding
@@ -8571,8 +8590,8 @@
     const roleVal = document.getElementById('role-select')?.value || '';
     const sumRole = document.getElementById('p5-sum-role');
     if (sumRole) sumRole.textContent = roleVal || '—';
-    // Render all apps
-    filteredApps = APPS.slice();
+    // Render the curated 8-app recommended grid (full catalog lives in modal).
+    filteredApps = (typeof _p5SortedApps === 'function') ? _p5SortedApps() : APPS.slice();
     renderAppGrid(filteredApps);
     updateP5Status();
   }
