@@ -5293,7 +5293,9 @@
             </svg>
             Search
           </div>
-          <div class="p8-nav-item" id="p8-nav-admin" onclick="switchP8View('admin')">
+          <!-- Avatar Admin sidebar entry removed — Shine AI in TEAM is now the
+               single entry point; the page opens with Profile / Chat tabs. -->
+          <div class="p8-nav-item" id="p8-nav-admin" onclick="switchP8View('admin')" hidden>
             <svg class="nav-icon-outline" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M7.4263 12C10.3827 12 13.2227 14.0664 14.2398 17.9385C14.6849 19.6347 13.2532 20.9998 11.7095 21H3.14407C1.60045 20.9999 0.168572 19.6348 0.613795 17.9385C1.63072 14.0666 4.47007 12.0002 7.4263 12ZM14.1382 12.4873C17.7453 10.9895 22.0792 12.957 23.3863 17.9434C23.8315 19.6425 22.3955 20.9998 20.855 21H16.2505C15.8364 20.9998 15.5005 20.6641 15.5005 20.25C15.5005 19.8359 15.8364 19.5002 16.2505 19.5H20.855C21.634 19.4998 22.0779 18.8681 21.9351 18.3232C20.8286 14.1028 17.3735 12.7678 14.7124 13.873C14.3303 14.0312 13.8919 13.8507 13.7329 13.4688C13.5741 13.0863 13.7559 12.6463 14.1382 12.4873ZM7.4263 13.5C5.23731 13.5002 2.93146 15.0202 2.06497 18.3193C1.92137 18.8665 2.36816 19.4999 3.14407 19.5H11.7095C12.4853 19.4999 12.9321 18.8665 12.7886 18.3193C11.922 15.02 9.61542 13.5 7.4263 13.5ZM7.49954 3C9.70868 3 11.4995 4.79086 11.4995 7C11.4995 9.20914 9.70868 11 7.49954 11C5.29047 10.9999 3.49954 9.20909 3.49954 7C3.49954 4.79091 5.29047 3.00009 7.49954 3ZM16.4995 3C18.7084 3.00012 20.5003 4.79111 20.5005 7C20.5003 9.20889 18.7084 10.9999 16.4995 11C14.2907 10.9998 12.4997 9.20884 12.4995 7C12.4997 4.79116 14.2907 3.00021 16.4995 3ZM7.49954 4.5C6.1189 4.50009 4.99954 5.61934 4.99954 7C4.99954 8.38066 6.1189 9.49991 7.49954 9.5C8.88025 9.5 9.99954 8.38072 9.99954 7C9.99954 5.61928 8.88025 4.5 7.49954 4.5ZM16.4995 4.5C15.1192 4.50021 13.9997 5.6196 13.9995 7C13.9997 8.3804 15.1192 9.49979 16.4995 9.5C17.88 9.49988 19.0003 8.38046 19.0005 7C19.0003 5.61954 17.88 4.50012 16.4995 4.5Z" fill="currentColor"/>
             </svg>
@@ -5319,10 +5321,9 @@
         <div class="p8-team-section">
           <div class="p8-team-label">TEAM</div>
           <div class="p8-chat-list">
-            <!-- Shine AI TEAM item is the dual entry point: it opens the
-                 Avatar Administration page with tabs (Profile / Chat).
-                 Default tab is Chat so the click still lands the user in
-                 the conversation, but Profile is one click away. -->
+            <!-- Shine AI is the single entry point to the tabbed Profile /
+                 Chat view. Default tab is Chat so clicking here still lands
+                 in the conversation; Profile is one click away. -->
             <div class="p8-chat-item active" onclick="openShineAI()" role="button" tabindex="0">
               <div class="p8-chat-avatar">
                 <img id="p8-chat-avatar-img" src="" alt=""/>
@@ -5451,15 +5452,8 @@
             </div>
           </div>
         </div>
-        <!-- AVATAR ADMIN VIEW — alternate main body; hidden until sidebar nav clicked -->
+        <!-- SHINE AI VIEW — tabbed Profile + Chat, one entry point (TEAM → Shine AI) -->
         <div class="p8-admin-body" id="p8-admin-body" hidden>
-          <div class="admin-head">
-            <div class="admin-head-text">
-              <div class="admin-title">Avatar Administration</div>
-              <div class="admin-sub">Manage your AI&rsquo;s identity, usage, feed, and access.</div>
-            </div>
-          </div>
-
           <!-- Profile / Chat tab switcher. Profile shows the admin dashboard
                below; Chat swaps the body for the chat-body + input bar so
                both live behind a single "Shine AI" entry point. -->
@@ -6367,6 +6361,11 @@
       // Build-New-AI flag so Skip-for-now reappears if the flow is entered
       // again later via the normal (pre-signup) path.
       screens.classList.remove('no-skip');
+      // Land on the Shine AI page (Chat tab) by default so the Profile /
+      // Chat tab switcher is visible without requiring a manual sidebar
+      // click. The "Avatar Administration" heading is gone — tabs ARE the
+      // top of the page now.
+      if (typeof openShineAI === 'function') openShineAI();
     }
     // Handover secondary flow — pages 9/10/11/12. Reset any stale form state when
     // entering the intro so the flow feels fresh each time.
@@ -7204,16 +7203,17 @@
     goTo(2);
   }
 
-  /* TEAM "Shine AI" entry — opens the Avatar Administration page and
-     defaults to the Chat tab, so clicking this item still feels like the
-     familiar "jump into chat" action while also exposing the Profile tab
-     one click away. */
+  /* TEAM "Shine AI" entry — opens the Shine AI tabbed page and defaults
+     to the Chat tab so clicking this item still feels like "jump into
+     chat" while exposing the Profile tab one click away. There is no
+     separate "Avatar Administration" page anymore — the tabs ARE the
+     top of this page. */
   function openShineAI() {
     switchP8View('admin');
     switchAvatarTab('chat');
   }
 
-  /* Switch between the Profile and Chat tabs inside the Avatar Admin view.
+  /* Switch between the Profile and Chat tabs inside the Shine AI view.
      Tab state is reflected on .p8-main via the .shine-chat-tab class; CSS
      handles the swap between the admin-wrap and the chat-body + input. */
   function switchAvatarTab(tab) {
@@ -7273,17 +7273,18 @@
     }
 
     // Sidebar active state — only the active nav item gets the .active class.
+    // The Shine AI page (admin mode in the JS for historical reasons) is now
+    // reached exclusively via the TEAM → Shine AI entry, so the active state
+    // lives on that chat-item regardless of whether the user is on Profile or
+    // Chat tab.
     document.querySelectorAll('.p8-sidebar .p8-nav-item').forEach(el => el.classList.remove('active'));
     const shineTeamItem = document.querySelector('.p8-sidebar .p8-chat-item');
-    if (mode === 'admin') {
-      const adminNav = document.getElementById('p8-nav-admin');
-      if (adminNav) adminNav.classList.add('active');
-      if (shineTeamItem) shineTeamItem.classList.remove('active');
-    } else if (mode === 'newai') {
+    if (mode === 'newai') {
       const newaiNav = document.getElementById('p8-nav-newai');
       if (newaiNav) newaiNav.classList.add('active');
       if (shineTeamItem) shineTeamItem.classList.remove('active');
     } else {
+      // admin (Shine AI page) and chat both light up the Shine AI TEAM item.
       if (shineTeamItem) shineTeamItem.classList.add('active');
     }
   }
