@@ -2712,9 +2712,30 @@
       background: #fafbfc;
       font-family: 'Poppins', sans-serif;
       display: flex; flex-direction: column;
-      gap: 20px;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
     }
     .p8-newai-body[hidden] { display: none; }
+
+    /* Embedded "Choose an option" heading — matches the page-2 full-screen
+       typography but lives inside the main column so the sidebar stays put. */
+    .newai-choose-heading {
+      text-align: center;
+    }
+    .newai-choose-title {
+      font-size: 32px;
+      font-weight: 600;
+      font-family: 'GeistPixel', monospace;
+      color: #07191e;
+      line-height: 1.2;
+      margin: 0;
+    }
+    /* Cap the choice-cards at a slightly narrower width inside the main
+       column so they don't feel as sprawling as the full-screen version. */
+    .newai-choose-cards {
+      max-width: 760px;
+    }
 
     /* Head — mirrors .admin-head typography and 960px centered width.
        Title+sub stack is left-aligned; the Create AI button is absolutely
@@ -5638,42 +5659,43 @@
              Columns: AWAITING (waiting on invitee) / NEEDS REVIEW (your
              turn) / COMPLETED (active AIs). Cards rendered by JS from
              _NEWAI_BOARD_DATA so the empty state and counts stay in sync. -->
+        <!-- BUILD NEW AI VIEW — embedded "Choose an option" page that lives
+             inside p8-main so the sidebar stays visible. Clicking a choice
+             card kicks off the full-screen onboarding wizard (page 3 or 9);
+             page-3 back handler returns here when the .no-skip sentinel is
+             set, so the user never leaves the logged-in shell involuntarily. -->
         <div class="p8-newai-body" id="p8-newai-body" hidden>
-          <div class="newai-head">
-            <div class="newai-head-text">
-              <div class="newai-title">New AI</div>
-              <div class="newai-sub">Create and track your AI team across invites and reviews.</div>
-            </div>
-            <button class="newai-create-btn" type="button" onclick="openCreateAIModal()">
-              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 2v10M2 7h10"/></svg>
-              Create AI
-            </button>
+          <div class="newai-choose-heading">
+            <h2 class="newai-choose-title">Let&rsquo;s build. Choose an option:</h2>
           </div>
-
-          <div class="newai-board">
-            <!-- Col 1: items waiting on YOU to confirm (data-status "review") -->
-            <div class="newai-col" data-status="review">
-              <div class="newai-col-head">
-                <span class="newai-col-title">Need Confirm</span>
-                <span class="newai-col-count" id="newai-count-review">0</span>
+          <div class="choice-cards newai-choose-cards">
+            <!-- Left card — Build your AI self -->
+            <div class="choice-card left" onclick="goTo(3)" style="cursor:pointer">
+              <div class="choice-card-image blue">
+                <img src="assets/build-your-ai-self.png" alt="Build your AI self" />
               </div>
-              <div class="newai-col-body" id="newai-col-review"></div>
+              <div class="card-text">
+                <div class="choice-title">Build your AI self</div>
+                <div class="choice-desc">Learns how you work and handles your tasks 24/7 &mdash; as a Slack bot.</div>
+              </div>
+              <button class="card-btn blue-btn" type="button" onclick="event.stopPropagation();goTo(3)">
+                Start build
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
+              </button>
             </div>
-            <!-- Col 2: items in progress (invite sent / linking) — data-status "awaiting" -->
-            <div class="newai-col" data-status="awaiting">
-              <div class="newai-col-head">
-                <span class="newai-col-title">In Progress</span>
-                <span class="newai-col-count" id="newai-count-awaiting">0</span>
+            <!-- Right card — Build your teammate AI -->
+            <div class="choice-card right" onclick="goTo(9)" style="cursor:pointer">
+              <div class="choice-card-image peach">
+                <img src="assets/build-your-teammate.png" alt="Build your teammate" />
               </div>
-              <div class="newai-col-body" id="newai-col-awaiting"></div>
-            </div>
-            <!-- Col 3: deployed AIs -->
-            <div class="newai-col" data-status="completed">
-              <div class="newai-col-head">
-                <span class="newai-col-title">Completed</span>
-                <span class="newai-col-count" id="newai-count-completed">0</span>
+              <div class="card-text">
+                <div class="choice-title">Build your teammate AI</div>
+                <div class="choice-desc">Capture their knowledge before they go. Your team keeps working with them.</div>
               </div>
-              <div class="newai-col-body" id="newai-col-completed"></div>
+              <button class="card-btn peach-btn" type="button" onclick="event.stopPropagation();goTo(9)">
+                Start build
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
+              </button>
             </div>
           </div>
         </div>
@@ -5744,7 +5766,7 @@
         </div>
 
         <div class="handover-intro-actions">
-          <button class="handover-intro-secondary" type="button" onclick="goTo(2)">Back to options</button>
+          <button class="handover-intro-secondary" type="button" onclick="backToBuildOptions()">Back to options</button>
           <button class="handover-intro-primary" type="button" onclick="goTo(10)">
             Start handover
             <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7h9M8 3.5 11.5 7 8 10.5"/></svg>
@@ -7188,9 +7210,30 @@
      cleared by goTo(8) when the flow completes, so a future pre-signup
      visitor still sees Skip. */
   function startBuildNewAI() {
+    // Show the Choose-an-option page inside the p8 main column (sidebar
+    // stays visible). The .no-skip flag is still set so that when the user
+    // picks a card and enters the full-screen wizard (page 3 / 9), the
+    // Skip-for-now button is suppressed throughout.
     const s = document.getElementById('screens');
     if (s) s.classList.add('no-skip');
-    goTo(2);
+    switchP8View('newai');
+  }
+
+  /* Shared "back to Choose-an-option" helper. If the user launched the
+     wizard from inside the product (Build New AI in the sidebar), the
+     Choose-an-option view lives embedded inside page 8 — send them back
+     there, NOT to the full-screen page 2. Otherwise fall back to page 2. */
+  function backToBuildOptions() {
+    const s = document.getElementById('screens');
+    if (s && s.classList.contains('no-skip')) {
+      goTo(8);
+      if (typeof switchP8View === 'function') switchP8View('newai');
+      // goTo(8) clears the no-skip flag on entry; re-set it so the wizard
+      // stays Skip-less if the user re-enters via a choice card.
+      s.classList.add('no-skip');
+    } else {
+      goTo(2);
+    }
   }
 
   /* TEAM "Shine AI" entry — opens the Shine AI tabbed page and defaults
@@ -7250,8 +7293,10 @@
       adminBody.hidden = true;
       if (newaiBody) newaiBody.hidden = false;
       if (inputArea) inputArea.hidden = true;
+      // Hide the Shine-AI topNav here — the embedded Choose-an-option view
+      // is about creating a NEW AI, not chatting with Shine, so the Shine
+      // header would be misleading.
       if (topNav)    topNav.hidden = true;
-      renderNewAIBoard();
       // Clear stale avatar-tab state so a later return to admin starts clean.
       if (p8Main) p8Main.classList.remove('shine-chat-tab');
     } else {
@@ -8391,7 +8436,7 @@
       goTo(1);
     }
   });
-  document.getElementById('backbtn3').addEventListener('click',    () => goTo(2));
+  document.getElementById('backbtn3').addEventListener('click',    () => backToBuildOptions());
   document.getElementById('backbtn4').addEventListener('click',    () => goTo(3));
   const backbtn6 = document.getElementById('backbtn6');
   if (backbtn6) backbtn6.addEventListener('click',                 () => goTo(5));
