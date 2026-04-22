@@ -1107,14 +1107,49 @@
       background: #f0f4f8; color: #07191e;
       border: 1.5px solid transparent;
       line-height: 1;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
     #app-list .app-card .app-tag svg { width: 16px; height: 16px; display: block; flex-shrink: 0; }
+    /* Card-hover: Link chip turns white so it pops off the gray card fill.
+       Declared BEFORE tag:hover so the direct-tag-hover (blue) wins via cascade. */
+    #app-list .app-card:hover .app-tag {
+      background: #FFFFFF;
+      border-color: rgba(7, 25, 30, 0.08);
+    }
     #app-list .app-card .app-tag:hover {
       background: #ddf2ff; color: #014261; border-color: #89D2F8;
     }
+    /* Connected state: the "linked" signal is now a green check badge on the
+       logo (see .app-icon::after below), not a pill — so these tag rules are
+       harmless even when no .app-tag renders in the connected card. */
     #app-list .app-card.connected .app-tag,
     #app-list .app-card.connected .app-tag:hover {
       background: #D1FAE5; color: #10b981; border-color: transparent;
+    }
+    /* Green check badge: anchors to the bottom-right of the logo tile when
+       the card is in the linked (connected) state. Scoped separately for the
+       Page 5 grid (larger 48×48 icon) and the modal (32×32 icon). */
+    #app-list .app-icon { position: relative; }
+    #app-list .app-card.connected .app-icon::after {
+      content: "";
+      position: absolute;
+      right: -4px; bottom: -4px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background-color: #10B981;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E");
+      background-size: 12px 12px;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: 2px solid #fff;
+      box-sizing: border-box;
+    }
+    /* Page 5 Unlink ghost button: size it so it reads as a peer to the Link
+       pill it replaces (same row, right-aligned, comfortable hit area). */
+    #app-list .app-card .app-unlink {
+      height: 36px; padding: 0 12px;
+      font-size: 13px; font-weight: 500;
+      display: inline-flex; align-items: center;
     }
     .app-card {
       background: #fff; border-radius: 12px; padding: 12px 14px;
@@ -4637,9 +4672,31 @@
     /* Icons come in as raw <svg viewBox> without width/height, so clamp them
        to the 32×32 .app-icon frame. Without this they render at the browser
        default intrinsic size and blow the card up. */
+    .p8-link-app-list .app-icon { position: relative; }
     .p8-link-app-list .app-icon svg,
     .p8-link-app-list .app-icon img {
       width: 100%; height: 100%; display: block; object-fit: contain;
+    }
+    /* Smaller green check badge for the 32×32 modal icon (matches the
+       larger badge on Page 5, just scaled down). */
+    .p8-link-app-list .app-card.connected .app-icon::after {
+      content: "";
+      position: absolute;
+      right: -3px; bottom: -3px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background-color: #10B981;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E");
+      background-size: 9px 9px;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: 1.5px solid #fff;
+      box-sizing: border-box;
+    }
+    /* Card-hover: Link chip turns white in the modal too. */
+    .p8-link-app-list .app-card:hover .app-tag {
+      background: #FFFFFF;
+      border-color: rgba(7, 25, 30, 0.08);
     }
     /* The Link / Unlink chip sits on the right side of the card, same row
        as the icon. Keep it visually compact so the card height stays tight. */
@@ -6745,7 +6802,7 @@
       const right = c.querySelector('.app-card-right');
       if (!right) return;
       if (linked) {
-        right.innerHTML = '<div class="app-tag">✓ Linked</div><button class="app-unlink" type="button">Unlink</button>';
+        right.innerHTML = '<button class="app-unlink" type="button">Unlink</button>';
         const unlink = right.querySelector('.app-unlink');
         if (unlink) {
           unlink.onclick = (ev) => {
@@ -6795,7 +6852,7 @@
                + '</div>';
     const desc = '<div class="app-desc">' + app.desc + '</div>';
     const right = on
-      ? '<div class="app-card-right"><div class="app-tag">✓ Linked</div><button class="app-unlink" type="button">Unlink</button></div>'
+      ? '<div class="app-card-right"><button class="app-unlink" type="button">Unlink</button></div>'
       : '<div class="app-card-right"><div class="app-tag">Link</div></div>';
     return '<div class="app-card' + (on ? ' connected' : '')
          + '" data-id="' + app.id
@@ -8427,7 +8484,7 @@
             + '</div>';
     var desc = '<div class="app-desc">' + app.desc + '</div>';
     var right = on
-      ? '<div class="app-card-right"><div class="app-tag">✓ Linked</div><button class="app-unlink" type="button">Unlink</button></div>'
+      ? '<div class="app-card-right"><button class="app-unlink" type="button">Unlink</button></div>'
       : '<div class="app-card-right"><div class="app-tag">' + LINK_ICON_SVG + '<span>Link</span></div></div>';
     // Header puts icon+name (left) and the Link chip (right) on the same row.
     // Description drops beneath the header.
