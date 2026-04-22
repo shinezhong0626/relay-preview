@@ -1744,19 +1744,22 @@
       z-index: 2;
       pointer-events: none;
     }
-    /* Card-wide shimmer sweep — matches rhythm of .shimmer-text (2.2s infinite). */
+    /* Card-wide shimmer sweep — matches rhythm of .shimmer-text (2.2s infinite).
+       Gradient direction is tilted 25° off vertical (115deg) so the highlight
+       band rakes across the card naturally, mimicking a real light source
+       sweeping past a glossy surface rather than a flat horizontal wipe. */
     .p5-id-card.p7-card.shimmering::after {
       content: '';
       position: absolute; inset: 0;
       border-radius: 18px;
-      /* Horizontal sweep matches the .shimmer-text 90deg gradient direction */
       background: linear-gradient(
-        90deg,
+        115deg,
         transparent 38%,
         rgba(255,255,255,0.55) 50%,
         transparent 62%
       );
-      background-size: 220% 100%;
+      /* A wider band so the angled sweep fully clears the card edges. */
+      background-size: 260% 100%;
       animation: p7-card-sweep 2.2s linear infinite;
       pointer-events: none;
       z-index: 3;
