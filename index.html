@@ -1216,15 +1216,18 @@
       justify-content: center;
       background: #f7f8fb;
     }
-    .choice-card-image.blue  { background: #e8f6ff; }
+    /* Left card now has a real illustration — let it show natively (no pale-blue
+       wash, no radius mismatch). Peach card still a placeholder, keeps its tint. */
+    .choice-card-image.blue  { background: transparent; }
     .choice-card-image.peach { background: #fff3ef; }
-    .choice-card.left:hover  .choice-card-image.blue  { background: rgba(255,255,255,0.7); }
+    .choice-card.left:hover  .choice-card-image.blue  { background: transparent; }
     .choice-card.right:hover .choice-card-image.peach { background: rgba(255,255,255,0.7); }
     .choice-card-image img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+      border-radius: inherit;
     }
 
     /* ── Page 3 & 4 bottom continue bar ── */
