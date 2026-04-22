@@ -8281,7 +8281,18 @@
 
   /* ── Page navigation ── */
   document.getElementById('continuebtn').addEventListener('click', () => goTo(2));
-  document.getElementById('backbtn').addEventListener('click',     () => goTo(1));
+  /* Page 2 Back — normally returns to the pre-signup landing page. But if
+     the flow was launched from the in-app "Build New AI" sidebar entry
+     (marked by #screens.no-skip), the user is already signed in, so Back
+     should drop them back into the chat home instead of the landing page. */
+  document.getElementById('backbtn').addEventListener('click', () => {
+    const s = document.getElementById('screens');
+    if (s && s.classList.contains('no-skip')) {
+      goTo(8);   // goTo(8) clears the no-skip flag on entry
+    } else {
+      goTo(1);
+    }
+  });
   document.getElementById('backbtn3').addEventListener('click',    () => goTo(2));
   document.getElementById('backbtn4').addEventListener('click',    () => goTo(3));
   const backbtn6 = document.getElementById('backbtn6');
