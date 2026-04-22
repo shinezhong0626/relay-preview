@@ -6672,7 +6672,9 @@
   /* Rebuild the right-hand side of a modal app-card to match onboarding
      Step-3: "✓ Linked" + "Unlink" when linked, plain "Link" tag otherwise.
      Also toggles the .connected class and wires click handlers.
-     Used exclusively inside the Link Apps modal (not onboarding). */
+     Used exclusively inside the Link Apps modal (not onboarding).
+     Syncs every card in the modal with the same data-id (so Recommended-
+     section copies stay consistent with the category-section copies). */
   function _setModalLinkCardState(card, linked) {
     if (!card) return;
     // When the modal was opened from Page 5's "Explore all apps", clicking
@@ -6691,29 +6693,42 @@
         return;
       }
     }
-    card.classList.toggle('connected', !!linked);
-    card.style.cursor = linked ? 'default' : 'pointer';
-    const right = card.querySelector('.app-card-right');
-    if (!right) return;
-    if (linked) {
-      right.innerHTML = '<div class="app-tag">✓ Linked</div><button class="app-unlink" type="button">Unlink</button>';
-      const unlink = right.querySelector('.app-unlink');
-      if (unlink) {
-        unlink.onclick = (ev) => {
-          ev.stopPropagation();
-          _setModalLinkCardState(card, false);
-        };
-      }
-    } else {
-      right.innerHTML = '<div class="app-tag">Link</div>';
-      const tag = right.querySelector('.app-tag');
-      if (tag) {
-        tag.onclick = (ev) => {
-          ev.stopPropagation();
-          _setModalLinkCardState(card, true);
-        };
-      }
+    // Find every copy of this app in the modal — the Recommended section
+    // and the category section both render the same card, and toggling
+    // one must keep both visually in sync.
+    const appId = card.getAttribute('data-id');
+    const list  = document.getElementById('p8-link-app-list');
+    let twins;
+    if (appId && list) {
+      twins = Array.from(list.querySelectorAll('.app-card[data-id="' + appId + '"]'));
     }
+    if (!twins || !twins.length) twins = [card];
+
+    twins.forEach(c => {
+      c.classList.toggle('connected', !!linked);
+      c.style.cursor = linked ? 'default' : 'pointer';
+      const right = c.querySelector('.app-card-right');
+      if (!right) return;
+      if (linked) {
+        right.innerHTML = '<div class="app-tag">✓ Linked</div><button class="app-unlink" type="button">Unlink</button>';
+        const unlink = right.querySelector('.app-unlink');
+        if (unlink) {
+          unlink.onclick = (ev) => {
+            ev.stopPropagation();
+            _setModalLinkCardState(c, false);
+          };
+        }
+      } else {
+        right.innerHTML = '<div class="app-tag">Link</div>';
+        const tag = right.querySelector('.app-tag');
+        if (tag) {
+          tag.onclick = (ev) => {
+            ev.stopPropagation();
+            _setModalLinkCardState(c, true);
+          };
+        }
+      }
+    });
   }
 
   /* Open the Link Apps modal from the onboarding Step-3 page. Sets the origin
@@ -6723,27 +6738,75 @@
     openLinkAppsModal();
   }
 
+  /* Curated "Recommended for you" picks that render above the category
+     sections inside the Link Apps modal. Order here is the display order
+     within the Recommended block. */
+  const RECOMMENDED_APP_IDS = ['slack','gdrive','notion','jira','linear','zoom','outlook','gmail'];
+
+  /* Build one app-card as an HTML string. Kept as a string (not a DOM node)
+     because the modal assembles its whole grid via a single innerHTML set,
+     which also wipes any stray event listeners from makeAppCard. Fresh click
+     handlers are then re-attached by _setModalLinkCardState. */
+  function _modalCardHtml(app) {
+    const on = connectedApps.has(app.id);
+    const name = (app.name || '').toLowerCase();
+    const top  = '<div class="app-card-top">'
+               +   '<div class="app-icon" style="background:' + app.bg + '">' + app.icon + '</div>'
+               +   '<div class="app-name">' + app.name + '</div>'
+               + '</div>';
+    const desc = '<div class="app-desc">' + app.desc + '</div>';
+    const right = on
+      ? '<div class="app-card-right"><div class="app-tag">✓ Linked</div><button class="app-unlink" type="button">Unlink</button></div>'
+      : '<div class="app-card-right"><div class="app-tag">Link</div></div>';
+    return '<div class="app-card' + (on ? ' connected' : '')
+         + '" data-id="' + app.id
+         + '" data-cat="' + app.cat
+         + '" data-name="' + name
+         + '" style="cursor:' + (on ? 'default' : 'pointer') + '">'
+         + top + desc + right
+         + '</div>';
+  }
+
   /* ── Link Apps modal (opens from the "Link tools to Relay" bar) ──
-     Clones the onboarding Step-3 app-list HTML so we get identical
-     category headers + cards (2-column grid), and rewires each Link tag
-     to a simple connect toggle so the modal is interactive without
-     reaching back into the onboarding flow. */
+     Builds the grid fresh each open: a "Recommended for you" section on top
+     (curated 8 picks), then one section per category from CAT_ORDER that
+     has at least one app. Apps appear twice — once in Recommended, once
+     under their native category — so _setModalLinkCardState syncs both
+     copies whenever one is toggled. */
   function openLinkAppsModal() {
     const overlay = document.getElementById('p8-link-overlay');
     const dest    = document.getElementById('p8-link-app-list');
-    const src     = document.getElementById('app-list');
     if (!overlay || !dest) return;
-    // Rebuild the cloned list each open so it reflects the current state.
-    if (src) {
-      dest.innerHTML = src.innerHTML;
-      // Strip any onclick/handlers from the cloned nodes and wire fresh ones
-      // that mirror the onboarding Step-3 linked state: when connected show
-      // an "Unlink" button + "✓ Linked" tag; otherwise just a "Link" tag.
-      dest.querySelectorAll('.app-card').forEach(card => {
-        card.onclick = null;
-        _setModalLinkCardState(card, card.classList.contains('connected'));
-      });
+
+    const recApps = RECOMMENDED_APP_IDS
+      .map(id => APPS.find(a => a.id === id))
+      .filter(Boolean);
+
+    let html = '';
+    // Recommended block (first). data-cat="recommended" marks it so the
+    // category filter can hide the whole group when a specific category
+    // is selected (those apps already appear inside that category below).
+    if (recApps.length) {
+      html += '<div class="app-cat-header first" data-cat="recommended">Recommended for you</div>';
+      recApps.forEach(app => html += _modalCardHtml(app));
     }
+    // Category blocks, in CAT_ORDER. Skip categories with no apps so we
+    // don't render empty headers.
+    CAT_ORDER.forEach(cat => {
+      const appsInCat = APPS.filter(a => a.cat === cat);
+      if (!appsInCat.length) return;
+      html += '<div class="app-cat-header" data-cat="' + cat + '">' + CAT_LABELS[cat] + '</div>';
+      appsInCat.forEach(app => html += _modalCardHtml(app));
+    });
+
+    dest.innerHTML = html;
+    // Attach Link / Unlink handlers to every card. We do this after
+    // innerHTML is set so the handlers can't be stripped by a later
+    // re-serialization.
+    dest.querySelectorAll('.app-card').forEach(card => {
+      _setModalLinkCardState(card, card.classList.contains('connected'));
+    });
+
     // Clear search + reset category filter + show
     const searchEl = document.getElementById('p8-link-search');
     if (searchEl) { searchEl.value = ''; }
@@ -6875,6 +6938,17 @@
     let visibleTotal = 0;
     for (const g of groups) {
       const header = g[0];
+      const headerCat = header ? (header.getAttribute('data-cat') || '') : '';
+      const isRecommended = headerCat === 'recommended';
+      // When a specific category filter is active, suppress the whole
+      // Recommended block — the same apps already appear in their native
+      // category section below, so showing them twice with the same filter
+      // applied would be noisy.
+      if (isRecommended && cat !== 'all') {
+        if (header) header.style.display = 'none';
+        for (let i = 1; i < g.length; i++) g[i].style.display = 'none';
+        continue;
+      }
       let visibleInGroup = 0;
       for (let i = 1; i < g.length; i++) {
         const card = g[i];
@@ -6884,7 +6958,14 @@
         const matchCat  = cat === 'all' || cCat === cat;
         const match = matchText && matchCat;
         card.style.display = match ? '' : 'none';
-        if (match) { visibleInGroup++; anyVisible = true; visibleTotal++; }
+        if (match) {
+          visibleInGroup++;
+          anyVisible = true;
+          // Each app appears once in Recommended and once in its own
+          // category, so count only the category-section occurrence in
+          // the "All Tools (N)" badge to avoid a doubled total.
+          if (!isRecommended) visibleTotal++;
+        }
       }
       if (header) header.style.display = visibleInGroup ? '' : 'none';
     }
