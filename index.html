@@ -2580,16 +2580,24 @@
     /* Activity heatmap — rich terminal-style grid with stats header on top
        and an hour axis below. Kept on the light palette; the numbers use
        the GeistPixel numeral face to evoke the "monitor readout" feel of
-       the reference without adopting its dark theme. */
-    .admin-activity-card {
-      padding: 18px 22px 18px;
+       the reference without adopting its dark theme.
+       Note: the card's outer padding is zero — the nested .admin-card-head
+       and .admin-card-body own the paddings, matching the Identity/Usage
+       cards above so the whole panel reads as one family. */
+    .admin-activity-card { padding: 0; }
+    .admin-activity-card .admin-card-body {
+      /* Give the heatmap body a touch more breathing room than the default
+         .admin-card-body (4/20/16) — 12 top and 18 bottom so the stats row
+         has space above the grid and the hour axis sits comfortably. */
+      padding: 12px 20px 18px;
     }
     .admin-activity-head {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: flex-start;
       margin-bottom: 14px;
       gap: 16px;
     }
-    .admin-activity-sub { font-size: 11px; color: #9ca3af; }
+    /* .admin-activity-sub was removed — "Last 30 days" now lives in the
+       shared .admin-card-sub slot inside .admin-card-head. */
     .admin-activity-stats {
       display: inline-flex; align-items: center; gap: 14px;
       font-family: 'GeistPixel', ui-monospace, monospace;
@@ -5520,22 +5528,30 @@
                 </div>
               </div>
 
-              <!-- ── Activity heatmap (full-width 30-day strip) ── -->
+              <!-- ── Activity heatmap (full-width 30-day strip) ──
+                   Mirrors the Identity / Usage cards: a titled .admin-card-head
+                   (Activity + Last 30 days) above the body that holds the
+                   stats line, heatmap grid, and time axis. -->
               <div class="admin-card admin-activity-card">
-                <div class="admin-activity-head">
-                  <div class="admin-activity-stats">
-                    <span class="admin-activity-day" id="admin-activity-day">Today</span>
-                    <span class="admin-activity-sep"></span>
-                    <span class="admin-activity-stat">Active: <strong id="admin-activity-active">0</strong></span>
-                    <span class="admin-activity-stat idle">Idle: <strong id="admin-activity-idle">0</strong></span>
+                <div class="admin-card-head">
+                  <div class="admin-card-title">Activity</div>
+                  <div class="admin-card-sub">Last 30 days</div>
+                </div>
+                <div class="admin-card-body">
+                  <div class="admin-activity-head">
+                    <div class="admin-activity-stats">
+                      <span class="admin-activity-day" id="admin-activity-day">Today</span>
+                      <span class="admin-activity-sep"></span>
+                      <span class="admin-activity-stat">Active: <strong id="admin-activity-active">0</strong></span>
+                      <span class="admin-activity-stat idle">Idle: <strong id="admin-activity-idle">0</strong></span>
+                    </div>
                   </div>
-                  <div class="admin-activity-sub">Last 30 days</div>
-                </div>
-                <div class="admin-activity-grid" id="admin-activity-grid">
-                  <!-- Populated by renderActivityHeatmap() — dense grid -->
-                </div>
-                <div class="admin-activity-axis" aria-hidden="true">
-                  <span>09:00</span><span>10:00</span><span>11:00</span><span>12:00</span><span>13:00</span><span>14:00</span><span>15:00</span><span>16:00</span>
+                  <div class="admin-activity-grid" id="admin-activity-grid">
+                    <!-- Populated by renderActivityHeatmap() — dense grid -->
+                  </div>
+                  <div class="admin-activity-axis" aria-hidden="true">
+                    <span>09:00</span><span>10:00</span><span>11:00</span><span>12:00</span><span>13:00</span><span>14:00</span><span>15:00</span><span>16:00</span>
+                  </div>
                 </div>
               </div>
 
