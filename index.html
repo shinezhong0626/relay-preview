@@ -1195,8 +1195,11 @@
       cursor: default; transition: border-color 0.18s, background 0.18s;
     }
     .app-card:hover { border-color: #b0e4fe; }
-    .app-card.connected { border-color: transparent; background: #fff; }
-    .app-card.connected:hover { border-color: transparent; }
+    /* Connected (linked) cards keep the same light-gray outline as unlinked
+       ones — the "linked" signal is carried by the green check badge on the
+       logo (see .app-icon::after above), not by hiding the border. Keeping
+       the stroke makes both states read as one consistent card system. */
+    .app-card.connected { background: #fff; }
     .app-card-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
     .app-card-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
     .app-card-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
