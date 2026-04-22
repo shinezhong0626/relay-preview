@@ -8244,6 +8244,159 @@
     { id:'gmail', name:'Gmail', desc:'Triages your inbox and writes replies in your voice while you focus.', cat:'communication', bg:'transparent', icon:'<svg viewBox="12.8334 9.33325 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"> <g> <path d="M12.8334 25.3333C12.8334 16.4967 19.9968 9.33325 28.8334 9.33325H52.8334C61.6699 9.33325 68.8334 16.4967 68.8334 25.3333V49.3333C68.8334 58.1698 61.6699 65.3333 52.8334 65.3333H28.8334C19.9968 65.3333 12.8334 58.1698 12.8334 49.3333V25.3333Z" fill="white"/> <path d="M28.8334 9.91626H52.8334C61.3478 9.91626 68.2504 16.8189 68.2504 25.3333V49.3333C68.2504 57.8476 61.3478 64.7502 52.8334 64.7502H28.8334C20.319 64.7502 13.4164 57.8476 13.4164 49.3333V25.3333C13.4164 16.8189 20.319 9.91626 28.8334 9.91626Z" stroke="#EFEFEF" stroke-width="1.16667"/> <path d="M50.1617 26.8301L40.9325 33.8636L31.4923 26.8301V26.832L31.5037 26.8415V36.6904L40.8261 43.876L50.1617 36.9679V26.8301Z" fill="#EA4335"/> <path d="M52.5851 25.1195L50.1614 26.8303V36.9682L57.7881 31.2501V27.8055C57.7881 27.8055 56.8623 22.8859 52.5851 25.1195Z" fill="#FBBC05"/> <path d="M50.1614 36.9681V50.117H56.0068C56.0068 50.117 57.6702 49.9497 57.79 48.0982V31.25L50.1614 36.9681Z" fill="#34A853"/> <path d="M31.5038 50.1285V36.6907L31.4923 36.6812L31.5038 50.1285Z" fill="#C5221F"/> <path d="M31.4922 26.8315L29.0818 25.1301C24.8046 22.8965 23.877 27.8143 23.877 27.8143V31.2588L31.4922 36.6804V26.8315Z" fill="#C5221F"/> <path d="M31.4923 26.8323V36.6811L31.5038 36.6907V26.8418L31.4923 26.8323Z" fill="#C5221F"/> <path d="M23.877 31.2615V48.1097C23.9948 49.9631 25.6601 50.1285 25.6601 50.1285H31.5055L31.4922 36.6811L23.877 31.2615Z" fill="#4285F4"/> </g> </svg>' },
   ];
 
+  /* ── Expand APPS with ~105 additional common SaaS tools ──
+     Each extra entry uses a generated monogram icon (brand-colored
+     rounded-square tile with a single-letter glyph). This keeps the
+     catalog visually consistent at scale without having to source 100+
+     individual SVG logos. The 8 branded entries above are untouched. */
+  function _monoIcon(letter, bg) {
+    // Luminance heuristic: dark glyph on light tiles, white glyph on dark.
+    var c = bg.replace('#', '');
+    var r = parseInt(c.substr(0,2), 16);
+    var g = parseInt(c.substr(2,2), 16);
+    var b = parseInt(c.substr(4,2), 16);
+    var lum = (0.299*r + 0.587*g + 0.114*b) / 255;
+    var fg = lum > 0.62 ? '#07191e' : '#FFFFFF';
+    return '<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">'
+         +   '<rect x="0.5" y="0.5" width="55" height="55" rx="15.5" fill="' + bg + '"/>'
+         +   '<rect x="0.5" y="0.5" width="55" height="55" rx="15.5" stroke="#EFEFEF"/>'
+         +   '<text x="28" y="37" font-family="Poppins, Inter, -apple-system, sans-serif" '
+         +     'font-size="24" font-weight="700" fill="' + fg + '" text-anchor="middle">'
+         +     letter + '</text>'
+         + '</svg>';
+  }
+
+  // Compact data: [id, name, cat, desc, bg, letter?]
+  // letter is optional; defaults to first char of name (uppercase).
+  var _EXTRA_APPS = [
+    // ── Productivity (27)
+    ['asana','Asana','productivity','Syncs tasks and deadlines so nothing falls off your team’s plate.','#F06A6A'],
+    ['trello','Trello','productivity','Keeps your boards tidy and nudges cards before they go stale.','#0079BF'],
+    ['clickup','ClickUp','productivity','Surfaces what’s due today across every list and space.','#7B68EE'],
+    ['monday','Monday','productivity','Rolls up status across boards so you know where work stands.','#FF3D57'],
+    ['airtable','Airtable','productivity','Reads your bases so answers stay grounded in real records.','#FCB400'],
+    ['confluence','Confluence','productivity','Pulls from team wikis so summaries cite real documentation.','#172B4D'],
+    ['onedrive','OneDrive','productivity','Reads your OneDrive files so replies reference the right source.','#0078D4'],
+    ['sharepoint','SharePoint','productivity','Searches SharePoint sites when you need policy or process context.','#038387'],
+    ['msword','Word','productivity','Drafts and edits Word docs without leaving your flow.','#185ABD','W'],
+    ['msexcel','Excel','productivity','Reads spreadsheets so numbers in replies are always current.','#107C41','E'],
+    ['mspp','PowerPoint','productivity','Pulls slide content when you need last deck’s key points.','#D24726','P'],
+    ['gdocs','Google Docs','productivity','Drafts and edits Docs with your voice and context.','#4285F4','D'],
+    ['gsheets','Google Sheets','productivity','Queries your sheets so stats and tables come back fresh.','#0F9D58','S'],
+    ['gslides','Google Slides','productivity','Picks up slide content when you need a past deck’s points.','#F4B400','L'],
+    ['gcal','Google Calendar','productivity','Guards your calendar and sets up meetings on your behalf.','#4285F4','C'],
+    ['dropbox','Dropbox','productivity','Finds files across Dropbox so answers carry the real attachment.','#0061FF'],
+    ['box','Box','productivity','Pulls context from Box when replies need a source document.','#0061D5'],
+    ['evernote','Evernote','productivity','Searches your notes so reminders reference what you already wrote.','#00A82D'],
+    ['todoist','Todoist','productivity','Tracks personal tasks and unblocks ones that are sliding.','#E44332'],
+    ['basecamp','Basecamp','productivity','Reads project threads so status is always backed by real chatter.','#1D2D35'],
+    ['miro','Miro','productivity','Pulls board content when replies need a diagram’s context.','#FFD02F'],
+    ['mural','Mural','productivity','Reads MURAL boards so design notes stay attached to the work.','#FF0066'],
+    ['figjam','FigJam','productivity','Picks up whiteboard content so brainstorming context isn’t lost.','#FF7262'],
+    ['lucidchart','Lucidchart','productivity','Pulls diagrams when a process question needs a visual answer.','#F58222'],
+    ['github','GitHub','productivity','Watches PRs and nudges reviewers so code doesn’t sit idle.','#181717'],
+    ['gitlab','GitLab','productivity','Tracks pipelines and flags failing merges before they block.','#FC6D26'],
+    ['bitbucket','Bitbucket','productivity','Monitors your repos and keeps team-wide code status visible.','#0052CC'],
+
+    // ── Communication (10)
+    ['teams','Microsoft Teams','communication','Summarizes threads and drafts replies in your voice.','#4B53BC','T'],
+    ['meet','Google Meet','communication','Turns call recordings into notes and action items.','#00897B','M'],
+    ['discord','Discord','communication','Keeps community channels warm while you focus elsewhere.','#5865F2'],
+    ['telegram','Telegram','communication','Drafts replies and keeps group chats tidy.','#26A5E4'],
+    ['webex','Webex','communication','Summarizes meetings into notes, actions, and follow-ups.','#06C167'],
+    ['ringcentral','RingCentral','communication','Surfaces the calls and voicemails that need your attention.','#066FAC','R'],
+    ['front','Front','communication','Triages shared inboxes and drafts replies from team context.','#A857F1'],
+    ['intercom','Intercom','communication','Handles chat conversations and routes the right ones to humans.','#1F8DED'],
+    ['twilio','Twilio','communication','Sends routine SMS updates so customers stay in the loop.','#F22F46'],
+    ['mailchimp','Mailchimp','communication','Writes and schedules email campaigns in your brand voice.','#FFE01B'],
+
+    // ── Customer & Growth (19)
+    ['salesforce','Salesforce','customer','Pulls CRM records so answers cite real opportunities.','#00A1E0'],
+    ['hubspot','HubSpot','customer','Reads deals and contacts to keep pipeline answers fresh.','#FF7A59'],
+    ['pipedrive','Pipedrive','customer','Surfaces next steps on the deals most likely to close.','#1A1A1A'],
+    ['zendesk','Zendesk','customer','Answers tickets in your tone using past resolutions.','#03363D'],
+    ['freshdesk','Freshdesk','customer','Triages tickets and drafts replies with real product context.','#25C16F'],
+    ['drift','Drift','customer','Chats with prospects on your site and qualifies the hot ones.','#1F2736'],
+    ['klaviyo','Klaviyo','customer','Writes lifecycle emails that match your brand voice.','#131415'],
+    ['activecampaign','ActiveCampaign','customer','Builds automations around how your real users behave.','#356AE6'],
+    ['braze','Braze','customer','Crafts onboarding pushes that reflect how users actually engage.','#2E0058'],
+    ['customerio','Customer.io','customer','Writes event-triggered messages grounded in real behavior.','#7F18F4','C'],
+    ['sendgrid','SendGrid','customer','Drafts transactional emails so alerts sound on-brand.','#3E86E0'],
+    ['marketo','Marketo','customer','Feeds campaigns with content that matches buyer stage.','#5C4C9F'],
+    ['outreach','Outreach','customer','Writes prospect sequences that don’t read like templates.','#5951FF'],
+    ['salesloft','SalesLoft','customer','Drafts follow-ups so reps spend less time typing.','#4B3AFF'],
+    ['apollo','Apollo','customer','Finds prospects and pulls the context for cold outreach.','#5B5FFD'],
+    ['gong','Gong','customer','Pulls call insights so follow-ups hit the right notes.','#8038D7'],
+    ['chorus','Chorus','customer','Reviews recorded calls and surfaces next-step cues.','#FB3970'],
+    ['clari','Clari','customer','Spots deals slipping so forecasts stay honest.','#0F56C6'],
+    ['zoho','Zoho CRM','customer','Keeps CRM entries current and flags stale records.','#C83C2E','Z'],
+
+    // ── Data & Analytics (15)
+    ['snowflake','Snowflake','data','Queries warehouses so numbers in replies are always live.','#29B5E8'],
+    ['databricks','Databricks','data','Runs notebooks and reports on real production data.','#FF3621'],
+    ['looker','Looker','data','Surfaces the dashboards that answer stakeholder questions.','#4285F4'],
+    ['tableau','Tableau','data','Pulls dashboard data when replies need charts, not guesses.','#E97627'],
+    ['powerbi','Power BI','data','Turns BI reports into on-demand answers.','#F2C811','P'],
+    ['metabase','Metabase','data','Answers questions from Metabase dashboards in plain English.','#509EE3'],
+    ['mixpanel','Mixpanel','data','Tracks funnels and flags drop-offs worth investigating.','#7856FF'],
+    ['amplitude','Amplitude','data','Reads user behavior so product questions have numbers.','#1E61F0'],
+    ['heap','Heap','data','Pulls session data to ground UX answers in reality.','#6457F9'],
+    ['segment','Segment','data','Keeps the right events flowing to every downstream tool.','#52BD95'],
+    ['ga','Google Analytics','data','Pulls traffic and conversion data on demand.','#F9AB00','A'],
+    ['hotjar','Hotjar','data','Surfaces recordings that match the bug you’re debugging.','#FD3A5C'],
+    ['fullstory','FullStory','data','Pulls session replays to explain weird user behavior.','#FF4F00'],
+    ['fivetran','Fivetran','data','Watches sync health so pipelines don’t fail silently.','#0073E6'],
+    ['dbt','dbt','data','Monitors model runs and flags failed transformations.','#FF694A','d'],
+
+    // ── Content & Design (16)
+    ['figma','Figma','content','Pulls frames from your files so design context is grounded.','#F24E1E'],
+    ['sketch','Sketch','content','Reads your files so design decisions get real references.','#F7B500'],
+    ['adobexd','Adobe XD','content','Pulls prototypes when replies need a concrete flow.','#FF61F6','X'],
+    ['photoshop','Photoshop','content','Handles routine asset edits and exports on your behalf.','#31A8FF'],
+    ['illustrator','Illustrator','content','Exports vectors and preps assets without hand-holding.','#FF9A00'],
+    ['canva','Canva','content','Whips up quick graphics that stay on brand.','#00C4CC'],
+    ['framer','Framer','content','Pulls live components from your Framer site for handoff.','#0055FF'],
+    ['invision','InVision','content','Surfaces prototypes so design reviews cite real screens.','#FF3366'],
+    ['webflow','Webflow','content','Updates copy on pages without asking dev to ship it.','#146EF5'],
+    ['wordpress','WordPress','content','Drafts posts and manages comments on your blog.','#21759B'],
+    ['ghost','Ghost','content','Writes newsletter drafts in your editorial voice.','#15171A'],
+    ['medium','Medium','content','Drafts blog posts grounded in your recent work.','#00AB6C'],
+    ['contentful','Contentful','content','Pulls CMS entries so marketing answers cite real content.','#2478CC'],
+    ['sanity','Sanity','content','Reads studio content to keep replies anchored in the CMS.','#F03E2F'],
+    ['loom','Loom','content','Turns recorded videos into searchable notes and clips.','#625DF5'],
+    ['descript','Descript','content','Cleans up recordings and turns them into shareable clips.','#39B5FF'],
+
+    // ── Finance & Management (18)
+    ['quickbooks','QuickBooks','finance','Categorizes transactions so books stay current.','#2CA01C'],
+    ['xero','Xero','finance','Reads ledgers so finance questions cite real numbers.','#13B5EA'],
+    ['netsuite','NetSuite','finance','Pulls ERP data when replies need financial context.','#125485'],
+    ['stripe','Stripe','finance','Surfaces payment issues and flags failed charges.','#635BFF'],
+    ['paypal','PayPal','finance','Tracks disputes and drafts responses on your behalf.','#003087'],
+    ['square','Square','finance','Watches sales and flags anomalies worth a look.','#3E4348'],
+    ['brex','Brex','finance','Reads corporate card spend and catches oddities.','#F46A35'],
+    ['ramp','Ramp','finance','Watches spend trends and nudges stale policies.','#14142B'],
+    ['expensify','Expensify','finance','Reviews receipts and preps reimbursement reports.','#2BA84A'],
+    ['billcom','Bill.com','finance','Routes AP invoices for approval so payments never lag.','#E31C3D'],
+    ['workday','Workday','finance','Pulls HR records so people questions reference the truth.','#0078B8'],
+    ['bamboohr','BambooHR','finance','Surfaces team data when you need org context.','#73BF45'],
+    ['gusto','Gusto','finance','Handles payroll questions with real period data.','#F45D48'],
+    ['adp','ADP','finance','Reads payroll runs so benefit answers cite real amounts.','#C8102E'],
+    ['rippling','Rippling','finance','Pulls HR/IT context when onboarding questions come up.','#FFD400'],
+    ['greenhouse','Greenhouse','finance','Updates candidates on pipeline movement automatically.','#1C732B'],
+    ['lever','Lever','finance','Tracks your pipeline and flags stalled candidates.','#0E1C36'],
+    ['deel','Deel','finance','Handles global contractor questions with real paperwork context.','#15144A'],
+  ];
+
+  _EXTRA_APPS.forEach(function(row) {
+    var id = row[0], name = row[1], cat = row[2], desc = row[3], bg = row[4];
+    var letter = row[5] || (name || '?').charAt(0).toUpperCase();
+    APPS.push({
+      id: id, name: name, cat: cat, desc: desc,
+      bg: 'transparent',
+      icon: _monoIcon(letter, bg)
+    });
+  });
+
   const connectedApps = new Set();
   let filteredApps = [...APPS];
   let activeFilter = 'all';
