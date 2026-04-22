@@ -6312,12 +6312,13 @@
     if (subEl)   subEl.textContent  = 'Ingesting data…';
     typewriterP7Card();
     startP7Shimmer();
-    // After 20s of loading, swap to the SUCCESS state (new copy + Get started
-    // countdown button). The countdown itself advances to page 8.
+    // After 10s of loading, swap to the SUCCESS state (new copy + Get started
+    // countdown button). The countdown itself advances to page 8. Was 20s —
+    // shortened per design feedback that the whole animation drags on.
     if (window._p7ToP8Timer)   clearTimeout(window._p7ToP8Timer);
     if (window._p7CtaTimer)    clearTimeout(window._p7CtaTimer);
     if (window._p7CtaInterval) clearInterval(window._p7CtaInterval);
-    window._p7ToP8Timer = setTimeout(() => { enterP7Success(); }, 20000);
+    window._p7ToP8Timer = setTimeout(() => { enterP7Success(); }, 10000);
   }
 
   /* Swap page 7 into its success state: new headings, hide shimmer, show
