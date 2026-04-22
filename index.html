@@ -2186,7 +2186,7 @@
       font-size: 14px; line-height: 20px;
       color: #6b7280;
     }
-    /* Segmented toggle between Dashboard / All Avatars */
+    /* Segmented toggle (Profile / Chat inside Avatar Administration). */
     .admin-tabs {
       display: inline-flex; align-items: center;
       background: #eef1f5;
@@ -2205,6 +2205,26 @@
       background: #fff; color: #07191e;
       box-shadow: 0 1px 3px rgba(7,25,30,0.06);
     }
+    /* Wrapper that centers the tab pill inside the 960px admin column,
+       matching .admin-head alignment above it. */
+    .admin-avtabs-row {
+      max-width: 960px; width: 100%; margin: 0 auto;
+    }
+    /* ── Chat-tab layout override ──
+       When the Avatar Admin view is on the Chat tab, the admin-body shrinks
+       to just its head + tab bar so the existing chat-body below can claim
+       the remaining vertical space. admin-wrap (profile content) is hidden,
+       chat-body and input-area are shown. The "no-scroll" while flex:0 0 auto
+       is critical — otherwise admin-body would keep flex:1 and squeeze the
+       chat-body to zero height. */
+    .p8-main.shine-chat-tab .p8-admin-body {
+      flex: 0 0 auto;
+      overflow: visible;
+      padding-bottom: 8px;
+    }
+    .p8-main.shine-chat-tab .p8-admin-body .admin-wrap { display: none; }
+    .p8-main.shine-chat-tab .p8-chat-body  { display: flex; }
+    .p8-main.shine-chat-tab .p8-input-area { display: flex; }
     .admin-wrap {
       max-width: 960px; width: 100%;
       margin: 0 auto;
@@ -5293,7 +5313,11 @@
         <div class="p8-team-section">
           <div class="p8-team-label">TEAM</div>
           <div class="p8-chat-list">
-            <div class="p8-chat-item active">
+            <!-- Shine AI TEAM item is the dual entry point: it opens the
+                 Avatar Administration page with tabs (Profile / Chat).
+                 Default tab is Chat so the click still lands the user in
+                 the conversation, but Profile is one click away. -->
+            <div class="p8-chat-item active" onclick="openShineAI()" role="button" tabindex="0">
               <div class="p8-chat-avatar">
                 <img id="p8-chat-avatar-img" src="" alt=""/>
               </div>
@@ -5430,6 +5454,20 @@
             </div>
           </div>
 
+          <!-- Profile / Chat tab switcher. Profile shows the admin dashboard
+               below; Chat swaps the body for the chat-body + input bar so
+               both live behind a single "Shine AI" entry point. -->
+          <div class="admin-avtabs-row">
+            <div class="admin-tabs" role="tablist" aria-label="Avatar view">
+              <button class="admin-tab active" id="av-tab-profile" type="button"
+                      role="tab" aria-selected="true"
+                      onclick="switchAvatarTab('profile')">Profile</button>
+              <button class="admin-tab" id="av-tab-chat" type="button"
+                      role="tab" aria-selected="false"
+                      onclick="switchAvatarTab('chat')">Chat</button>
+            </div>
+          </div>
+
           <div class="admin-wrap">
             <!-- ─── PROFILE VIEW (AI profile card + Identity/Usage + Feed + Permissions) ─── -->
             <div class="admin-dashboard" id="admin-dashboard">
@@ -5453,7 +5491,7 @@
                     </svg>
                     Settings
                   </button>
-                  <button class="admin-btn-chat" type="button" onclick="switchP8View('chat')">
+                  <button class="admin-btn-chat" type="button" onclick="switchAvatarTab('chat')">
                     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                       <path d="M14 7.5A5.5 5.5 0 0 1 8.5 13c-.9 0-1.76-.22-2.5-.6L3 13l.6-3A5.5 5.5 0 1 1 14 7.5z"/>
                     </svg>
@@ -7160,12 +7198,42 @@
     goTo(2);
   }
 
+  /* TEAM "Shine AI" entry — opens the Avatar Administration page and
+     defaults to the Chat tab, so clicking this item still feels like the
+     familiar "jump into chat" action while also exposing the Profile tab
+     one click away. */
+  function openShineAI() {
+    switchP8View('admin');
+    switchAvatarTab('chat');
+  }
+
+  /* Switch between the Profile and Chat tabs inside the Avatar Admin view.
+     Tab state is reflected on .p8-main via the .shine-chat-tab class; CSS
+     handles the swap between the admin-wrap and the chat-body + input. */
+  function switchAvatarTab(tab) {
+    const main  = document.querySelector('.p8-main');
+    const tabP  = document.getElementById('av-tab-profile');
+    const tabC  = document.getElementById('av-tab-chat');
+    const isChat = tab === 'chat';
+
+    if (main) main.classList.toggle('shine-chat-tab', isChat);
+    if (tabP) {
+      tabP.classList.toggle('active', !isChat);
+      tabP.setAttribute('aria-selected', !isChat);
+    }
+    if (tabC) {
+      tabC.classList.toggle('active', isChat);
+      tabC.setAttribute('aria-selected', isChat);
+    }
+  }
+
   function switchP8View(mode) {
     const chatBody  = document.getElementById('p8-chat-body');
     const adminBody = document.getElementById('p8-admin-body');
     const newaiBody = document.getElementById('p8-newai-body');
     const inputArea = document.getElementById('p8-input-area');
     const topNav    = document.querySelector('.p8-main .p8-main-nav');
+    const p8Main    = document.querySelector('.p8-main');
     if (!chatBody || !adminBody) return;
 
     if (mode === 'admin') {
@@ -7175,6 +7243,10 @@
       if (inputArea) inputArea.hidden = true;
       if (topNav)    topNav.hidden = true;
       syncAdminView();
+      // Default to Profile tab when entering the Avatar Admin view.
+      // openShineAI() calls switchAvatarTab('chat') right after this, so
+      // its chat override still wins for the TEAM Shine AI entry point.
+      switchAvatarTab('profile');
     } else if (mode === 'newai') {
       chatBody.hidden = true;
       adminBody.hidden = true;
@@ -7182,6 +7254,8 @@
       if (inputArea) inputArea.hidden = true;
       if (topNav)    topNav.hidden = true;
       renderNewAIBoard();
+      // Clear stale avatar-tab state so a later return to admin starts clean.
+      if (p8Main) p8Main.classList.remove('shine-chat-tab');
     } else {
       // default → chat view
       chatBody.hidden = false;
@@ -7189,6 +7263,7 @@
       if (newaiBody) newaiBody.hidden = true;
       if (inputArea) inputArea.hidden = false;
       if (topNav)    topNav.hidden = false;
+      if (p8Main) p8Main.classList.remove('shine-chat-tab');
     }
 
     // Sidebar active state — only the active nav item gets the .active class.
