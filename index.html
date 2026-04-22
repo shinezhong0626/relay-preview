@@ -120,6 +120,13 @@
       display: flex;
       justify-content: flex-end;
     }
+    /* When the onboarding flow is launched from the in-app "Build New AI"
+       sidebar entry (see startBuildNewAI), hide all Skip-for-now buttons —
+       the user is already inside the product and deliberately chose to build
+       another AI, so "skip to chat" isn't a meaningful escape hatch. The
+       .ob-topbar-right slot is kept (with its min-width) so centered
+       stepper dots stay centered. */
+    #screens.no-skip .btn-skip { display: none !important; }
 
     /* ════════════════════════════════════════════
        PAGE 1 — CREATE A TEAM
@@ -4521,7 +4528,9 @@
       max-width: 880px;
       margin-top: -20px;
       padding: 28px 20px 10px;
-      background: #eef1f5;
+      /* Light-blue tint to draw the eye to the "Link tools" call-to-action so
+         new users notice the entry point for connecting their apps. */
+      background: #e6f2fb;
       border-radius: 0 0 12px 12px;
       display: flex; align-items: center; justify-content: space-between;
       gap: 12px;
@@ -4531,11 +4540,11 @@
       position: relative;
       z-index: 1;
     }
-    .p8-link-tools:hover { background: #e4e9ef; }
+    .p8-link-tools:hover { background: #d6eafa; }
     .p8-link-tools-text {
       font-family: 'Poppins', sans-serif;
       font-size: 14px; line-height: 20px;
-      color: #6d7574;
+      color: #3d5568;
     }
     .p8-link-tools-right {
       display: flex; align-items: center; gap: 6px;
@@ -5198,21 +5207,26 @@
           </div>
         </div>
         <nav class="p8-sidebar-nav">
-          <div class="p8-nav-item" onclick="switchP8View('chat')">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="9" r="5.5"/>
-              <path d="M13.5 13.5l3 3"/>
-            </svg>
-            Search
-          </div>
-          <div class="p8-nav-item" id="p8-nav-newai" onclick="switchP8View('newai')">
+          <!-- "Build New AI" entry jumps the user straight back into the
+               onboarding flow at Step 1 (choose-an-option). The Skip-for-now
+               topnav button is suppressed for the duration because the user
+               has already landed in the product and deliberately chose to
+               build another AI. -->
+          <div class="p8-nav-item" id="p8-nav-newai" onclick="startBuildNewAI()">
             <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
               <rect x="4" y="3" width="12" height="8" rx="2"/>
               <path d="M7.5 11v2.5M12.5 11v2.5M6 16h8"/>
               <circle cx="8" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
               <circle cx="12" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
             </svg>
-            New AI
+            Build New AI
+          </div>
+          <div class="p8-nav-item" onclick="switchP8View('chat')">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="9" r="5.5"/>
+              <path d="M13.5 13.5l3 3"/>
+            </svg>
+            Search
           </div>
           <div class="p8-nav-item" id="p8-nav-admin" onclick="switchP8View('admin')">
             <svg class="nav-icon-outline" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -6246,7 +6260,13 @@
       if (typeof resetActivateBtn === 'function') resetActivateBtn();
     }
     if (page === 7) screens.classList.add('page7');
-    if (page === 8) screens.classList.add('page8');
+    if (page === 8) {
+      screens.classList.add('page8');
+      // Leaving the onboarding flow for the chat/home screen — clear the
+      // Build-New-AI flag so Skip-for-now reappears if the flow is entered
+      // again later via the normal (pre-signup) path.
+      screens.classList.remove('no-skip');
+    }
     // Handover secondary flow — pages 9/10/11/12. Reset any stale form state when
     // entering the intro so the flow feels fresh each time.
     if (page === 9) {
@@ -7070,6 +7090,18 @@
     { id: 'research', name: 'Research AI', role: 'Research Analyst', status: 'Active', created: 'Mar 02, 2026', memory: 'FREE', active: 'Mar 08', kb: '820 MB', value: '$210', access: 'Team', src: '' },
     { id: 'support',  name: 'Support AI',  role: 'Customer Support', status: 'Paused', created: 'Feb 24, 2026', memory: 'FREE', active: 'Feb 28', kb: '540 MB', value: '$180', access: 'Restricted', src: '' }
   ];
+
+  /* Sidebar "Build New AI" entry. Re-enters the onboarding flow at Step 1
+     (Page 2 — choose-an-option). Because the user is already inside the
+     product, we mark the screens container with .no-skip so the Skip-for-now
+     topnav button is hidden for the duration of this pass. The flag is
+     cleared by goTo(8) when the flow completes, so a future pre-signup
+     visitor still sees Skip. */
+  function startBuildNewAI() {
+    const s = document.getElementById('screens');
+    if (s) s.classList.add('no-skip');
+    goTo(2);
+  }
 
   function switchP8View(mode) {
     const chatBody  = document.getElementById('p8-chat-body');
