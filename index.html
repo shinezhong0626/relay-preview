@@ -1469,6 +1469,22 @@
       color: #9ca3af;
       line-height: 1.4;
     }
+    /* Big-display layout: the 8-card Recommended grid comfortably fits
+       above the fold, so we stop stretching the scroll region to the
+       full height and let the Continue button sit 32px below the last
+       row instead of pinned to the viewport bottom. On laptop-class
+       heights the original flex:1 stretch behavior is preserved so the
+       cards don't float with a giant gap beneath them. */
+    @media (min-height: 1100px) {
+      #page5 .p5-app-scroll {
+        flex: 0 1 auto;
+        -webkit-mask-image: none;
+                mask-image: none;
+      }
+      #page5 .p5-bottom-bar {
+        padding-top: 32px;
+      }
+    }
 
     .p5-profile-name-row {
       display: flex; align-items: center; gap: 8px;
