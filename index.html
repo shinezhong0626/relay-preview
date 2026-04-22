@@ -5113,33 +5113,12 @@
           </div>
         </div>
 
-        <div class="p6-divider"></div>
-
-        <!-- Pricing -->
-        <div class="p6-price-box">
-          <div class="p6-price-col">
-            <div class="p6-price-label">Current Price</div>
-            <div class="p6-price-row">
-              <div class="p6-price-value">FREE</div>
-              <span class="p6-beta-badge">BETA</span>
-            </div>
-          </div>
-          <div class="p6-price-col future">
-            <div class="p6-price-label">Future Price</div>
-            <div class="p6-price-row">
-              <div class="p6-price-value">$149.5</div>
-              <span class="future-strike">$299</span>
-              <span class="future-unit">/ one-time</span>
-              <span class="p6-off-pill">50% OFF FOR BETA USERS</span>
-            </div>
-          </div>
-        </div>
       </div>
 
-      <!-- Bottom action -->
+      <!-- Bottom action — pricing row removed (beta is free, no payment gate). -->
       <div class="p6-bottom">
         <button class="p6-activate-btn" id="p6-activate-btn" onclick="activatePayment()">
-          Continue &amp; Activate Digital Employee
+          Continue
         </button>
       </div>
     </div>
@@ -5978,29 +5957,12 @@
             </div>
           </div>
 
-          <div class="p12-price-box">
-            <div class="p12-price-col">
-              <div class="p12-price-label">Current Price</div>
-              <div class="p12-price-row">
-                <div class="p12-price-value">FREE</div>
-                <span class="p12-beta-badge">BETA</span>
-              </div>
-            </div>
-            <div class="p12-price-col">
-              <div class="p12-price-label">Future Price</div>
-              <div class="p12-price-row">
-                <div class="p12-price-value">$149.5</div>
-                <span class="p12-future-strike">$299</span>
-                <span class="p12-future-unit">/ one-time</span>
-                <span class="p12-off-pill">50% OFF FOR BETA USERS</span>
-              </div>
-            </div>
-          </div>
         </div>
 
+      <!-- Pricing row removed — beta is free, no payment gate on the handover flow either. -->
       <div class="p12-bottom">
         <button class="p12-activate-btn" type="button" onclick="handoverActivateDigitalEmployee()">
-          Continue &amp; Activate Digital Employee
+          Continue
         </button>
       </div>
     </div>
@@ -8120,19 +8082,21 @@
     }, 2400);
   }
 
-  /* ── Step 4: Payment flow (loading → confetti → step 5) ── */
+  /* ── Step 4: Activation flow (loading → confetti → step 5) ──
+     Previously a paid Activate step; beta is free so the button is just
+     "Continue" and the spinner text no longer mentions payment. */
   function resetActivateBtn() {
     const btn = document.getElementById('p6-activate-btn');
     if (!btn) return;
     btn.disabled = false;
-    btn.innerHTML = 'Continue &amp; Activate Digital Employee';
+    btn.innerHTML = 'Continue';
   }
 
   function activatePayment() {
     const btn = document.getElementById('p6-activate-btn');
     if (!btn || btn.disabled) return;
     btn.disabled = true;
-    btn.innerHTML = '<span class="p6-btn-spinner"></span>Processing payment…';
+    btn.innerHTML = '<span class="p6-btn-spinner"></span>Activating…';
 
     setTimeout(() => {
       fireConfetti(btn);
