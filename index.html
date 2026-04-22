@@ -2214,10 +2214,12 @@
       background: #fff; color: #07191e;
       box-shadow: 0 1px 3px rgba(7,25,30,0.06);
     }
-    /* Wrapper that centers the tab pill inside the 960px admin column,
-       matching .admin-head alignment above it. */
+    /* Wrapper that centers the tab pill horizontally so it aligns with
+       the input box below (also centered in the main column). The row
+       is still capped at 960px for consistency with the profile grid. */
     .admin-avtabs-row {
       max-width: 960px; width: 100%; margin: 0 auto;
+      text-align: center;
     }
     /* ── Chat-tab layout override ──
        When the Avatar Admin view is on the Chat tab, the admin-body shrinks
