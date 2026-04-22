@@ -191,13 +191,17 @@
 
 
     /* ── Page 2 body ── */
+    /* Content used to carry an animated heading. With that gone, perfect
+       vertical centering left too much breathing room below the cards on
+       tall screens. Anchor to top with a vh-scaled offset so the center of
+       gravity rides high without hugging the nav on small screens. */
     .p2-body {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 0px 40px 28px;
+      justify-content: flex-start;
+      padding: clamp(48px, 12vh, 160px) 40px 28px;
       gap: 0;
     }
 
@@ -289,11 +293,29 @@
       margin-bottom: 24px;
     }
 
+    .choice-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
     .choice-title {
       font-size: 18px;
       font-weight: 600;
       color: #07191e;
       line-height: 1.3;
+    }
+    .choice-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: #F0F2F5;
+      color: #5b6770;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.4;
+      white-space: nowrap;
     }
     .choice-desc {
       font-size: 13.5px;
@@ -4760,7 +4782,10 @@
             <img src="assets/build-your-ai-self.png" alt="Build your AI self" />
           </div>
           <div class="card-text">
-            <div class="choice-title">Build your AI self</div>
+            <div class="choice-title-row">
+              <div class="choice-title">Build your AI self</div>
+              <span class="choice-tag">Quick setup</span>
+            </div>
             <div class="choice-desc">Learns how you work and handles your tasks 24/7 — as a Slack bot.</div>
           </div>
           <button class="card-btn blue-btn">
@@ -4775,7 +4800,10 @@
             <img src="assets/build-your-teammate.png" alt="Build your teammate" />
           </div>
           <div class="card-text">
-            <div class="choice-title">Build your teammate AI</div>
+            <div class="choice-title-row">
+              <div class="choice-title">Build your teammate AI</div>
+              <span class="choice-tag">Longer setup</span>
+            </div>
             <div class="choice-desc">Capture their knowledge before they go. Your team keeps working with them.</div>
           </div>
           <button class="card-btn peach-btn" type="button" onclick="event.stopPropagation();goTo(9)">
