@@ -9509,9 +9509,12 @@
           '</span>'
         : '';
       const buildingTag = isGenerating ? '<span class="p8-chat-building-tag">Building</span>' : '';
-      // "NEW" pill sits right next to the name (before Building) so
-      // it's the first thing the eye catches. Cleared on select.
-      const newTag = member._isNew ? '<span class="p8-chat-new-tag">NEW</span>' : '';
+      // "NEW" pill — reserved for fully-built AIs only. Building AIs
+      // (Marcus) never get it; only user-created teammates that
+      // landed in status='ready'. Cleared on the user's next click.
+      const newTag = (member._isNew && !isGenerating)
+        ? '<span class="p8-chat-new-tag">NEW</span>'
+        : '';
       item.innerHTML =
         '<div class="p8-chat-avatar">' +
           '<img src="' + src + '" alt=""/>' +
@@ -9552,11 +9555,15 @@
       window._teammateDraftCommitted = true;
       return;
     }
+    // Freshly-built teammates land as a fully-ready AI (NOT generating)
+    // so the shimmering NEW pill — which is reserved for completed AIs
+    // — can show. Marcus AI stays as the one 'generating' demo row in
+    // the seed data; user-created ones skip that state entirely.
     _CODY_TEAM.unshift({
       name: draft.name,
       role: draft.role || 'Teammate',
-      preview: 'Waiting\u2026',
-      time: '',
+      preview: 'Hi! I\u2019m ready to help.',
+      time: 'Just now',
       badge: '',
       active: false,
       owned: true,
@@ -9564,7 +9571,7 @@
       linkedApps: ['slack', 'gmail', 'gdrive'],
       departingName: draft.departing || draft.name.replace(/ AI$/, ''),
       handoverUnread: 0,
-      status: 'generating',
+      status: 'ready',
       _isNewlyAdded: true,
       _isNew: true
     });
@@ -11280,10 +11287,12 @@
       const s = document.getElementById('screens');
       if (s) s.classList.remove('no-skip');
       goTo(8);
-      const draftName = window._teammateDraft && window._teammateDraft.name;
       if (typeof _commitTeammateDraft === 'function') _commitTeammateDraft();
-      const target = draftName || 'Marcus AI';
-      if (typeof selectTeamMember === 'function') selectTeamMember(target);
+      // Don't auto-select the freshly-built AI — selectTeamMember
+      // clears its NEW tag, and we want the shimmering pill to stay
+      // visible so the user notices the new row. Drop them back on
+      // Shine AI (the default home) and let them click through.
+      if (typeof selectTeamMember === 'function') selectTeamMember('Shine AI');
     } else {
       goTo(2);
     }
