@@ -2328,13 +2328,16 @@
       background: #ede9fe;
       display: block;
     }
+    /* Group avatar follows the Figma 48/32 spec: overall slot is
+       48x48 (same as any chat row avatar) and each of the two inner
+       portraits is 32x32, with a 2px white ring on the front one. */
     .p8-chat-avatar.group .p8-chat-avatar-back {
       top: 0; right: 0;
-      width: 65%; height: 65%;
+      width: 32px; height: 32px;
     }
     .p8-chat-avatar.group .p8-chat-avatar-front {
       bottom: 0; left: 0;
-      width: 68%; height: 68%;
+      width: 32px; height: 32px;
       border: 2px solid #fff;
       box-sizing: border-box;
     }
@@ -9287,21 +9290,21 @@
   /* Cody's pinned avatar index in the onboarding bank. Used wherever
      Cody needs a pixel-art portrait (self-built Cody AI, etc.). */
   const _CODY_AVATAR_INDEX = 12;
-  /* Real-person avatars (DiceBear personas, deterministic per seed)
-     for handover group chats. AI rows keep their pixel-art portraits;
-     only humans (departing teammates + Cody the new owner) use these
-     illustrated real-person avatars. MIT-licensed, served from their
-     CDN so the seed always yields the same face. */
-  const _DICEBEAR_BASE = 'https://api.dicebear.com/9.x/personas/svg?seed=';
+  /* Real-person avatars for handover group chats. Sourced from the
+     user's onboarding folder (photographic portraits) and served
+     locally so the repo is self-contained and avatars are stable.
+     AI rows keep their pixel-art portraits — these real-human photos
+     are scoped to the handover surface (sidebar row + chat bubbles +
+     Group Member panel). */
   const _REAL_AVATARS = {
-    'Shine Zhong':   _DICEBEAR_BASE + 'ShineZhong',
-    'Ana Rodríguez': _DICEBEAR_BASE + 'AnaRodriguez',
-    'Marcus Chen':   _DICEBEAR_BASE + 'MarcusChen',
-    'Priya Patel':   _DICEBEAR_BASE + 'PriyaPatel',
-    'Cody':          _DICEBEAR_BASE + 'CodySong'
+    'Shine Zhong':   'assets/person-shine.png',
+    'Ana Rodríguez': 'assets/person-ana.png',
+    'Marcus Chen':   'assets/person-marcus.png',
+    'Priya Patel':   'assets/person-priya.png',
+    'Cody':          'assets/person-cody.png'
   };
   function _realAvatarFor(name) {
-    return _REAL_AVATARS[name] || (_DICEBEAR_BASE + encodeURIComponent(name || 'User'));
+    return _REAL_AVATARS[name] || 'assets/person-cody.png';
   }
   function _relayLogoImg() {
     return '<img src="' + _RELAY_LOGO_SRC + '" alt="Relay assistant"/>';
