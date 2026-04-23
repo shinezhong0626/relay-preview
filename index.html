@@ -3701,13 +3701,12 @@
       background: transparent;
     }
     /* Disabled state — pending handover (e.g. Marcus before build
-       completes). Dims the input box + footer icons and blocks
-       keyboard/mouse interaction. Textarea still receives a custom
-       placeholder from JS; the Link-tools footer stays active so
-       Cody can prep connectors while waiting. */
+       completes). Keep the input box's normal white card + shadow so
+       it doesn't disappear into the grey column background. Only the
+       placeholder text and the footer icons/buttons are dimmed and
+       non-interactive; the Link-tools footer stays active so Cody
+       can prep connectors while waiting. */
     .ho-input-wrap.ho-input-disabled .p8-input-box {
-      background: #f3f5f9;
-      box-shadow: none;
       cursor: not-allowed;
     }
     .ho-input-wrap.ho-input-disabled .p8-input-text {
@@ -3718,7 +3717,7 @@
       color: #9aa0a6;
     }
     .ho-input-wrap.ho-input-disabled .p8-input-footer button {
-      opacity: 0.5;
+      opacity: 0.4;
       pointer-events: none;
     }
 
@@ -3840,6 +3839,23 @@
     .ho-member-tag.tag-admin {
       background: #f3f4f6;
       color: #374151;
+    }
+    .ho-member-tag.tag-waiting {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+    /* Pending-member avatar: departing teammate hasn't linked their
+       account yet, so we can't show their real photo. Render a neutral
+       grey circle with a clock/hourglass glyph so it reads as "this
+       person hasn't joined yet". */
+    .ho-member-avatar.pending {
+      background: #e5e7eb;
+      color: #9aa0a6;
+      border-color: rgba(7,25,30,0.06);
+    }
+    .ho-member-avatar.pending svg {
+      width: 16px; height: 16px;
+      display: block;
     }
     .ho-member-role {
       font-size: 11px; line-height: 14px;
@@ -5880,6 +5896,15 @@
       font-size: 14px; font-weight: 600;
       line-height: 20px;
       color: #07191e;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .p8-msg-ai-time {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 16px;
+      color: #9aa0a6;
     }
     .p8-msg-ai-text {
       color: #07191e;
@@ -8621,6 +8646,17 @@
     return convo;
   }
 
+  /* Human-friendly "HH:MM AM/PM" timestamp shown next to the AI
+     name — makes the message feel like a real chat log. Locale
+     defaults to the user's browser. */
+  function _nowChatTime() {
+    try {
+      return new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    } catch (e) {
+      return 'now';
+    }
+  }
+
   function appendAIResponse(text) {
     const convo = document.getElementById('p8-conversation');
     if (!convo) return;
@@ -8640,7 +8676,10 @@
         '<img src="' + avatarSrc + '" alt=""/>' +
       '</span>' +
       '<div class="p8-msg-ai-body">' +
-        '<div class="p8-msg-ai-name">' + AI_NAME + '</div>' +
+        '<div class="p8-msg-ai-name">' +
+          AI_NAME +
+          '<span class="p8-msg-ai-time">' + _nowChatTime() + '</span>' +
+        '</div>' +
         '<div class="p8-msg-ai-text"><span class="p8-ai-typing"></span></div>' +
       '</div>';
     convo.appendChild(msg);
@@ -8845,7 +8884,12 @@
             '<img src="' + avatarSrc + '" alt=""/>' +
           '</span>' +
           '<div class="p8-msg-ai-body">' +
-            '<div class="p8-msg-ai-name">' + AI_NAME + '</div>' +
+            '<div class="p8-msg-ai-name">' +
+              AI_NAME +
+              '<span class="p8-msg-ai-time">' +
+                (typeof _nowChatTime === 'function' ? _nowChatTime() : 'now') +
+              '</span>' +
+            '</div>' +
             '<div class="p8-msg-ai-text p8-msg-ai-greeting">' + greetingHtml + '</div>' +
           '</div>';
         convo.appendChild(msg);
@@ -9748,6 +9792,56 @@
     // member" affordance (Cody is the org owner in this demo, so he
     // can pull teammates into the handover thread).
     if (membersList) {
+      // Pending handovers render the departing teammate with a grey
+      // placeholder avatar + clock glyph + "Waiting" tag — their real
+      // profile isn't linked yet, so there's nothing to show. Receiver
+      // row is skipped entirely (no Alex Kim assigned until the build
+      // completes).
+      const clockIconSvg =
+        '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" ' +
+        'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+        '<circle cx="10" cy="10" r="7"/>' +
+        '<path d="M10 6v4l2.5 1.5"/>' +
+        '</svg>';
+      const departingRow = isPending
+        ? (
+            '<div class="ho-member">' +
+              '<span class="ho-member-avatar pending" title="Waiting for ' + departing + ' to join">' + clockIconSvg + '</span>' +
+              '<div class="ho-member-info">' +
+                '<div class="ho-member-name-row">' +
+                  '<span class="ho-member-name">' + departing + '</span>' +
+                  '<span class="ho-member-tag tag-waiting">Waiting</span>' +
+                '</div>' +
+                '<div class="ho-member-role">Waiting to join</div>' +
+              '</div>' +
+            '</div>'
+          )
+        : (
+            '<div class="ho-member">' +
+              '<span class="ho-member-avatar"><img src="' + departingAvatar + '" alt=""/></span>' +
+              '<div class="ho-member-info">' +
+                '<div class="ho-member-name-row">' +
+                  '<span class="ho-member-name">' + departing + '</span>' +
+                  '<span class="ho-member-tag tag-departing">Departing</span>' +
+                '</div>' +
+                '<div class="ho-member-role">' + member.role + '</div>' +
+              '</div>' +
+            '</div>'
+          );
+      const receiverRow = isPending
+        ? ''
+        : (
+            '<div class="ho-member">' +
+              '<span class="ho-member-avatar"><img src="' + receiverAvatar + '" alt=""/></span>' +
+              '<div class="ho-member-info">' +
+                '<div class="ho-member-name-row">' +
+                  '<span class="ho-member-name">' + receiverName + '</span>' +
+                  '<span class="ho-member-tag tag-receiver">Receiver</span>' +
+                '</div>' +
+                '<div class="ho-member-role">' + member.role + '</div>' +
+              '</div>' +
+            '</div>'
+          );
       membersList.innerHTML =
         // Relay assistant — always first
         '<div class="ho-member">' +
@@ -9759,30 +9853,8 @@
             '<div class="ho-member-role">Mediator</div>' +
           '</div>' +
         '</div>' +
-        // Departing teammate
-        '<div class="ho-member">' +
-          '<span class="ho-member-avatar"><img src="' + departingAvatar + '" alt=""/></span>' +
-          '<div class="ho-member-info">' +
-            '<div class="ho-member-name-row">' +
-              '<span class="ho-member-name">' + departing + '</span>' +
-              '<span class="ho-member-tag tag-departing">Departing</span>' +
-            '</div>' +
-            '<div class="ho-member-role">' + member.role + '</div>' +
-          '</div>' +
-        '</div>' +
-        // Receiver — Alex Kim, taking over the departing teammate's
-        // role. Subtitle shows the same job title so the handover
-        // reads as same-role replacement.
-        '<div class="ho-member">' +
-          '<span class="ho-member-avatar"><img src="' + receiverAvatar + '" alt=""/></span>' +
-          '<div class="ho-member-info">' +
-            '<div class="ho-member-name-row">' +
-              '<span class="ho-member-name">' + receiverName + '</span>' +
-              '<span class="ho-member-tag tag-receiver">Receiver</span>' +
-            '</div>' +
-            '<div class="ho-member-role">' + member.role + '</div>' +
-          '</div>' +
-        '</div>' +
+        departingRow +
+        receiverRow +
         // Cody — org admin observing the handover. Keeps the "C" blue
         // chip (not a real photo) to match his account chrome. HR is
         // Cody\u2019s actual job title in the demo.
