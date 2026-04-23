@@ -97,7 +97,12 @@
       line-height: 1.5;
       margin: 0;
     }
-    .demo-picker-cards { max-width: 760px; }
+    /* Stack the two demo cards vertically. Narrower max-width since
+       a single-column layout doesn't need the full horizontal span. */
+    .demo-picker-cards {
+      flex-direction: column;
+      max-width: 440px;
+    }
 
     /* ── Shared nav ── */
     .topnav {
@@ -5273,7 +5278,6 @@
           </div>
           <div class="card-text">
             <div class="choice-title">Shine — Fresh onboarding</div>
-            <div class="choice-desc">Brand-new account. Walk through team creation, the build flow, and the loading → first chat sequence end-to-end.</div>
           </div>
           <button class="card-btn blue-btn" type="button" onclick="event.stopPropagation();goTo(1)">
             Start onboarding
@@ -5290,7 +5294,6 @@
           </div>
           <div class="card-text">
             <div class="choice-title">Cody — Existing user home</div>
-            <div class="choice-desc">Drop straight into the product home as an existing user with 4 AI employees on the team (including Shine AI).</div>
           </div>
           <button class="card-btn peach-btn" type="button" onclick="event.stopPropagation();enterCodyDemo()">
             Enter product
