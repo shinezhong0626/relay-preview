@@ -1971,52 +1971,64 @@
     }
     /* ── Read-only AI profile panel (right side) ──
        Opens when the user clicks the AI avatar in a chat bubble. Shows
-       org-visible info (name, role, managed-by, linked apps) with no
-       mutate actions — the Admin tab remains the editing surface. */
+       org-visible info (avatar, name, role, visibility, managed-by,
+       linked apps) with no mutate actions — the Admin tab remains the
+       editing surface. Layout: avatar w/ status dot → name → subtitle
+       → inline meta (Restricted · Managed by Shine) → linked apps. */
     .p8-ai-panel {
       width: 280px; flex-shrink: 0;
       background: #fff;
       border-left: 1px solid #e5e7eb;
-      padding: 16px 20px 20px;
+      padding: 28px 20px 24px;
       display: flex; flex-direction: column;
-      gap: 14px;
+      gap: 10px;
       overflow-y: auto;
       font-family: 'Poppins', sans-serif;
+      position: relative;
     }
     .p8-ai-panel[hidden] { display: none; }
-    .p8-ai-panel-head {
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .p8-ai-panel-title {
-      font-size: 13px; font-weight: 600;
-      color: #6b7280;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-    }
+    /* Floating close button in the top-right corner */
     .p8-ai-panel-close {
+      position: absolute;
+      top: 12px; right: 12px;
       background: transparent; border: none;
       width: 28px; height: 28px;
       border-radius: 8px;
-      color: #6b7280; cursor: pointer;
+      color: #9aa0a6; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      transition: background 0.12s;
+      transition: background 0.12s, color 0.12s;
     }
     .p8-ai-panel-close:hover { background: #f3f5f9; color: #07191e; }
+    /* Avatar + status dot overlay */
+    .p8-ai-panel-avatar-wrap {
+      position: relative;
+      width: 72px; height: 72px;
+      align-self: flex-start;
+      margin-bottom: 4px;
+    }
     .p8-ai-panel-avatar {
       width: 72px; height: 72px;
       border-radius: 50%;
       overflow: hidden;
       background: #ede9fe;
       border: 1px solid rgba(7,25,30,0.08);
-      align-self: flex-start;
     }
     .p8-ai-panel-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .p8-ai-panel-status {
+      position: absolute;
+      bottom: 2px; right: 2px;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #22c55e;
+      border: 2px solid #fff;
+    }
+    /* Name row — large name + optional Demo tag inline */
     .p8-ai-panel-name-row {
       display: flex; align-items: center; gap: 8px;
       flex-wrap: wrap;
     }
     .p8-ai-panel-name {
-      font-size: 18px; font-weight: 600; line-height: 24px;
+      font-size: 20px; font-weight: 600; line-height: 26px;
       color: #07191e;
     }
     .p8-ai-panel-tag {
@@ -2027,14 +2039,46 @@
       padding: 2px 8px;
     }
     .p8-ai-panel-tag[hidden] { display: none; }
-    .p8-ai-panel-role {
-      font-size: 13px; line-height: 18px;
+    /* Subtitle (role / short description) */
+    .p8-ai-panel-sub {
+      font-size: 14px; line-height: 20px;
       color: #6b7280;
-      margin-top: -6px;
+    }
+    /* Inline meta row: Restricted · [S] Managed by Shine */
+    .p8-ai-panel-meta {
+      display: flex; align-items: center; gap: 6px;
+      flex-wrap: wrap;
+      font-size: 13px; line-height: 20px;
+      color: #07191e;
+      margin-top: 2px;
+    }
+    .p8-ai-panel-visibility {
+      color: #07191e;
+    }
+    .p8-ai-panel-meta-dot {
+      color: #c4c7cc;
+      margin: 0 2px;
+    }
+    .p8-ai-panel-manager-chip {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: #07191e;
+      color: #fff;
+      font-size: 10px; font-weight: 500;
+      display: inline-flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .p8-ai-panel-manager-text {
+      color: #6b7280;
+    }
+    .p8-ai-panel-manager-text strong {
+      color: #07191e;
+      font-weight: 600;
     }
     .p8-ai-panel-section {
       display: flex; flex-direction: column; gap: 8px;
-      padding-top: 12px;
+      padding-top: 16px;
+      margin-top: 12px;
       border-top: 1px solid #f1f3f6;
     }
     .p8-ai-panel-section-head {
@@ -2043,30 +2087,8 @@
       letter-spacing: 0.04em;
       text-transform: uppercase;
     }
-    .p8-ai-panel-managed {
-      display: flex; align-items: center; gap: 10px;
-    }
-    .p8-ai-panel-managed-avatar {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      background: #ae3906;
-      color: #fff;
-      font-size: 14px; font-weight: 500;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .p8-ai-panel-managed-text {
-      min-width: 0;
-    }
-    .p8-ai-panel-managed-name {
-      font-size: 13px; font-weight: 500; color: #07191e;
-      line-height: 18px;
-    }
-    .p8-ai-panel-managed-sub {
-      font-size: 12px; color: #9aa0a6; line-height: 16px;
-    }
     .p8-ai-panel-apps {
-      display: flex; flex-direction: column; gap: 6px;
+      display: flex; flex-direction: column; gap: 4px;
     }
     .p8-ai-panel-app {
       display: flex; align-items: center; gap: 10px;
@@ -2087,13 +2109,6 @@
     .p8-ai-panel-apps-empty {
       font-size: 12px; color: #9aa0a6; font-style: italic;
       padding: 6px 8px;
-    }
-    .p8-ai-panel-footer {
-      margin-top: auto;
-      font-size: 11px; color: #9aa0a6;
-      line-height: 16px;
-      padding-top: 10px;
-      border-top: 1px solid #f1f3f6;
     }
     /* ── Sidebar 320px ── */
     .p8-sidebar {
@@ -6149,32 +6164,38 @@
            linked apps) but has no edit actions — the Admin tab is where a
            permissioned user goes to mutate any of this. Hidden by default. -->
       <aside class="p8-ai-panel" id="p8-ai-panel" hidden>
-        <div class="p8-ai-panel-head">
-          <span class="p8-ai-panel-title">Profile</span>
-          <button class="p8-ai-panel-close" type="button" onclick="closeAiProfilePanel()" aria-label="Close">
-            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M5 5l10 10M15 5L5 15"/>
-            </svg>
-          </button>
+        <!-- Floating close in the top-right corner. No other chrome so the
+             panel reads as a single profile card. -->
+        <button class="p8-ai-panel-close" type="button" onclick="closeAiProfilePanel()" aria-label="Close">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 5l10 10M15 5L5 15"/>
+          </svg>
+        </button>
+
+        <!-- Avatar with a green status dot overlay. -->
+        <div class="p8-ai-panel-avatar-wrap">
+          <div class="p8-ai-panel-avatar">
+            <img id="p8-ai-panel-avatar-img" src="" alt=""/>
+          </div>
+          <span class="p8-ai-panel-status" aria-label="Active"></span>
         </div>
-        <div class="p8-ai-panel-avatar">
-          <img id="p8-ai-panel-avatar-img" src="" alt=""/>
-        </div>
+
+        <!-- Name + optional Demo tag -->
         <div class="p8-ai-panel-name-row">
           <span class="p8-ai-panel-name" id="p8-ai-panel-name">Shine AI</span>
           <span class="p8-ai-panel-tag" id="p8-ai-panel-tag" hidden>Demo</span>
         </div>
-        <div class="p8-ai-panel-role" id="p8-ai-panel-role">AI Employee</div>
 
-        <div class="p8-ai-panel-section">
-          <div class="p8-ai-panel-section-head">Managed by</div>
-          <div class="p8-ai-panel-managed">
-            <div class="p8-ai-panel-managed-avatar">S</div>
-            <div class="p8-ai-panel-managed-text">
-              <div class="p8-ai-panel-managed-name">Shine Zhong</div>
-              <div class="p8-ai-panel-managed-sub">Admin · Tanka</div>
-            </div>
-          </div>
+        <!-- Subtitle: role / short description -->
+        <div class="p8-ai-panel-sub" id="p8-ai-panel-role">AI Employee</div>
+
+        <!-- Visibility + Managed-by inline meta. No buttons, purely
+             informational. Small S chip visually anchors "Managed by Shine". -->
+        <div class="p8-ai-panel-meta">
+          <span class="p8-ai-panel-visibility">Restricted</span>
+          <span class="p8-ai-panel-meta-dot">·</span>
+          <span class="p8-ai-panel-manager-chip">S</span>
+          <span class="p8-ai-panel-manager-text">Managed by <strong>Shine</strong></span>
         </div>
 
         <div class="p8-ai-panel-section">
@@ -6183,8 +6204,6 @@
             <!-- Populated by renderAiPanelApps() on open. -->
           </div>
         </div>
-
-        <div class="p8-ai-panel-footer">Read-only · Ask an admin to request changes.</div>
       </aside>
     </div>
   </div>
