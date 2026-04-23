@@ -97,11 +97,87 @@
       line-height: 1.5;
       margin: 0;
     }
-    /* Stack the two demo cards vertically. Narrower max-width since
-       a single-column layout doesn't need the full horizontal span. */
-    .demo-picker-cards {
-      flex-direction: column;
-      max-width: 440px;
+    /* Account-row style demo entries. Two rows stacked vertically; each
+       reads as a "choose an account" item with avatar + name + email +
+       tag + forward button on the right. */
+    .demo-users {
+      width: 100%;
+      max-width: 480px;
+      display: flex; flex-direction: column;
+      gap: 12px;
+    }
+    .demo-user-card {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px;
+      background: #fff;
+      border: 1px solid #e7eaed;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.18s;
+    }
+    .demo-user-card:hover {
+      background: #f7fbff;
+      border-color: #cfe7fb;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(1,66,97,0.06);
+    }
+    .demo-user-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500; font-size: 16px;
+      letter-spacing: 0.5px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .demo-user-avatar.shine { background: #7c5cff; }
+    .demo-user-avatar.cody  { background: #2563eb; }
+    .demo-user-info {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .demo-user-name {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600; font-size: 15px; line-height: 20px;
+      color: #07191e;
+    }
+    .demo-user-email {
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; line-height: 18px;
+      color: #6b7280;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .demo-user-tag {
+      flex-shrink: 0;
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px; font-weight: 500; line-height: 16px;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+    .demo-user-tag.onboarding {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+    .demo-user-tag.existing {
+      background: #fff3ef;
+      color: #ae3906;
+    }
+    .demo-user-btn {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      border: 1px solid rgba(7,25,30,0.12);
+      background: #fff;
+      color: #07191e;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .demo-user-btn:hover {
+      background: #07191e;
+      color: #fff;
+      border-color: #07191e;
     }
 
     /* ── Shared nav ── */
@@ -5349,36 +5425,33 @@
         <h2 class="demo-picker-title">Choose a demo flow</h2>
         <p class="demo-picker-sub">Pick the experience you want to walk through.</p>
       </div>
-      <div class="choice-cards demo-picker-cards">
-        <div class="choice-card left" onclick="goTo(1)" style="cursor:pointer">
-          <div class="card-icon blue">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#014261" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="8" r="4"/>
-              <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+      <div class="demo-users">
+        <!-- Account row for Shine — routes to fresh onboarding (page 1). -->
+        <div class="demo-user-card" onclick="goTo(1)">
+          <div class="demo-user-avatar shine">S</div>
+          <div class="demo-user-info">
+            <div class="demo-user-name">Shine</div>
+            <div class="demo-user-email">shine@tanka.ai</div>
+          </div>
+          <span class="demo-user-tag onboarding">Onboarding</span>
+          <button class="demo-user-btn" type="button" onclick="event.stopPropagation();goTo(1)" aria-label="Start onboarding">
+            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 10h10M10 5l5 5-5 5"/>
             </svg>
-          </div>
-          <div class="card-text">
-            <div class="choice-title">Shine — Fresh onboarding</div>
-          </div>
-          <button class="card-btn blue-btn" type="button" onclick="event.stopPropagation();goTo(1)">
-            Start onboarding
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
           </button>
         </div>
-        <div class="choice-card right" onclick="enterCodyDemo()" style="cursor:pointer">
-          <div class="card-icon peach">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ae3906" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 12l9-9 9 9"/>
-              <path d="M5 10v10h14V10"/>
-              <path d="M10 20v-6h4v6"/>
+        <!-- Account row for Cody — drops straight into the product home. -->
+        <div class="demo-user-card" onclick="enterCodyDemo()">
+          <div class="demo-user-avatar cody">C</div>
+          <div class="demo-user-info">
+            <div class="demo-user-name">Cody</div>
+            <div class="demo-user-email">cody@tanka.ai</div>
+          </div>
+          <span class="demo-user-tag existing">Existing</span>
+          <button class="demo-user-btn" type="button" onclick="event.stopPropagation();enterCodyDemo()" aria-label="Enter product">
+            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 10h10M10 5l5 5-5 5"/>
             </svg>
-          </div>
-          <div class="card-text">
-            <div class="choice-title">Cody — Existing user home</div>
-          </div>
-          <button class="card-btn peach-btn" type="button" onclick="event.stopPropagation();enterCodyDemo()">
-            Enter product
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
           </button>
         </div>
       </div>
