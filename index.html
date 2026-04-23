@@ -3184,69 +3184,179 @@
     }
     .p8-newai-body[hidden] { display: none; }
 
-    /* ── Handover body (shown when Handover tab is active) ──
-       Centered card in a light-gray field; matches the calm tone of
-       the admin view (not the chat). */
+    /* ── Handover body ──
+       Group-chat surface between the departing teammate, Relay AI,
+       and the new owner (Cody). Mirrors the main chat column: header
+       with participants, scrollable message list, bottom input. */
     .p8-handover-body {
       flex: 1; min-height: 0;
-      overflow-y: auto;
-      padding: 48px 48px;
-      background: #fafbfc;
+      background: #fff;
       font-family: 'Poppins', sans-serif;
       display: flex;
-      align-items: flex-start;
-      justify-content: center;
+      flex-direction: column;
     }
     .p8-handover-body[hidden] { display: none; }
-    .handover-body-card {
-      max-width: 560px; width: 100%;
+    .ho-group-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 48px;
+      border-bottom: 1px solid #e5e7eb;
       background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 16px;
-      padding: 32px;
-      display: flex; flex-direction: column;
-      gap: 16px;
+      flex-shrink: 0;
     }
-    .handover-body-icon {
-      width: 56px; height: 56px;
-      border-radius: 14px;
-      background: #fff3ef;
-      color: #ae3906;
+    .ho-group-avatars {
+      display: inline-flex; align-items: center;
+    }
+    .ho-group-avatars .ho-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid #fff;
+      background: #ede9fe;
+      margin-left: -8px;
+      box-shadow: 0 0 0 1px rgba(7,25,30,0.06);
+    }
+    .ho-group-avatars .ho-avatar:first-child { margin-left: 0; }
+    .ho-group-avatars .ho-avatar img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .ho-group-avatars .ho-avatar.initial {
       display: flex; align-items: center; justify-content: center;
+      color: #fff; font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 500;
     }
-    .handover-body-title {
-      font-size: 22px; font-weight: 600; line-height: 28px;
-      color: #07191e;
-      margin: 0;
+    .ho-group-meta {
+      display: flex; flex-direction: column; gap: 2px;
     }
-    .handover-body-desc {
-      font-size: 14px; line-height: 22px;
-      color: #6b7280;
-      margin: 0;
-    }
-    .handover-body-actions {
-      display: flex; gap: 12px;
-      margin-top: 8px;
-    }
-    .handover-body-primary,
-    .handover-body-secondary {
-      height: 40px;
-      padding: 0 18px;
-      border-radius: 10px;
+    .ho-group-title {
       font-family: 'Poppins', sans-serif;
-      font-size: 14px; font-weight: 500;
+      font-size: 16px; font-weight: 600; line-height: 22px;
+      color: #07191e;
+    }
+    .ho-group-sub {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px; line-height: 16px;
+      color: #6d7574;
+    }
+    /* Scrollable message list */
+    .ho-chat-body {
+      flex: 1; min-height: 0;
+      overflow-y: auto;
+      padding: 24px 48px 16px;
+      display: flex; flex-direction: column; gap: 18px;
+    }
+    .ho-msg {
+      display: flex; align-items: flex-start; gap: 12px;
+      max-width: 720px;
+    }
+    .ho-msg-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #ede9fe;
+      flex-shrink: 0;
+      border: 1px solid rgba(7,25,30,0.08);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-family: 'Poppins', sans-serif;
+      font-size: 12px; font-weight: 500;
+    }
+    .ho-msg-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ho-msg-body {
+      display: flex; flex-direction: column; gap: 4px;
+      min-width: 0;
+    }
+    .ho-msg-head {
+      display: flex; align-items: baseline; gap: 8px;
+    }
+    .ho-msg-name {
+      font-size: 13px; font-weight: 600; line-height: 18px;
+      color: #07191e;
+    }
+    .ho-msg-tag {
+      font-size: 10px; font-weight: 500;
+      color: #6b7280;
+      background: #f3f4f6;
+      border-radius: 4px;
+      padding: 1px 6px;
+    }
+    .ho-msg-time {
+      font-size: 11px; line-height: 16px;
+      color: #9aa0a6;
+    }
+    .ho-msg-text {
+      font-size: 14px; line-height: 22px;
+      color: #07191e;
+      white-space: pre-wrap;
+    }
+    /* System notice row (e.g. "Handover started") */
+    .ho-msg.system {
+      align-self: center;
+      max-width: 480px;
+      justify-content: center;
+    }
+    .ho-msg.system .ho-msg-text {
+      font-size: 12px;
+      color: #6b7280;
+      text-align: center;
+      background: #f3f5f9;
+      padding: 6px 12px;
+      border-radius: 999px;
+    }
+    /* Input bar at the bottom, mirroring the main chat input. */
+    .ho-input-area {
+      padding: 12px 48px 20px;
+      background: #fff;
+      flex-shrink: 0;
+    }
+    .ho-input-box {
+      max-width: 920px; width: 100%;
+      margin: 0 auto;
+      background: #fdfefe;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+    .ho-input-text {
+      flex: 1;
+      resize: none;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px; line-height: 22px;
+      color: #07191e;
+      max-height: 120px;
+    }
+    .ho-input-send {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: #07191e;
+      color: #fff;
+      border: none;
+      display: flex; align-items: center; justify-content: center;
       cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
+      flex-shrink: 0;
     }
-    .handover-body-primary {
-      background: #07191e; color: #fff; border: 1px solid #07191e;
+    .ho-input-send svg { width: 18px; height: 18px; }
+
+    /* ── Tab unread count badge (Chat / Handover / Admin) ──
+       Small blue pill that sits to the right of the tab label. Hidden
+       when data-count is empty or "0"; revealed via data-count. */
+    .admin-tab {
+      display: inline-flex; align-items: center; gap: 6px;
     }
-    .handover-body-primary:hover { background: #000; }
-    .handover-body-secondary {
-      background: #fff; color: #07191e;
-      border: 1px solid rgba(7,25,30,0.2);
+    .admin-tab .admin-tab-count {
+      font-size: 10px; font-weight: 600; line-height: 14px;
+      background: #0089e6;
+      color: #fff;
+      padding: 0 6px;
+      border-radius: 999px;
+      min-width: 16px;
+      text-align: center;
     }
-    .handover-body-secondary:hover { background: #f7f8fb; }
+    .admin-tab .admin-tab-count[hidden] { display: none; }
+    .admin-tab.active .admin-tab-count { background: #07191e; }
 
     /* Embedded "Choose an option" heading — matches the page-2 full-screen
        typography but lives inside the main column so the sidebar stays put. */
@@ -6052,15 +6162,24 @@
             <div class="admin-tabs" role="tablist" aria-label="Avatar view">
               <button class="admin-tab active" id="av-tab-chat" type="button"
                       role="tab" aria-selected="true"
-                      onclick="switchAvatarTab('chat')">Chat</button>
+                      onclick="switchAvatarTab('chat')">
+                <span>Chat</span>
+                <span class="admin-tab-count" id="av-tab-chat-count" hidden></span>
+              </button>
               <!-- Handover tab — only shown for AIs the current user owns.
                    selectTeamMember() toggles this via data-owned. -->
               <button class="admin-tab" id="av-tab-handover" type="button"
                       role="tab" aria-selected="false" hidden
-                      onclick="switchAvatarTab('handover')">Handover</button>
+                      onclick="switchAvatarTab('handover')">
+                <span>Handover</span>
+                <span class="admin-tab-count" id="av-tab-handover-count" hidden></span>
+              </button>
               <button class="admin-tab" id="av-tab-profile" type="button"
                       role="tab" aria-selected="false"
-                      onclick="switchAvatarTab('profile')">Admin</button>
+                      onclick="switchAvatarTab('profile')">
+                <span>Admin</span>
+                <span class="admin-tab-count" id="av-tab-profile-count" hidden></span>
+              </button>
             </div>
           </div>
           <div class="p8-nav-actions">
@@ -6377,19 +6496,32 @@
              owned AI. Keeps the current user (Cody) in-app and gives a
              clear "kick off handover" affordance that defers to the
              existing full-screen handover flow (page 10+) when clicked. -->
+        <!-- HANDOVER VIEW — a group chat between the departing teammate,
+             the new owner (Cody), and Relay AI. Structure mirrors the
+             regular chat: scrollable message list + input box, with a
+             group header at the top that stacks member avatars so the
+             "who's in this chat" context is always visible. -->
         <div class="p8-handover-body" id="p8-handover-body" hidden>
-          <div class="handover-body-card">
-            <div class="handover-body-icon">
-              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12h13M12 6l4 6-4 6"/>
-                <path d="M20 6v12"/>
-              </svg>
+          <div class="ho-group-header">
+            <div class="ho-group-avatars" id="ho-group-avatars">
+              <!-- Populated by renderHandoverChat() with departing + Relay + Cody avatars. -->
             </div>
-            <h2 class="handover-body-title">Handover <span id="p8-handover-name">this AI</span></h2>
-            <p class="handover-body-desc">Transfer ownership, pause activity, or archive when the employee leaves. Handover preserves the AI's memory and context for the next owner.</p>
-            <div class="handover-body-actions">
-              <button class="handover-body-primary" type="button" onclick="goTo(10)">Start handover flow</button>
-              <button class="handover-body-secondary" type="button">Archive AI</button>
+            <div class="ho-group-meta">
+              <div class="ho-group-title">Handover · <span id="ho-group-name">this AI</span></div>
+              <div class="ho-group-sub"><span id="ho-group-count">3</span> members</div>
+            </div>
+          </div>
+          <div class="ho-chat-body" id="ho-chat-body">
+            <!-- Messages injected by renderHandoverChat(). -->
+          </div>
+          <div class="ho-input-area">
+            <div class="ho-input-box">
+              <textarea class="ho-input-text" rows="1" placeholder="Message this handover…"></textarea>
+              <button class="ho-input-send" type="button" aria-label="Send">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10 16V4M5.5 8.5L10 4l4.5 4.5"/>
+                </svg>
+              </button>
             </div>
           </div>
         </div>
@@ -7995,10 +8127,14 @@
      it, not admin or hand it over. owned=true gets the 3-tab view
      (Chat / Handover / Admin). */
   const _CODY_TEAM = [
-    { name: 'Shine AI',  role: 'UI Designer',     preview: 'welcome to relay',      time: 'Just now',  badge: '1', active: true,  owned: false, avatarIndex: 0,  linkedApps: ['slack', 'figma', 'notion', 'gdrive'] },
-    { name: 'Ana AI',    role: 'Product Manager', preview: 'Sprint recap is ready', time: '2h',        badge: '',  active: false, owned: true,  avatarIndex: 3,  linkedApps: ['slack', 'notion', 'jira', 'linear'] },
-    { name: 'Marcus AI', role: 'Engineer',        preview: 'CI is green again',     time: 'Yesterday', badge: '',  active: false, owned: true,  avatarIndex: 6,  linkedApps: ['github', 'linear', 'jira', 'slack'] },
-    { name: 'Priya AI',  role: 'Marketing',       preview: 'Campaign draft posted', time: 'Mon',       badge: '',  active: false, owned: true,  avatarIndex: 9,  linkedApps: ['slack', 'gmail', 'gdrive', 'notion'] }
+    { name: 'Shine AI',  role: 'UI Designer',     preview: 'welcome to relay',      time: 'Just now',  badge: '1', active: true,  owned: false, avatarIndex: 0,  linkedApps: ['slack', 'figma', 'notion', 'gdrive'],
+      departingName: 'Shine Zhong',   handoverUnread: 0 },
+    { name: 'Ana AI',    role: 'Product Manager', preview: 'Sprint recap is ready', time: '2h',        badge: '',  active: false, owned: true,  avatarIndex: 3,  linkedApps: ['slack', 'notion', 'jira', 'linear'],
+      departingName: 'Ana Rodríguez', handoverUnread: 2 },
+    { name: 'Marcus AI', role: 'Engineer',        preview: 'CI is green again',     time: 'Yesterday', badge: '',  active: false, owned: true,  avatarIndex: 6,  linkedApps: ['github', 'linear', 'jira', 'slack'],
+      departingName: 'Marcus Chen',   handoverUnread: 0 },
+    { name: 'Priya AI',  role: 'Marketing',       preview: 'Campaign draft posted', time: 'Mon',       badge: '',  active: false, owned: true,  avatarIndex: 9,  linkedApps: ['slack', 'gmail', 'gdrive', 'notion'],
+      departingName: 'Priya Patel',   handoverUnread: 1 }
   ];
 
   function enterCodyDemo() {
@@ -8111,6 +8247,121 @@
     const handoverTab = document.getElementById('av-tab-handover');
     if (avtabsBar) avtabsBar.hidden = !member.owned;
     if (handoverTab) handoverTab.hidden = !member.owned;
+
+    // Refresh the per-tab unread badges and the handover chat content
+    // for the newly-selected member.
+    updateTabUnreadCounts(member);
+    renderHandoverChat(member);
+  }
+
+  /* Render the Handover group chat for the currently selected team
+     member. Three participants:
+       1. The departing teammate (the AI's original owner).
+       2. Relay AI (acts as the mediator / source-of-truth bot).
+       3. Cody (the new owner).
+     Messages are seeded from the AI's linked-app context so the chat
+     reads as a real knowledge-transfer conversation. */
+  function renderHandoverChat(member) {
+    const avatarsWrap = document.getElementById('ho-group-avatars');
+    const nameEl      = document.getElementById('ho-group-name');
+    const countEl     = document.getElementById('ho-group-count');
+    const body        = document.getElementById('ho-chat-body');
+    if (!avatarsWrap || !body) return;
+
+    const opts = Array.from(document.querySelectorAll('.av2-opt'));
+    const memberAvatar = (opts[member.avatarIndex] && opts[member.avatarIndex].dataset.src) || '';
+    const departing    = member.departingName || 'Teammate';
+    const departingInit = departing.charAt(0).toUpperCase();
+    const aiName = member.name;
+
+    if (nameEl)  nameEl.textContent = aiName;
+    if (countEl) countEl.textContent = '3';
+
+    // Member avatar row: departing (real avatar), Relay AI (dark chip),
+    // Cody (blue "C"). Stacked with a slight overlap.
+    avatarsWrap.innerHTML =
+      '<span class="ho-avatar"><img src="' + memberAvatar + '" alt="' + departing + '"/></span>' +
+      '<span class="ho-avatar initial" style="background:#07191e">R</span>' +
+      '<span class="ho-avatar initial" style="background:#2563eb">C</span>';
+
+    // Seed messages — intentionally generic so they read well for any
+    // owned AI. Senders alternate to mimic a real handover thread.
+    const linkedLabel = (member.linkedApps || []).slice(0, 3)
+      .map(id => {
+        const meta = (typeof APPS !== 'undefined') ? APPS.find(a => a.id === id) : null;
+        return meta ? meta.name : id;
+      })
+      .join(', ') || 'the connected apps';
+
+    const msgs = [
+      { kind: 'system', text: 'Handover chat created · ' + departing + ' → Cody' },
+      { who: 'relay',     text: "I'm Relay AI. I'll preserve " + aiName + "'s memory and context during this handover so Cody can pick up without losing anything." },
+      { who: 'departing', text: "Here's the short version: " + aiName + " already covers the weekly review, sprint tracking, and stakeholder updates. Context lives in " + linkedLabel + '.' },
+      { who: 'relay',     text: 'Memory snapshot preserved. ' + (member.linkedApps || []).length + ' linked apps transferred. No permissions changed yet — Cody will need to confirm access.' },
+      { who: 'cody',      text: 'Got it — I\'ll review the pinned conversations tomorrow morning and flag anything unclear.' }
+    ];
+
+    body.innerHTML = '';
+    msgs.forEach(m => {
+      const row = document.createElement('div');
+      if (m.kind === 'system') {
+        row.className = 'ho-msg system';
+        row.innerHTML = '<div class="ho-msg-body"><div class="ho-msg-text">' + m.text + '</div></div>';
+        body.appendChild(row);
+        return;
+      }
+      row.className = 'ho-msg';
+      let avatarHtml, senderName, tag;
+      if (m.who === 'relay') {
+        avatarHtml = '<span class="ho-msg-avatar" style="background:#07191e;">R</span>';
+        senderName = 'Relay AI';
+        tag = 'Bot';
+      } else if (m.who === 'cody') {
+        avatarHtml = '<span class="ho-msg-avatar" style="background:#2563eb;">C</span>';
+        senderName = 'Cody';
+        tag = 'New owner';
+      } else {
+        avatarHtml = '<span class="ho-msg-avatar"><img src="' + memberAvatar + '" alt=""/></span>';
+        senderName = departing;
+        tag = 'Departing';
+      }
+      row.innerHTML =
+        avatarHtml +
+        '<div class="ho-msg-body">' +
+          '<div class="ho-msg-head">' +
+            '<span class="ho-msg-name">' + senderName + '</span>' +
+            '<span class="ho-msg-tag">' + tag + '</span>' +
+          '</div>' +
+          '<div class="ho-msg-text">' + m.text + '</div>' +
+        '</div>';
+      body.appendChild(row);
+    });
+    body.scrollTop = 0;
+  }
+
+  /* Update the small unread-count pills next to each tab label. Called
+     from selectTeamMember (when the member changes) and from switchAvatarTab
+     (so the tab you just opened drops to zero unread). */
+  function updateTabUnreadCounts(member) {
+    const setCount = (id, n) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!n || n <= 0) {
+        el.hidden = true;
+        el.textContent = '';
+      } else {
+        el.hidden = false;
+        el.textContent = String(n);
+      }
+    };
+    // Chat unread — for the prototype we just mirror the sidebar badge.
+    const chatUnread = member && member.badge ? parseInt(member.badge, 10) || 0 : 0;
+    setCount('av-tab-chat-count', chatUnread);
+    // Handover unread — per-member.
+    const hoUnread = member && member.handoverUnread ? member.handoverUnread : 0;
+    setCount('av-tab-handover-count', hoUnread);
+    // Admin tab never has unread.
+    setCount('av-tab-profile-count', 0);
   }
 
   /* Page-2 "Skip for now" — lands the user inside the product but parked on
@@ -8406,11 +8657,15 @@
       tabP.setAttribute('aria-selected', on);
     }
 
-    // Reflect the active AI's name inside the handover card.
-    if (tab === 'handover') {
-      const nameSpan = document.getElementById('p8-handover-name');
-      if (nameSpan) {
-        nameSpan.textContent = window._activeMemberName || 'this AI';
+    // Opening a tab clears its unread count — same pattern as every
+    // messaging client. We zero it on the _CODY_TEAM record so the
+    // sidebar stays in sync and so repeated opens don't flicker.
+    if (typeof _CODY_TEAM !== 'undefined' && window._activeMemberName) {
+      const m = _CODY_TEAM.find(x => x.name === window._activeMemberName);
+      if (m) {
+        if (tab === 'chat')     m.badge = '';
+        if (tab === 'handover') m.handoverUnread = 0;
+        if (typeof updateTabUnreadCounts === 'function') updateTabUnreadCounts(m);
       }
     }
   }
