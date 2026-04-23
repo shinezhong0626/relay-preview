@@ -10309,9 +10309,9 @@
       && typeof _CODY_TEAM !== 'undefined'
       && (_CODY_TEAM.find(m => m.name === activeMember) || {}).owned === false;
     const settingsBtn = document.getElementById('admin-btn-settings');
-    if (settingsBtn) settingsBtn.hidden = !!isSharedAi;
+    if (settingsBtn) settingsBtn.style.display = isSharedAi ? 'none' : '';
     const linkMoreBtn = document.getElementById('admin-btn-link-more');
-    if (linkMoreBtn) linkMoreBtn.hidden = !!isSharedAi;
+    if (linkMoreBtn) linkMoreBtn.style.display = isSharedAi ? 'none' : '';
     const permRow    = document.getElementById('admin-perm-row');
     const permLabel  = document.getElementById('admin-perm-label');
     const permVal    = document.getElementById('admin-perm-value');
@@ -10332,10 +10332,10 @@
       const ownerFirstName = (member.departingName || 'Shine').split(' ')[0];
       if (permLabel) permLabel.textContent = 'Managed by ' + ownerFirstName;
       if (permHint)  permHint.textContent = 'shared with you';
-      if (permValWrap) permValWrap.hidden = true;
+      if (permValWrap) permValWrap.style.display = 'none';
     } else {
       if (permLabel)   permLabel.textContent = 'Who can access';
-      if (permValWrap) permValWrap.hidden = false;
+      if (permValWrap) permValWrap.style.display = '';
       if (permVal) {
         // Not shared — reset to the user's current permission label.
         const currentPerm = window._currentPerm || 'me';
