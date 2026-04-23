@@ -32,27 +32,31 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; font-family: 'Poppins', sans-serif; overflow: hidden; }
 
-    /* ── Screen slide container ── */
+    /* ── Screen slide container ──
+       A horizontally-sliding strip of 14 screens. The demo selector (page
+       #page-demo) is screen 0 and shown by default (no class); all other
+       pages shift one position to the right vs. before. */
     .screens {
       display: flex;
-      width: 1300vw;
+      width: 1400vw;
       height: 100vh;
       transition: none;
     }
-    .screens.page2  { transform: translateX(-100vw); }
-    .screens.page3  { transform: translateX(-200vw); }
-    .screens.page4  { transform: translateX(-300vw); }
-    .screens.page5  { transform: translateX(-400vw); }
-    .screens.page6  { transform: translateX(-500vw); }
-    .screens.page7  { transform: translateX(-600vw); }
-    .screens.page8  { transform: translateX(-700vw); }
+    .screens.page1  { transform: translateX(-100vw); }
+    .screens.page2  { transform: translateX(-200vw); }
+    .screens.page3  { transform: translateX(-300vw); }
+    .screens.page4  { transform: translateX(-400vw); }
+    .screens.page5  { transform: translateX(-500vw); }
+    .screens.page6  { transform: translateX(-600vw); }
+    .screens.page7  { transform: translateX(-700vw); }
+    .screens.page8  { transform: translateX(-800vw); }
     /* Handover secondary flow — opened from the right card on page 2.
        Flow order: 9 intro → 10 invite → 11 waiting → 13 avatar → 12 create. */
-    .screens.page9  { transform: translateX(-800vw); }
-    .screens.page10 { transform: translateX(-900vw); }
-    .screens.page11 { transform: translateX(-1000vw); }
-    .screens.page12 { transform: translateX(-1100vw); }
-    .screens.page13 { transform: translateX(-1200vw); }
+    .screens.page9  { transform: translateX(-900vw); }
+    .screens.page10 { transform: translateX(-1000vw); }
+    .screens.page11 { transform: translateX(-1100vw); }
+    .screens.page12 { transform: translateX(-1200vw); }
+    .screens.page13 { transform: translateX(-1300vw); }
 
     .screen {
       width: 100vw;
@@ -62,6 +66,38 @@
       flex-shrink: 0;
       overflow: hidden;
     }
+
+    /* ── Demo picker (page 0) ── */
+    #page-demo {
+      background: linear-gradient(to bottom, #eef7ff 53%, #ffe4d5 100%);
+      align-items: center;
+      justify-content: center;
+      padding: 40px 32px;
+    }
+    .demo-picker {
+      width: 100%;
+      max-width: 880px;
+      display: flex; flex-direction: column;
+      gap: 40px;
+      align-items: center;
+    }
+    .demo-picker-heading {
+      text-align: center;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .demo-picker-title {
+      font-family: 'GeistPixel', monospace;
+      font-size: 36px; font-weight: 600; line-height: 1.2;
+      color: #07191e;
+      margin: 0;
+    }
+    .demo-picker-sub {
+      font-family: 'Poppins', sans-serif;
+      font-size: 15px; color: #6b7280;
+      line-height: 1.5;
+      margin: 0;
+    }
+    .demo-picker-cards { max-width: 760px; }
 
     /* ── Shared nav ── */
     .topnav {
@@ -5203,10 +5239,57 @@
 
 <div class="screens" id="screens">
 
+  <!-- ═══════════ PAGE DEMO: Demo flow picker ═══════════
+       Shown by default (no class on #screens) so visitors land here first.
+       Two flows: Shine (fresh onboarding) and Cody (existing-user home). -->
+  <div class="screen" id="page-demo">
+    <div class="demo-picker">
+      <div class="demo-picker-heading">
+        <h2 class="demo-picker-title">Choose a demo flow</h2>
+        <p class="demo-picker-sub">Pick the experience you want to walk through.</p>
+      </div>
+      <div class="choice-cards demo-picker-cards">
+        <div class="choice-card left" onclick="goTo(1)" style="cursor:pointer">
+          <div class="card-icon blue">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#014261" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"/>
+              <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+            </svg>
+          </div>
+          <div class="card-text">
+            <div class="choice-title">Shine — Fresh onboarding</div>
+            <div class="choice-desc">Brand-new account. Walk through team creation, the build flow, and the loading → first chat sequence end-to-end.</div>
+          </div>
+          <button class="card-btn blue-btn" type="button" onclick="event.stopPropagation();goTo(1)">
+            Start onboarding
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
+          </button>
+        </div>
+        <div class="choice-card right" onclick="enterCodyDemo()" style="cursor:pointer">
+          <div class="card-icon peach">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ae3906" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12l9-9 9 9"/>
+              <path d="M5 10v10h14V10"/>
+              <path d="M10 20v-6h4v6"/>
+            </svg>
+          </div>
+          <div class="card-text">
+            <div class="choice-title">Cody — Existing user home</div>
+            <div class="choice-desc">Drop straight into the product home as an existing user with 4 AI employees on the team (including Shine AI).</div>
+          </div>
+          <button class="card-btn peach-btn" type="button" onclick="event.stopPropagation();enterCodyDemo()">
+            Enter product
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══════════ PAGE 1: Create a Team ═══════════ -->
   <div class="screen" id="page1">
     <nav class="topnav">
-      <button class="btn-back">Back</button>
+      <button class="btn-back" onclick="backToDemoPicker()">Back</button>
     </nav>
     <div class="content-area">
       <div class="card">
@@ -6753,7 +6836,8 @@
   const screens = document.getElementById('screens');
 
   function goTo(page) {
-    screens.classList.remove('page2','page3','page4','page5','page6','page7','page8','page9','page10','page11','page12','page13');
+    screens.classList.remove('page1','page2','page3','page4','page5','page6','page7','page8','page9','page10','page11','page12','page13');
+    if (page === 1) screens.classList.add('page1');
     if (page === 2) screens.classList.add('page2');
     if (page === 3) screens.classList.add('page3');
     if (page === 4) screens.classList.add('page4');
@@ -7635,6 +7719,108 @@
     { id: 'research', name: 'Research AI', role: 'Research Analyst', status: 'Active', created: 'Mar 02, 2026', memory: 'FREE', active: 'Mar 08', kb: '820 MB', value: '$210', access: 'Team', src: '' },
     { id: 'support',  name: 'Support AI',  role: 'Customer Support', status: 'Paused', created: 'Feb 24, 2026', memory: 'FREE', active: 'Feb 28', kb: '540 MB', value: '$180', access: 'Restricted', src: '' }
   ];
+
+  /* Back handler for page 1 — returns to the demo flow picker. */
+  function backToDemoPicker() {
+    screens.classList.remove('page1','page2','page3','page4','page5','page6','page7','page8','page9','page10','page11','page12','page13');
+  }
+
+  /* ── Demo picker → Cody existing-user flow ──
+     Drops the user directly into page 8 (product home) with a populated
+     team: 4 AI employees including the canonical Shine AI. The bottom
+     account row shows Cody. Avatars are pulled from the onboarding
+     av2-opt bank so the visuals feel consistent with the rest of the
+     product. */
+  const _CODY_TEAM = [
+    { name: 'Shine AI',  role: 'UI Designer',     preview: 'welcome to relay',      time: 'Just now', badge: '1', active: true  },
+    { name: 'Ana AI',    role: 'Product Manager', preview: 'Sprint recap is ready', time: '2h',       badge: '',  active: false },
+    { name: 'Marcus AI', role: 'Engineer',        preview: 'CI is green again',     time: 'Yesterday',badge: '',  active: false },
+    { name: 'Priya AI',  role: 'Marketing',       preview: 'Campaign draft posted', time: 'Mon',      badge: '',  active: false }
+  ];
+
+  function enterCodyDemo() {
+    // Mark Cody state so other UI can key off it if needed. Unlike the
+    // demo-ai flag (used by Sarah), the Cody flow is "real existing user"
+    // rather than a canned mockup, so we don't need the demo-ai class.
+    window._isCodyDemo = true;
+    // Clear any stale Sarah demo state so the Shine AI entry behaves
+    // like a regular AI (link tools, attach, etc. all come back).
+    window._isDemoAi = false;
+    const screensEl = document.getElementById('screens');
+    if (screensEl) screensEl.classList.remove('demo-ai');
+    // Seed the role select so syncAdminView / syncP8 render Shine AI
+    // with the "UI Designer" job title instead of the generic default.
+    const roleSelect = document.getElementById('role-select');
+    if (roleSelect) roleSelect.value = 'UI Designer';
+
+    // Swap the bottom-left account row to Cody.
+    const userAvatar = document.querySelector('.p8-sidebar-user .p8-user-avatar-sq');
+    if (userAvatar) {
+      userAvatar.textContent = 'C';
+      userAvatar.style.background = '#2563eb';
+    }
+    const userName = document.querySelector('.p8-sidebar-user .p8-user-name');
+    if (userName) userName.textContent = 'Cody';
+    const userSub  = document.querySelector('.p8-sidebar-user .p8-user-sub');
+    if (userSub)  userSub.textContent  = 'Tanka';
+
+    // Populate the TEAM list with 4 AI employees. Shuffle the avatar bank
+    // once and assign one per member; Shine AI is always present and
+    // active by default.
+    const list = document.querySelector('.p8-chat-list');
+    if (list) {
+      const avatarPool = Array.from(document.querySelectorAll('.av2-opt'))
+        .map(el => el.dataset.src)
+        .filter(Boolean)
+        .sort(() => Math.random() - 0.5);
+
+      list.innerHTML = '';
+      _CODY_TEAM.forEach((member, i) => {
+        const src = avatarPool[i] || '';
+        const item = document.createElement('div');
+        item.className = 'p8-chat-item' + (member.active ? ' active' : '');
+        item.setAttribute('role', 'button');
+        item.setAttribute('tabindex', '0');
+        // Shine AI is the clickable one (opens the existing admin/chat
+        // view). Other members are passive placeholders for now.
+        if (member.name === 'Shine AI') {
+          item.setAttribute('onclick', 'openShineAI()');
+        }
+        item.innerHTML =
+          '<div class="p8-chat-avatar">' +
+            '<img ' + (member.name === 'Shine AI' ? 'id="p8-chat-avatar-img" ' : '') + 'src="' + src + '" alt=""/>' +
+          '</div>' +
+          '<div class="p8-chat-info">' +
+            '<div class="p8-chat-row-1">' +
+              '<span class="p8-chat-name"' + (member.name === 'Shine AI' ? ' id="p8-chat-name"' : '') + '>' + member.name + '</span>' +
+              '<span class="p8-chat-time">' + member.time + '</span>' +
+            '</div>' +
+            '<div class="p8-chat-row-2">' +
+              '<span class="p8-chat-preview">' + member.preview + '</span>' +
+              (member.badge ? '<span class="p8-chat-badge">' + member.badge + '</span>' : '') +
+            '</div>' +
+          '</div>';
+        list.appendChild(item);
+      });
+
+      // Pre-select a random avatar for Shine AI so syncP8 / openShineAI
+      // pick it up when user opens the Shine AI view.
+      try {
+        const opts = document.querySelectorAll('.av2-opt');
+        if (opts.length) {
+          opts.forEach(o => o.classList.remove('selected'));
+          const shineIdx = _CODY_TEAM.findIndex(m => m.name === 'Shine AI');
+          // Use the same avatar that appears next to Shine AI in the list.
+          const shineSrc = avatarPool[shineIdx] || '';
+          const match = Array.from(opts).find(o => o.dataset.src === shineSrc);
+          (match || opts[0]).classList.add('selected');
+        }
+      } catch (e) { /* no-op */ }
+    }
+
+    // Land on the product home.
+    goTo(8);
+  }
 
   /* Page-2 "Skip for now" — lands the user inside the product but parked on
      the Build New AI choose-option view (empty state). This keeps the first
