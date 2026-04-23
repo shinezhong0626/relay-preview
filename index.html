@@ -2317,24 +2317,23 @@
       font-size: 14px; line-height: 18px;
       color: #9aa0a6;
     }
-    /* Generating team row — preview label sits in the second line as
-       a plain "Building" string in blue so the state is legible but
-       doesn't clutter the avatar with an overlay. */
-    .p8-chat-item.generating .p8-chat-preview {
-      color: #0089e6;
-    }
+    /* Generating team row — "Building" sits in the second line in the
+       same muted gray as every other preview so the row doesn't read
+       as higher-priority than finished AIs. State comes through via
+       the preview text itself, not a color accent. */
+    /* (no override — preview inherits the default .p8-chat-preview gray) */
     /* Shared-with-you badge — inline icon after the AI name on rows
-       the current user doesn't own. 18x18 share glyph, muted color so
-       it reads as metadata rather than action. */
+       the current user doesn't own. 16x16 share glyph in Relay orange
+       so it reads as a distinct "inherited" affordance. */
     .p8-chat-shared {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 18px; height: 18px;
-      color: #9aa0a6;
+      width: 16px; height: 16px;
+      color: #ae3906;
       flex-shrink: 0;
     }
-    .p8-chat-shared svg { width: 18px; height: 18px; display: block; }
+    .p8-chat-shared svg { width: 16px; height: 16px; display: block; }
     /* Tight the row-1 flex so name + share badge sit together on the
        left and time floats to the right. */
     .p8-chat-row-1 {
