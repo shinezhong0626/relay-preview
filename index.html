@@ -9283,9 +9283,24 @@
      row, profile panel, etc.) until training completes. */
   const _BUILDING_AVATAR_SRC = 'assets/building-avatar.png';
   /* Cody's pinned avatar index in the onboarding bank. Used wherever
-     Cody needs a pixel-art portrait (group-chat handover avatars,
-     self-built Cody AI) instead of the "C" blue chip. */
+     Cody needs a pixel-art portrait (self-built Cody AI, etc.). */
   const _CODY_AVATAR_INDEX = 12;
+  /* Real-person avatars (DiceBear personas, deterministic per seed)
+     for handover group chats. AI rows keep their pixel-art portraits;
+     only humans (departing teammates + Cody the new owner) use these
+     illustrated real-person avatars. MIT-licensed, served from their
+     CDN so the seed always yields the same face. */
+  const _DICEBEAR_BASE = 'https://api.dicebear.com/9.x/personas/svg?seed=';
+  const _REAL_AVATARS = {
+    'Shine Zhong':   _DICEBEAR_BASE + 'ShineZhong',
+    'Ana Rodríguez': _DICEBEAR_BASE + 'AnaRodriguez',
+    'Marcus Chen':   _DICEBEAR_BASE + 'MarcusChen',
+    'Priya Patel':   _DICEBEAR_BASE + 'PriyaPatel',
+    'Cody':          _DICEBEAR_BASE + 'CodySong'
+  };
+  function _realAvatarFor(name) {
+    return _REAL_AVATARS[name] || (_DICEBEAR_BASE + encodeURIComponent(name || 'User'));
+  }
   function _relayLogoImg() {
     return '<img src="' + _RELAY_LOGO_SRC + '" alt="Relay assistant"/>';
   }
@@ -9303,9 +9318,13 @@
     if (!body) return;
 
     const opts = Array.from(document.querySelectorAll('.av2-opt'));
-    const memberAvatar = (opts[member.avatarIndex] && opts[member.avatarIndex].dataset.src) || '';
     const departing    = member.departingName || 'Teammate';
     const aiName       = member.name;
+    // Handover participants use real-human avatars (DiceBear personas)
+    // rather than the AI's pixel-art portrait, since the thread is
+    // person-to-person, not chatting with the AI itself.
+    const departingAvatar = _realAvatarFor(departing);
+    const codyAvatar      = _realAvatarFor('Cody');
 
     // Seed messages — intentionally generic so they read well for any
     // owned AI. Senders alternate to mimic a real handover thread.
@@ -9342,10 +9361,10 @@
         avatarHtml = '<span class="ho-msg-avatar">' + _relayLogoImg() + '</span>';
         senderName = 'Relay assistant';
       } else if (m.who === 'cody') {
-        avatarHtml = '<span class="ho-msg-avatar" style="background:#2563eb;">C</span>';
+        avatarHtml = '<span class="ho-msg-avatar"><img src="' + codyAvatar + '" alt=""/></span>';
         senderName = 'Cody';
       } else {
-        avatarHtml = '<span class="ho-msg-avatar"><img src="' + memberAvatar + '" alt=""/></span>';
+        avatarHtml = '<span class="ho-msg-avatar"><img src="' + departingAvatar + '" alt=""/></span>';
         senderName = departing;
       }
       row.innerHTML =
@@ -9405,7 +9424,7 @@
         '</div>' +
         // Departing teammate
         '<div class="ho-member">' +
-          '<span class="ho-member-avatar"><img src="' + memberAvatar + '" alt=""/></span>' +
+          '<span class="ho-member-avatar"><img src="' + departingAvatar + '" alt=""/></span>' +
           '<div class="ho-member-info">' +
             '<div class="ho-member-name-row">' +
               '<span class="ho-member-name">' + departing + '</span>' +
@@ -9416,7 +9435,7 @@
         '</div>' +
         // Receiver — Cody
         '<div class="ho-member">' +
-          '<span class="ho-member-avatar" style="background:#2563eb;">C</span>' +
+          '<span class="ho-member-avatar"><img src="' + codyAvatar + '" alt=""/></span>' +
           '<div class="ho-member-info">' +
             '<div class="ho-member-name-row">' +
               '<span class="ho-member-name">Cody</span>' +
@@ -9689,16 +9708,17 @@
       item.setAttribute('data-handover', 'true');
       // Open the handover as a standalone surface (no Chat/Profile pill).
       item.setAttribute('onclick', 'selectHandoverGroup("' + member.name.replace(/"/g, '&quot;') + '")');
-      // Group avatar: two overlapping pixel-art portraits per the
-      // Figma spec — Cody's pinned avatar sits in the top-right
-      // (behind) and the departing teammate's avatar sits bottom-left
-      // (in front) with a white ring, signalling the handover is a
-      // two-person conversation.
-      const codyAvatarSrc = (opts[_CODY_AVATAR_INDEX] && opts[_CODY_AVATAR_INDEX].dataset.src) || '';
+      // Group avatar: two overlapping real-person portraits. Cody's
+      // DiceBear avatar sits in the top-right (behind); the departing
+      // teammate's DiceBear avatar sits bottom-left (in front) with a
+      // white ring. Represents the two-person handover conversation
+      // using real-human identities rather than the AI's pixel art.
+      const departingRealAvatar = _realAvatarFor(departing);
+      const codyRealAvatar = _realAvatarFor('Cody');
       item.innerHTML =
         '<div class="p8-chat-avatar group">' +
-          '<span class="p8-chat-avatar-back"><img src="' + codyAvatarSrc + '" alt=""/></span>' +
-          '<span class="p8-chat-avatar-front"><img src="' + src + '" alt=""/></span>' +
+          '<span class="p8-chat-avatar-back"><img src="' + codyRealAvatar + '" alt=""/></span>' +
+          '<span class="p8-chat-avatar-front"><img src="' + departingRealAvatar + '" alt=""/></span>' +
         '</div>' +
         '<div class="p8-chat-info">' +
           '<div class="p8-chat-row-1">' +
