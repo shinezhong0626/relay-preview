@@ -7179,7 +7179,7 @@
        and a single primary Continue button. -->
   <div class="screen" id="page10">
     <div class="ob-topbar">
-      <button class="btn-back" id="backbtn10" onclick="goTo(9)">Back</button>
+      <button class="btn-back" id="backbtn10" onclick="buildFlowBack(9)">Back</button>
       <div class="step-dots" aria-label="Step 1 of 4">
         <div class="step-dot active"></div>
         <div class="step-dot"></div>
@@ -7327,7 +7327,7 @@
        to the avatar picker (page 13) is wired in goTo(11). -->
   <div class="screen" id="page11">
     <div class="ob-topbar">
-      <button class="btn-back" id="backbtn11" onclick="goTo(10)">Back</button>
+      <button class="btn-back" id="backbtn11" onclick="buildFlowBack(10)">Back</button>
       <div class="step-dots" aria-label="Step 2 of 4">
         <div class="step-dot done"></div>
         <div class="step-dot active"></div>
@@ -7413,7 +7413,7 @@
        white confirmation card below. -->
   <div class="screen" id="page12">
     <div class="ob-topbar">
-      <button class="btn-back" type="button" onclick="goTo(13)">Back</button>
+      <button class="btn-back" type="button" onclick="buildFlowBack(13)">Back</button>
       <div class="step-dots" aria-label="Step 4 of 4">
         <div class="step-dot done"></div>
         <div class="step-dot done"></div>
@@ -7492,7 +7492,7 @@
        the grid below is populated at runtime by buildHandoverAvatarGrid(). -->
   <div class="screen" id="page13">
     <div class="ob-topbar">
-      <button class="btn-back" type="button" onclick="goTo(11)">Back</button>
+      <button class="btn-back" type="button" onclick="buildFlowBack(11)">Back</button>
       <div class="step-dots" aria-label="Step 3 of 4">
         <div class="step-dot done"></div>
         <div class="step-dot done"></div>
@@ -9330,6 +9330,21 @@
     }
   }
 
+  /* Back behavior for any wizard page (3-7, 10-13) inside the Build
+     New AI flow differs from the pre-signup onboarding:
+       • Onboarding (fresh signup): Back goes one step back (fallback).
+       • Build New AI (sidebar → no-skip sentinel): Back = CLOSE. The
+         user already committed to exiting; bring them straight to the
+         product home instead of walking them backwards step-by-step. */
+  function buildFlowBack(fallback) {
+    const s = document.getElementById('screens');
+    if (s && s.classList.contains('no-skip')) {
+      goTo(8);   // goTo(8) clears the no-skip flag on entry
+    } else {
+      goTo(fallback);
+    }
+  }
+
   /* TEAM "Shine AI" entry — opens the Shine AI tabbed page and defaults
      to the Chat tab so clicking this item still feels like "jump into
      chat" while exposing the Profile tab one click away. There is no
@@ -10756,9 +10771,9 @@
     }
   });
   document.getElementById('backbtn3').addEventListener('click',    () => backToBuildOptions());
-  document.getElementById('backbtn4').addEventListener('click',    () => goTo(3));
+  document.getElementById('backbtn4').addEventListener('click',    () => buildFlowBack(3));
   const backbtn6 = document.getElementById('backbtn6');
-  if (backbtn6) backbtn6.addEventListener('click',                 () => goTo(5));
+  if (backbtn6) backbtn6.addEventListener('click',                 () => buildFlowBack(5));
 
   /* ── Avatar selection (page 4) ── */
   const av2Opts    = document.querySelectorAll('.av2-opt');
@@ -11225,7 +11240,7 @@
     renderAppGrid(filteredApps);
   }
 
-  document.getElementById('backbtn5').addEventListener('click', () => goTo(4));
+  document.getElementById('backbtn5').addEventListener('click', () => buildFlowBack(4));
   // activate-btn handled via inline onclick
 
 </script>
