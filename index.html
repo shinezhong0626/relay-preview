@@ -10332,7 +10332,10 @@
       const ownerFirstName = (member.departingName || 'Shine').split(' ')[0];
       if (permLabel) permLabel.textContent = 'Managed by ' + ownerFirstName;
       if (permHint)  permHint.textContent = 'shared with you';
-      if (permValWrap) permValWrap.style.display = 'none';
+      // Keep the right-side pill visible but lock it to "Restricted"
+      // (no chevron — chevron was already hidden above).
+      if (permValWrap) permValWrap.style.display = '';
+      if (permVal)     permVal.textContent = 'Restricted';
     } else {
       if (permLabel)   permLabel.textContent = 'Who can access';
       if (permValWrap) permValWrap.style.display = '';
