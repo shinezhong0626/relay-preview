@@ -1933,6 +1933,132 @@
       overflow: hidden;
       font-family: 'Poppins', sans-serif;
     }
+    /* ── Read-only AI profile panel (right side) ──
+       Opens when the user clicks the AI avatar in a chat bubble. Shows
+       org-visible info (name, role, managed-by, linked apps) with no
+       mutate actions — the Admin tab remains the editing surface. */
+    .p8-ai-panel {
+      width: 280px; flex-shrink: 0;
+      background: #fff;
+      border-left: 1px solid #e5e7eb;
+      padding: 16px 20px 20px;
+      display: flex; flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+      font-family: 'Poppins', sans-serif;
+    }
+    .p8-ai-panel[hidden] { display: none; }
+    .p8-ai-panel-head {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .p8-ai-panel-title {
+      font-size: 13px; font-weight: 600;
+      color: #6b7280;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+    .p8-ai-panel-close {
+      background: transparent; border: none;
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      color: #6b7280; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.12s;
+    }
+    .p8-ai-panel-close:hover { background: #f3f5f9; color: #07191e; }
+    .p8-ai-panel-avatar {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #ede9fe;
+      border: 1px solid rgba(7,25,30,0.08);
+      align-self: flex-start;
+    }
+    .p8-ai-panel-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .p8-ai-panel-name-row {
+      display: flex; align-items: center; gap: 8px;
+      flex-wrap: wrap;
+    }
+    .p8-ai-panel-name {
+      font-size: 18px; font-weight: 600; line-height: 24px;
+      color: #07191e;
+    }
+    .p8-ai-panel-tag {
+      font-size: 11px; font-weight: 500; line-height: 16px;
+      color: #6b7280;
+      background: #f3f4f6;
+      border-radius: 6px;
+      padding: 2px 8px;
+    }
+    .p8-ai-panel-tag[hidden] { display: none; }
+    .p8-ai-panel-role {
+      font-size: 13px; line-height: 18px;
+      color: #6b7280;
+      margin-top: -6px;
+    }
+    .p8-ai-panel-section {
+      display: flex; flex-direction: column; gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid #f1f3f6;
+    }
+    .p8-ai-panel-section-head {
+      font-size: 11px; font-weight: 600;
+      color: #9aa0a6;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .p8-ai-panel-managed {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .p8-ai-panel-managed-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: #ae3906;
+      color: #fff;
+      font-size: 14px; font-weight: 500;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .p8-ai-panel-managed-text {
+      min-width: 0;
+    }
+    .p8-ai-panel-managed-name {
+      font-size: 13px; font-weight: 500; color: #07191e;
+      line-height: 18px;
+    }
+    .p8-ai-panel-managed-sub {
+      font-size: 12px; color: #9aa0a6; line-height: 16px;
+    }
+    .p8-ai-panel-apps {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .p8-ai-panel-app {
+      display: flex; align-items: center; gap: 10px;
+      padding: 6px 8px;
+      border-radius: 8px;
+    }
+    .p8-ai-panel-app-logo {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      background: #f3f5f9;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .p8-ai-panel-app-logo svg { width: 16px; height: 16px; }
+    .p8-ai-panel-app-name {
+      font-size: 13px; color: #07191e;
+    }
+    .p8-ai-panel-apps-empty {
+      font-size: 12px; color: #9aa0a6; font-style: italic;
+      padding: 6px 8px;
+    }
+    .p8-ai-panel-footer {
+      margin-top: auto;
+      font-size: 11px; color: #9aa0a6;
+      line-height: 16px;
+      padding-top: 10px;
+      border-top: 1px solid #f1f3f6;
+    }
     /* ── Sidebar 320px ── */
     .p8-sidebar {
       width: 320px;
@@ -2235,6 +2361,7 @@
       background: #fff;
       border-bottom: 1px solid #e5e7eb;
       flex-shrink: 0;
+      position: relative; /* anchor for the centered tab pill below */
     }
     .p8-main-nav[hidden] { display: none; }
     /* Space switcher — Team / Shine AI breadcrumb that acts as a single
@@ -2364,10 +2491,17 @@
       max-width: 960px; width: 100%; margin: 0 auto;
       text-align: center;
     }
-    /* ── Tab-pill wrapper (now lives inline inside .p8-main-nav) ──
-       Holds the Profile/Chat pill on the right edge of the single-row
-       top nav. Hidden whenever we're not in the Shine AI admin view. */
+    /* ── Tab-pill wrapper (centered in .p8-main-nav) ──
+       Absolutely positioned at the horizontal center of the main nav so
+       the Chat/Admin pill stays aligned with the chat area below (which
+       is also centered). Using left:50% instead of a width-based layout
+       means the pill re-centers automatically when the side panel opens
+       and the main area shrinks. */
     .p8-avtabs-bar {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
       display: inline-flex;
       align-items: center;
     }
@@ -4610,18 +4744,43 @@
       font-size: 15px; line-height: 22px;
       word-wrap: break-word;
     }
+    /* AI message: flex row with an avatar on the left + text on the right.
+       Clicking the avatar opens a read-only profile panel on the right edge
+       of the app. */
     .p8-msg-ai {
       align-self: flex-start;
-      max-width: 760px;
+      max-width: 800px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .p8-msg-ai-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #ede9fe;
+      flex-shrink: 0;
+      padding: 0; border: 1px solid rgba(7,25,30,0.08);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .p8-msg-ai-avatar:hover {
+      transform: scale(1.05);
+      box-shadow: 0 2px 8px rgba(7,25,30,0.12);
+    }
+    .p8-msg-ai-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .p8-msg-ai-text {
+      flex: 1; min-width: 0;
       color: #07191e;
       font-family: 'Poppins', sans-serif;
       font-size: 15px; line-height: 24px;
       white-space: pre-wrap;
+      padding-top: 4px;
     }
-    .p8-msg-ai strong {
+    .p8-msg-ai-text strong {
       font-weight: 600; color: #07191e;
     }
-    .p8-msg-ai .p8-ai-typing {
+    .p8-msg-ai-text .p8-ai-typing {
       display: inline-block;
       width: 8px; height: 8px;
       margin-left: 2px;
@@ -5601,7 +5760,7 @@
                       onclick="switchAvatarTab('chat')">Chat</button>
               <button class="admin-tab" id="av-tab-profile" type="button"
                       role="tab" aria-selected="false"
-                      onclick="switchAvatarTab('profile')">Profile</button>
+                      onclick="switchAvatarTab('profile')">Admin</button>
             </div>
           </div>
         </header>
@@ -5902,6 +6061,48 @@
           </div>
         </div>
       </main>
+      <!-- Read-only AI profile panel. Opened by clicking the avatar next to
+           an AI message bubble. Shows org-visible info (name, role, manager,
+           linked apps) but has no edit actions — the Admin tab is where a
+           permissioned user goes to mutate any of this. Hidden by default. -->
+      <aside class="p8-ai-panel" id="p8-ai-panel" hidden>
+        <div class="p8-ai-panel-head">
+          <span class="p8-ai-panel-title">Profile</span>
+          <button class="p8-ai-panel-close" type="button" onclick="closeAiProfilePanel()" aria-label="Close">
+            <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 5l10 10M15 5L5 15"/>
+            </svg>
+          </button>
+        </div>
+        <div class="p8-ai-panel-avatar">
+          <img id="p8-ai-panel-avatar-img" src="" alt=""/>
+        </div>
+        <div class="p8-ai-panel-name-row">
+          <span class="p8-ai-panel-name" id="p8-ai-panel-name">Shine AI</span>
+          <span class="p8-ai-panel-tag" id="p8-ai-panel-tag" hidden>Demo</span>
+        </div>
+        <div class="p8-ai-panel-role" id="p8-ai-panel-role">AI Employee</div>
+
+        <div class="p8-ai-panel-section">
+          <div class="p8-ai-panel-section-head">Managed by</div>
+          <div class="p8-ai-panel-managed">
+            <div class="p8-ai-panel-managed-avatar">S</div>
+            <div class="p8-ai-panel-managed-text">
+              <div class="p8-ai-panel-managed-name">Shine Zhong</div>
+              <div class="p8-ai-panel-managed-sub">Admin · Tanka</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p8-ai-panel-section">
+          <div class="p8-ai-panel-section-head">Linked apps</div>
+          <div class="p8-ai-panel-apps" id="p8-ai-panel-apps">
+            <!-- Populated by renderAiPanelApps() on open. -->
+          </div>
+        </div>
+
+        <div class="p8-ai-panel-footer">Read-only · Ask an admin to request changes.</div>
+      </aside>
     </div>
   </div>
 
@@ -6886,16 +7087,22 @@
   function appendAIResponse(text) {
     const convo = document.getElementById('p8-conversation');
     if (!convo) return;
+    const sel = document.querySelector('.av2-opt.selected');
+    const avatarSrc = sel ? sel.dataset.src : '';
     const msg = document.createElement('div');
     msg.className = 'p8-msg-ai';
-    // Typing indicator first
-    msg.innerHTML = '<span class="p8-ai-typing"></span>';
+    msg.innerHTML =
+      '<button class="p8-msg-ai-avatar" type="button" aria-label="View AI profile" onclick="openAiProfilePanel()">' +
+        '<img src="' + avatarSrc + '" alt=""/>' +
+      '</button>' +
+      '<div class="p8-msg-ai-text"><span class="p8-ai-typing"></span></div>';
     convo.appendChild(msg);
     const body = document.getElementById('p8-chat-body');
     body.scrollTop = body.scrollHeight;
+    const textEl = msg.querySelector('.p8-msg-ai-text');
     // After a short delay, replace indicator with the answer
     setTimeout(() => {
-      msg.textContent = text;
+      if (textEl) textEl.textContent = text;
       body.scrollTop = body.scrollHeight;
     }, 650);
   }
@@ -7572,6 +7779,94 @@
   /* Switch between the Profile and Chat tabs inside the Shine AI view.
      Tab state is reflected on .p8-main via the .shine-chat-tab class; CSS
      handles the swap between the admin-wrap and the chat-body + input. */
+  /* ── Read-only AI profile panel ──
+     Opens when the user clicks the avatar next to an AI chat bubble.
+     Shows the org-visible profile: name, demo tag if applicable, role,
+     who manages, and linked apps. No edit affordances — the Admin tab
+     is where mutations happen. */
+  function openAiProfilePanel() {
+    const panel = document.getElementById('p8-ai-panel');
+    if (!panel) return;
+    // Copy the current AI's identity into the panel.
+    const sel = document.querySelector('.av2-opt.selected');
+    const avatarSrc = sel ? sel.dataset.src : '';
+    const isDemo = !!window._isDemoAi;
+    const AI_NAME = isDemo ? 'Sarah AI' : 'Shine AI';
+    const ROLE = isDemo ? 'Product Manager'
+                        : ((document.getElementById('role-select')?.value || '').trim() || 'AI Employee');
+
+    const img = document.getElementById('p8-ai-panel-avatar-img');
+    if (img) img.src = avatarSrc;
+    const nameEl = document.getElementById('p8-ai-panel-name');
+    if (nameEl) nameEl.textContent = AI_NAME;
+    const tagEl  = document.getElementById('p8-ai-panel-tag');
+    if (tagEl)  tagEl.hidden = !isDemo;
+    const roleEl = document.getElementById('p8-ai-panel-role');
+    if (roleEl) roleEl.textContent = ROLE;
+
+    renderAiPanelApps();
+    panel.hidden = false;
+  }
+
+  function closeAiProfilePanel() {
+    const panel = document.getElementById('p8-ai-panel');
+    if (panel) panel.hidden = true;
+  }
+
+  /* Fill the Linked apps list. Reuses the connectedApps set populated by
+     the onboarding / link modal. For the demo AI we show a small curated
+     set so the panel never looks empty. */
+  function renderAiPanelApps() {
+    const wrap = document.getElementById('p8-ai-panel-apps');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+
+    let appIds = [];
+    try {
+      if (typeof connectedApps !== 'undefined' && connectedApps instanceof Set) {
+        appIds = Array.from(connectedApps);
+      }
+    } catch (e) { /* no-op */ }
+
+    // Demo fallback — show a plausible set for Sarah AI so the section
+    // always reads as populated, even before the user connects anything.
+    if (window._isDemoAi && appIds.length === 0) {
+      appIds = ['slack', 'notion', 'figma', 'google-drive'];
+    }
+
+    if (!appIds.length) {
+      const empty = document.createElement('div');
+      empty.className = 'p8-ai-panel-apps-empty';
+      empty.textContent = 'No apps linked yet';
+      wrap.appendChild(empty);
+      return;
+    }
+
+    // Pretty label fallback for unknown ids.
+    const prettify = id => id
+      .split(/[-_]/)
+      .map(s => s.charAt(0).toUpperCase() + s.slice(1))
+      .join(' ');
+
+    appIds.slice(0, 8).forEach(id => {
+      const row = document.createElement('div');
+      row.className = 'p8-ai-panel-app';
+      // Try to crib the logo from an existing app card if present.
+      let logoHtml = '';
+      try {
+        const existing = document.querySelector('.app-card[data-id="' + id + '"] .app-card-logo svg');
+        if (existing) logoHtml = existing.outerHTML;
+      } catch (e) {}
+      if (!logoHtml) {
+        logoHtml = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/></svg>';
+      }
+      row.innerHTML =
+        '<span class="p8-ai-panel-app-logo">' + logoHtml + '</span>' +
+        '<span class="p8-ai-panel-app-name">' + prettify(id) + '</span>';
+      wrap.appendChild(row);
+    });
+  }
+
   function switchAvatarTab(tab) {
     const main  = document.querySelector('.p8-main');
     const tabP  = document.getElementById('av-tab-profile');
