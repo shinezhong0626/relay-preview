@@ -2057,7 +2057,7 @@
        editing surface. Layout: avatar w/ status dot → name → subtitle
        → inline meta (Restricted · Managed by Shine) → linked apps. */
     .p8-ai-panel {
-      width: 280px; flex-shrink: 0;
+      width: 320px; flex-shrink: 0;
       background: #fff;
       border-left: 1px solid #e5e7eb;
       padding: 28px 20px 24px;
@@ -2177,13 +2177,17 @@
       border-radius: 8px;
     }
     .p8-ai-panel-app-logo {
-      width: 24px; height: 24px;
-      border-radius: 6px;
-      background: #f3f5f9;
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: transparent;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
+      overflow: hidden;
     }
-    .p8-ai-panel-app-logo svg { width: 16px; height: 16px; }
+    .p8-ai-panel-app-logo svg {
+      width: 100%; height: 100%;
+      display: block;
+    }
     .p8-ai-panel-app-name {
       font-size: 13px; color: #07191e;
     }
@@ -7952,10 +7956,10 @@
      it, not admin or hand it over. owned=true gets the 3-tab view
      (Chat / Handover / Admin). */
   const _CODY_TEAM = [
-    { name: 'Shine AI',  role: 'UI Designer',     preview: 'welcome to relay',      time: 'Just now',  badge: '1', active: true,  owned: false, avatarIndex: 0  },
-    { name: 'Ana AI',    role: 'Product Manager', preview: 'Sprint recap is ready', time: '2h',        badge: '',  active: false, owned: true,  avatarIndex: 3  },
-    { name: 'Marcus AI', role: 'Engineer',        preview: 'CI is green again',     time: 'Yesterday', badge: '',  active: false, owned: true,  avatarIndex: 6  },
-    { name: 'Priya AI',  role: 'Marketing',       preview: 'Campaign draft posted', time: 'Mon',       badge: '',  active: false, owned: true,  avatarIndex: 9  }
+    { name: 'Shine AI',  role: 'UI Designer',     preview: 'welcome to relay',      time: 'Just now',  badge: '1', active: true,  owned: false, avatarIndex: 0,  linkedApps: ['slack', 'figma', 'notion', 'gdrive'] },
+    { name: 'Ana AI',    role: 'Product Manager', preview: 'Sprint recap is ready', time: '2h',        badge: '',  active: false, owned: true,  avatarIndex: 3,  linkedApps: ['slack', 'notion', 'jira', 'linear'] },
+    { name: 'Marcus AI', role: 'Engineer',        preview: 'CI is green again',     time: 'Yesterday', badge: '',  active: false, owned: true,  avatarIndex: 6,  linkedApps: ['github', 'linear', 'jira', 'slack'] },
+    { name: 'Priya AI',  role: 'Marketing',       preview: 'Campaign draft posted', time: 'Mon',       badge: '',  active: false, owned: true,  avatarIndex: 9,  linkedApps: ['slack', 'gmail', 'gdrive', 'notion'] }
   ];
 
   function enterCodyDemo() {
@@ -8255,17 +8259,25 @@
     if (!wrap) return;
     wrap.innerHTML = '';
 
+    // Priority order for the linked-apps list:
+    //   1. Cody flow: per-member linkedApps on _CODY_TEAM.
+    //   2. Sarah demo: canned set.
+    //   3. Default: whatever the user has connected via connectedApps.
     let appIds = [];
-    try {
-      if (typeof connectedApps !== 'undefined' && connectedApps instanceof Set) {
-        appIds = Array.from(connectedApps);
-      }
-    } catch (e) { /* no-op */ }
-
-    // Demo fallback — show a plausible set for Sarah AI so the section
-    // always reads as populated, even before the user connects anything.
-    if (window._isDemoAi && appIds.length === 0) {
-      appIds = ['slack', 'notion', 'figma', 'google-drive'];
+    const activeName = window._activeMemberName;
+    if (activeName && typeof _CODY_TEAM !== 'undefined') {
+      const m = _CODY_TEAM.find(t => t.name === activeName);
+      if (m && Array.isArray(m.linkedApps)) appIds = m.linkedApps.slice();
+    }
+    if (!appIds.length && window._isDemoAi) {
+      appIds = ['slack', 'notion', 'figma', 'gdrive'];
+    }
+    if (!appIds.length) {
+      try {
+        if (typeof connectedApps !== 'undefined' && connectedApps instanceof Set) {
+          appIds = Array.from(connectedApps);
+        }
+      } catch (e) { /* no-op */ }
     }
 
     if (!appIds.length) {
@@ -8276,27 +8288,25 @@
       return;
     }
 
-    // Pretty label fallback for unknown ids.
     const prettify = id => id
       .split(/[-_]/)
       .map(s => s.charAt(0).toUpperCase() + s.slice(1))
       .join(' ');
 
     appIds.slice(0, 8).forEach(id => {
+      // Look up the real brand logo + name from the APPS catalog so
+      // Slack shows as the Slack SVG, not a generic square. Falls back
+      // to a prettified id + placeholder glyph for unknown ids.
+      const meta = (typeof APPS !== 'undefined') ? APPS.find(a => a.id === id) : null;
+      const iconHtml = meta
+        ? meta.icon
+        : '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/></svg>';
+      const name = meta ? meta.name : prettify(id);
       const row = document.createElement('div');
       row.className = 'p8-ai-panel-app';
-      // Try to crib the logo from an existing app card if present.
-      let logoHtml = '';
-      try {
-        const existing = document.querySelector('.app-card[data-id="' + id + '"] .app-card-logo svg');
-        if (existing) logoHtml = existing.outerHTML;
-      } catch (e) {}
-      if (!logoHtml) {
-        logoHtml = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="2"/></svg>';
-      }
       row.innerHTML =
-        '<span class="p8-ai-panel-app-logo">' + logoHtml + '</span>' +
-        '<span class="p8-ai-panel-app-name">' + prettify(id) + '</span>';
+        '<span class="p8-ai-panel-app-logo">' + iconHtml + '</span>' +
+        '<span class="p8-ai-panel-app-name">' + name + '</span>';
       wrap.appendChild(row);
     });
   }
