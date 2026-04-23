@@ -8059,6 +8059,15 @@
     const tabC  = document.getElementById('av-tab-chat');
     const isChat = tab === 'chat';
 
+    // If the user is currently on the Build New AI choose-option view,
+    // clicking Chat/Admin should jump them back into the Shine AI area
+    // with the appropriate tab. Without this guard the pill would update
+    // its active state but the newai body would still be rendered.
+    const newaiBody = document.getElementById('p8-newai-body');
+    if (newaiBody && !newaiBody.hidden) {
+      switchP8View('admin');
+    }
+
     if (main) main.classList.toggle('shine-chat-tab', isChat);
     if (tabP) {
       tabP.classList.toggle('active', !isChat);
@@ -8099,11 +8108,11 @@
       adminBody.hidden = true;
       if (newaiBody) newaiBody.hidden = false;
       if (inputArea) inputArea.hidden = true;
-      // Hide the Shine-AI topNav here — the embedded Choose-an-option view
-      // is about creating a NEW AI, not chatting with Shine, so the Shine
-      // header would be misleading.
-      if (topNav)    topNav.hidden = true;
-      if (avtabsBar) avtabsBar.hidden = true;
+      // Keep the topNav + Chat/Admin switch pill visible even on the
+      // Build-New-AI view so the user never loses the ability to jump
+      // back to Shine AI's Chat or Admin with one click.
+      if (topNav)    topNav.hidden = false;
+      if (avtabsBar) avtabsBar.hidden = false;
       // Clear stale avatar-tab state so a later return to admin starts clean.
       if (p8Main) p8Main.classList.remove('shine-chat-tab');
     } else {
@@ -8113,7 +8122,7 @@
       if (newaiBody) newaiBody.hidden = true;
       if (inputArea) inputArea.hidden = false;
       if (topNav)    topNav.hidden = false;
-      if (avtabsBar) avtabsBar.hidden = true;
+      if (avtabsBar) avtabsBar.hidden = false;
       if (p8Main) p8Main.classList.remove('shine-chat-tab');
     }
 
