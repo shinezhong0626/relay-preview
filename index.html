@@ -2277,7 +2277,7 @@
       gap: 8px;
       height: 48px;
       padding: 0 16px;
-      margin: 6px 0 10px;
+      margin: 10px 0 10px;
       border: 2px dashed #c9cfd7;
       border-radius: 12px;
       background: #f3f4f6;
@@ -2288,6 +2288,23 @@
       color: #014261;
     }
     #p8-nav-newai:hover svg { color: #014261; }
+    /* Newly-added team row — slides in with a brief highlight flash so
+       the user notices the just-created AI. Clears itself after one
+       render pass (see _renderCodyChatList). */
+    @keyframes p8-row-slide-in {
+      0%   { opacity: 0; transform: translateX(-16px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes p8-row-highlight {
+      0%, 100% { background: transparent; }
+      25%      { background: #e6f2fb; }
+      75%      { background: #e6f2fb; }
+    }
+    .p8-chat-item.newly-added {
+      animation:
+        p8-row-slide-in 0.45s cubic-bezier(0.2, 0.7, 0.3, 1),
+        p8-row-highlight 1.8s ease 0.45s 1;
+    }
     /* ── TEAM view-switch (Notion-style icon toggle) ──
        Sits below the TEAM label with no container background. Only the
        hover and active states fill with #F3F4F6, giving each segment a
@@ -9403,63 +9420,110 @@
     const userSub  = document.querySelector('.p8-sidebar-user .p8-user-sub');
     if (userSub)  userSub.textContent  = 'Tanka';
 
-    // Populate the TEAM list with 4 AI employees. All items are
-    // clickable — selectTeamMember() toggles the pill / view based on
-    // ownership. Avatars are pinned to avatarIndex for stable visuals.
-    const list = document.querySelector('.p8-chat-list');
-    if (list) {
-      const opts = Array.from(document.querySelectorAll('.av2-opt'));
-      const avatarFor = m => (opts[m.avatarIndex] && opts[m.avatarIndex].dataset.src) || '';
-
-      list.innerHTML = '';
-      _CODY_TEAM.forEach(member => {
-        const isGenerating = member.status === 'generating';
-        // Generating AIs use the shared building placeholder instead of
-        // the pinned av2-opt avatar — the real face only shows up once
-        // training completes.
-        const src = isGenerating ? _BUILDING_AVATAR_SRC : avatarFor(member);
-        const item = document.createElement('div');
-        item.className = 'p8-chat-item' + (member.active ? ' active' : '') + (isGenerating ? ' generating' : '');
-        item.setAttribute('role', 'button');
-        item.setAttribute('tabindex', '0');
-        item.setAttribute('data-member', member.name);
-        item.setAttribute('data-owned', member.owned ? 'true' : 'false');
-        if (isGenerating) item.setAttribute('data-status', 'generating');
-        // All four members are clickable in the Cody flow. Route through
-        // a shared selectTeamMember helper that owns the pill + view
-        // toggling based on data-owned.
-        item.setAttribute('onclick', 'selectTeamMember("' + member.name.replace(/"/g, '&quot;') + '")');
-        const sharedBadge = (!member.owned)
-          ? '<span class="p8-chat-shared" title="Shared with you" aria-label="Shared with you">' +
-              '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-                '<path d="M8.58997 13.5098L15.42 17.4898M15.41 6.50977L8.58997 10.4898M21 5C21 6.65685 19.6569 8 18 8C16.3431 8 15 6.65685 15 5C15 3.34315 16.3431 2 18 2C19.6569 2 21 3.34315 21 5ZM9 12C9 13.6569 7.65685 15 6 15C4.34315 15 3 13.6569 3 12C3 10.3431 4.34315 9 6 9C7.65685 9 9 10.3431 9 12ZM21 19C21 20.6569 19.6569 22 18 22C16.3431 22 15 20.6569 15 19C15 17.3431 16.3431 16 18 16C19.6569 16 21 17.3431 21 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
-              '</svg>' +
-            '</span>'
-          : '';
-        const buildingTag = isGenerating ? '<span class="p8-chat-building-tag">Building</span>' : '';
-        item.innerHTML =
-          '<div class="p8-chat-avatar">' +
-            '<img src="' + src + '" alt=""/>' +
-          '</div>' +
-          '<div class="p8-chat-info">' +
-            '<div class="p8-chat-row-1">' +
-              '<span class="p8-chat-name">' + member.name + '</span>' +
-              sharedBadge +
-              buildingTag +
-              '<span class="p8-chat-time">' + member.time + '</span>' +
-            '</div>' +
-            '<div class="p8-chat-row-2">' +
-              '<span class="p8-chat-preview">' + member.preview + '</span>' +
-              (member.badge ? '<span class="p8-chat-badge">' + member.badge + '</span>' : '') +
-            '</div>' +
-          '</div>';
-        list.appendChild(item);
-      });
-    }
+    // Populate the TEAM list with 4 AI employees. Delegated to the
+    // shared helper so it can also be used to re-render after new
+    // teammates get added mid-session.
+    _renderCodyChatList();
 
     // Land on the product home — default to Shine AI (the active team row).
     goTo(8);
     selectTeamMember('Shine AI');
+  }
+
+  /* Render the Cody TEAM sidebar list from the current _CODY_TEAM.
+     Used by enterCodyDemo on initial entry AND by _commitTeammateDraft
+     when a newly-built teammate AI gets pushed into the roster. */
+  function _renderCodyChatList() {
+    const list = document.querySelector('.p8-chat-list');
+    if (!list || typeof _CODY_TEAM === 'undefined') return;
+    const opts = Array.from(document.querySelectorAll('.av2-opt'));
+    const avatarFor = m => (opts[m.avatarIndex] && opts[m.avatarIndex].dataset.src) || '';
+
+    list.innerHTML = '';
+    _CODY_TEAM.forEach(member => {
+      const isGenerating = member.status === 'generating';
+      // Generating AIs use the shared building placeholder instead of
+      // the pinned av2-opt avatar — the real face only shows up once
+      // training completes.
+      const src = isGenerating ? _BUILDING_AVATAR_SRC : avatarFor(member);
+      const item = document.createElement('div');
+      item.className = 'p8-chat-item'
+        + (member.active ? ' active' : '')
+        + (isGenerating ? ' generating' : '')
+        + (member._isNewlyAdded ? ' newly-added' : '');
+      item.setAttribute('role', 'button');
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('data-member', member.name);
+      item.setAttribute('data-owned', member.owned ? 'true' : 'false');
+      if (isGenerating) item.setAttribute('data-status', 'generating');
+      // All four members are clickable in the Cody flow. Route through
+      // a shared selectTeamMember helper that owns the pill + view
+      // toggling based on data-owned.
+      item.setAttribute('onclick', 'selectTeamMember("' + member.name.replace(/"/g, '&quot;') + '")');
+      const sharedBadge = (!member.owned)
+        ? '<span class="p8-chat-shared" title="Shared with you" aria-label="Shared with you">' +
+            '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+              '<path d="M8.58997 13.5098L15.42 17.4898M15.41 6.50977L8.58997 10.4898M21 5C21 6.65685 19.6569 8 18 8C16.3431 8 15 6.65685 15 5C15 3.34315 16.3431 2 18 2C19.6569 2 21 3.34315 21 5ZM9 12C9 13.6569 7.65685 15 6 15C4.34315 15 3 13.6569 3 12C3 10.3431 4.34315 9 6 9C7.65685 9 9 10.3431 9 12ZM21 19C21 20.6569 19.6569 22 18 22C16.3431 22 15 20.6569 15 19C15 17.3431 16.3431 16 18 16C19.6569 16 21 17.3431 21 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+            '</svg>' +
+          '</span>'
+        : '';
+      const buildingTag = isGenerating ? '<span class="p8-chat-building-tag">Building</span>' : '';
+      item.innerHTML =
+        '<div class="p8-chat-avatar">' +
+          '<img src="' + src + '" alt=""/>' +
+        '</div>' +
+        '<div class="p8-chat-info">' +
+          '<div class="p8-chat-row-1">' +
+            '<span class="p8-chat-name">' + member.name + '</span>' +
+            sharedBadge +
+            buildingTag +
+            '<span class="p8-chat-time">' + member.time + '</span>' +
+          '</div>' +
+          '<div class="p8-chat-row-2">' +
+            '<span class="p8-chat-preview">' + member.preview + '</span>' +
+            (member.badge ? '<span class="p8-chat-badge">' + member.badge + '</span>' : '') +
+          '</div>' +
+        '</div>';
+      list.appendChild(item);
+    });
+    // Clear the one-shot animation flag so a later re-render doesn't
+    // replay the slide-in unless a brand-new member is pushed.
+    setTimeout(() => {
+      _CODY_TEAM.forEach(m => { if (m._isNewlyAdded) m._isNewlyAdded = false; });
+    }, 1500);
+  }
+
+  /* Push the captured teammate draft into _CODY_TEAM as a new
+     generating AI. Called when the user completes the teammate flow
+     (Generate) or backs out past step 2. No-op on refresh — the
+     draft is session-only (window state, not localStorage). */
+  function _commitTeammateDraft() {
+    if (!window._isCodyDemo) return;
+    const draft = window._teammateDraft;
+    if (!draft || window._teammateDraftCommitted) return;
+    if (typeof _CODY_TEAM === 'undefined') return;
+    // If an AI with the same name already exists, skip.
+    if (_CODY_TEAM.some(m => m.name === draft.name)) {
+      window._teammateDraftCommitted = true;
+      return;
+    }
+    _CODY_TEAM.unshift({
+      name: draft.name,
+      role: draft.role || 'Teammate',
+      preview: 'Waiting\u2026',
+      time: '',
+      badge: '',
+      active: false,
+      owned: true,
+      avatarIndex: 2 + Math.floor(Math.random() * 10),
+      linkedApps: ['slack', 'gmail', 'gdrive'],
+      departingName: draft.departing || draft.name.replace(/ AI$/, ''),
+      handoverUnread: 0,
+      status: 'generating',
+      _isNewlyAdded: true
+    });
+    window._teammateDraftCommitted = true;
+    _renderCodyChatList();
   }
 
   /* Select a Cody team member and drive the main column accordingly.
@@ -10285,9 +10349,20 @@
   }
   /* Called by each choice card — close the modal, then route into
      the wizard. Setting .no-skip (already set by startBuildNewAI) is
-     idempotent. */
+     idempotent.
+     Cody flow skips the "Preserve a departing teammate" intro (page 9)
+     — that 3-step overview is only relevant for first-time Shine
+     onboarding. Cody already knows the product, so we jump straight
+     into the step-1 form on page 10. */
   function pickBuildChoice(page) {
     closeNewAiChoiceModal();
+    if (window._isCodyDemo && page === 9) page = 10;
+    // Reset the teammate draft each time the user re-enters the
+    // wizard so a previous attempt doesn't leak into the new one.
+    if (page === 9 || page === 10) {
+      window._teammateDraft = null;
+      window._teammateDraftCommitted = false;
+    }
     goTo(page);
   }
 
@@ -10316,6 +10391,11 @@
   function buildFlowBack(fallback) {
     const s = document.getElementById('screens');
     if (s && s.classList.contains('no-skip')) {
+      // Cody flow: if the user made it past step 2 (so we have a
+      // teammate draft captured) and is now exiting, commit that
+      // draft as a new AI row. Fires once per flow thanks to the
+      // _teammateDraftCommitted guard.
+      if (typeof _commitTeammateDraft === 'function') _commitTeammateDraft();
       goTo(8);   // goTo(8) clears the no-skip flag on entry
     } else {
       goTo(fallback);
@@ -10986,16 +11066,38 @@
   function handoverProceedToStep2() {
     let email = '';
     let name  = '';
+    let role  = '';
     if (_handoverMode === 'existing') {
       const sel = document.getElementById('handover-member');
       const opt = sel ? sel.options[sel.selectedIndex] : null;
       const label = (opt && opt.textContent) || '';
       email = (opt && opt.dataset.email) || '';
       name  = label.split('·')[0].trim() || label;
+      role  = (opt && opt.dataset.title) || '';
     } else {
       email = (document.getElementById('handover-email')?.value || '').trim();
       // Derive a friendly name from the local-part of the email.
       name = email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    }
+    // Read the optional role select (if the wizard exposes one; fall
+    // back to "Teammate" so the row has something readable).
+    if (!role) {
+      const roleSel = document.getElementById('handover-role');
+      role = (roleSel && roleSel.value) || '';
+    }
+
+    // Cody flow: stash the in-progress teammate so we can commit it
+    // into _CODY_TEAM either on Generate completion or on Back-out
+    // after step 2. Session-only — a reload resets to the original 4.
+    if (window._isCodyDemo) {
+      const firstName = (name || 'Teammate').split(' ')[0] || 'Teammate';
+      window._teammateDraft = {
+        name: firstName + ' AI',
+        role: role || 'Teammate',
+        departing: name || email.split('@')[0] || 'Teammate',
+        email: email
+      };
+      window._teammateDraftCommitted = false;
     }
 
     const slug = _handoverSlug(email || name);
@@ -11111,17 +11213,19 @@
       window._handoverToStep3Timer = null;
     }
     // "Generate" commits the new teammate AI to the team list in a
-    // 'generating' state. In the Cody demo this is Marcus AI — so we
-    // drop the user onto page 8 and auto-select Marcus, landing in
-    // the generating surface. For the pre-signup / Shine onboarding
-    // flow (no Cody team), fall back to the original page-2 behavior.
+    // 'generating' state. Cody flow now builds a row from whatever
+    // the user typed in step 1 (email/name → "<FirstName> AI") and
+    // pushes it to the top of _CODY_TEAM with a one-shot slide-in.
+    // If no draft was captured (unusual — user bypassed step 2 form
+    // validation), fall back to the pre-seeded Marcus AI.
     if (window._isCodyDemo) {
       const s = document.getElementById('screens');
       if (s) s.classList.remove('no-skip');
       goTo(8);
-      // selectTeamMember switches to the generating view on its own
-      // when it sees status === 'generating'.
-      if (typeof selectTeamMember === 'function') selectTeamMember('Marcus AI');
+      const draftName = window._teammateDraft && window._teammateDraft.name;
+      if (typeof _commitTeammateDraft === 'function') _commitTeammateDraft();
+      const target = draftName || 'Marcus AI';
+      if (typeof selectTeamMember === 'function') selectTeamMember(target);
     } else {
       goTo(2);
     }
