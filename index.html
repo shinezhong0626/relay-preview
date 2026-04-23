@@ -2323,6 +2323,25 @@
     .p8-chat-item.generating .p8-chat-preview {
       color: #0089e6;
     }
+    /* Shared-with-you badge — inline icon after the AI name on rows
+       the current user doesn't own. 18x18 share glyph, muted color so
+       it reads as metadata rather than action. */
+    .p8-chat-shared {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px; height: 18px;
+      color: #9aa0a6;
+      flex-shrink: 0;
+    }
+    .p8-chat-shared svg { width: 18px; height: 18px; display: block; }
+    /* Tight the row-1 flex so name + share badge sit together on the
+       left and time floats to the right. */
+    .p8-chat-row-1 {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .p8-chat-row-1 .p8-chat-name { flex-shrink: 1; min-width: 0; }
+    .p8-chat-row-1 .p8-chat-time { margin-left: auto; }
     /* Highlight the timestamp only on the currently selected chat row.
        Before this, every row's timestamp rendered in blue which made it
        look like multiple rows were selected. */
@@ -7032,12 +7051,14 @@
         <div class="p8-ai-panel-sub" id="p8-ai-panel-role">AI Employee</div>
 
         <!-- Visibility + Managed-by inline meta. No buttons, purely
-             informational. Small S chip visually anchors "Managed by Shine". -->
+             informational. The chip + manager name are set dynamically
+             in openAiProfilePanel (Cody AI → "C" blue chip + "Cody",
+             Shine-owned → "S" reddish-brown chip + "Shine"). -->
         <div class="p8-ai-panel-meta">
           <span class="p8-ai-panel-visibility">Restricted</span>
           <span class="p8-ai-panel-meta-dot">·</span>
-          <span class="p8-ai-panel-manager-chip">S</span>
-          <span class="p8-ai-panel-manager-text">Managed by <strong>Shine</strong></span>
+          <span class="p8-ai-panel-manager-chip" id="p8-ai-panel-manager-chip">S</span>
+          <span class="p8-ai-panel-manager-text">Managed by <strong id="p8-ai-panel-manager-name">Shine</strong></span>
         </div>
 
         <div class="p8-ai-panel-section">
@@ -7916,11 +7937,19 @@
           item.setAttribute('data-member', member.name);
           item.setAttribute('data-owned', member.owned ? 'true' : 'false');
           item.setAttribute('onclick', 'selectTeamMember("' + member.name.replace(/"/g, '&quot;') + '")');
+          const sharedBadge = (!member.owned)
+            ? '<span class="p8-chat-shared" title="Shared with you" aria-label="Shared with you">' +
+                '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                  '<path d="M8.58997 13.5098L15.42 17.4898M15.41 6.50977L8.58997 10.4898M21 5C21 6.65685 19.6569 8 18 8C16.3431 8 15 6.65685 15 5C15 3.34315 16.3431 2 18 2C19.6569 2 21 3.34315 21 5ZM9 12C9 13.6569 7.65685 15 6 15C4.34315 15 3 13.6569 3 12C3 10.3431 4.34315 9 6 9C7.65685 9 9 10.3431 9 12ZM21 19C21 20.6569 19.6569 22 18 22C16.3431 22 15 20.6569 15 19C15 17.3431 16.3431 16 18 16C19.6569 16 21 17.3431 21 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+                '</svg>' +
+              '</span>'
+            : '';
           item.innerHTML =
             '<div class="p8-chat-avatar"><img src="' + src + '" alt=""/></div>' +
             '<div class="p8-chat-info">' +
               '<div class="p8-chat-row-1">' +
                 '<span class="p8-chat-name">' + member.name + '</span>' +
+                sharedBadge +
                 '<span class="p8-chat-time">' + member.time + '</span>' +
               '</div>' +
               '<div class="p8-chat-row-2">' +
@@ -8763,6 +8792,13 @@
         // a shared selectTeamMember helper that owns the pill + view
         // toggling based on data-owned.
         item.setAttribute('onclick', 'selectTeamMember("' + member.name.replace(/"/g, '&quot;') + '")');
+        const sharedBadge = (!member.owned)
+          ? '<span class="p8-chat-shared" title="Shared with you" aria-label="Shared with you">' +
+              '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                '<path d="M8.58997 13.5098L15.42 17.4898M15.41 6.50977L8.58997 10.4898M21 5C21 6.65685 19.6569 8 18 8C16.3431 8 15 6.65685 15 5C15 3.34315 16.3431 2 18 2C19.6569 2 21 3.34315 21 5ZM9 12C9 13.6569 7.65685 15 6 15C4.34315 15 3 13.6569 3 12C3 10.3431 4.34315 9 6 9C7.65685 9 9 10.3431 9 12ZM21 19C21 20.6569 19.6569 22 18 22C16.3431 22 15 20.6569 15 19C15 17.3431 16.3431 16 18 16C19.6569 16 21 17.3431 21 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' +
+              '</svg>' +
+            '</span>'
+          : '';
         item.innerHTML =
           '<div class="p8-chat-avatar">' +
             '<img src="' + src + '" alt=""/>' +
@@ -8770,6 +8806,7 @@
           '<div class="p8-chat-info">' +
             '<div class="p8-chat-row-1">' +
               '<span class="p8-chat-name">' + member.name + '</span>' +
+              sharedBadge +
               '<span class="p8-chat-time">' + member.time + '</span>' +
             '</div>' +
             '<div class="p8-chat-row-2">' +
@@ -9318,7 +9355,9 @@
     const sel = document.querySelector('.av2-opt.selected');
     const avatarSrc = sel ? sel.dataset.src : '';
     const isDemo = !!window._isDemoAi;
-    const AI_NAME = isDemo ? 'Sarah AI' : 'Shine AI';
+    const activeMember = window._activeMemberName;
+    const userAiName = (window._currentUserFirstName || 'Shine') + ' AI';
+    const AI_NAME = isDemo ? 'Sarah AI' : (activeMember || userAiName);
     const ROLE = isDemo ? 'Product Manager'
                         : ((document.getElementById('role-select')?.value || '').trim() || 'AI Employee');
 
@@ -9330,6 +9369,32 @@
     if (tagEl)  tagEl.hidden = !isDemo;
     const roleEl = document.getElementById('p8-ai-panel-role');
     if (roleEl) roleEl.textContent = ROLE;
+
+    // "Managed by" chip + name. Cody-owned AIs (Ana / Marcus / Priya /
+    // Cody AI) are managed by Cody — blue "C" chip. Everything else
+    // (Shine AI in Cody's team, the Shine onboarding flow, Sarah demo)
+    // shows "Managed by Shine" with a reddish-brown S chip.
+    let managerName = window._currentUserFirstName || 'Shine';
+    let managerChip = managerName.charAt(0).toUpperCase();
+    let managerBg = (managerName === 'Cody') ? '#2563eb' : '#ae3906';
+
+    if (window._isCodyDemo && typeof _CODY_TEAM !== 'undefined' && activeMember) {
+      const m = _CODY_TEAM.find(x => x.name === activeMember);
+      if (m && !m.owned) {
+        // Shared AI (e.g. Shine AI in Cody's team) — managed by the
+        // original creator, not the current user.
+        managerName = 'Shine';
+        managerChip = 'S';
+        managerBg = '#ae3906';
+      }
+    }
+    const chipEl = document.getElementById('p8-ai-panel-manager-chip');
+    if (chipEl) {
+      chipEl.textContent = managerChip;
+      chipEl.style.background = managerBg;
+    }
+    const mgrNameEl = document.getElementById('p8-ai-panel-manager-name');
+    if (mgrNameEl) mgrNameEl.textContent = managerName;
 
     renderAiPanelApps();
     panel.hidden = false;
