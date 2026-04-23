@@ -2278,6 +2278,27 @@
       color: #6b7280;
       flex-shrink: 0;
     }
+    /* Demo tag — only shown for the pre-built Sarah AI that appears when
+       the user enters via Skip-for-now. Hidden by default; revealed only
+       when #screens has .demo-ai. */
+    .p8-space-demo-tag {
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px; font-weight: 500; line-height: 16px;
+      color: #6b7280;
+      background: #f3f4f6;
+      border-radius: 6px;
+      padding: 2px 8px;
+      margin-left: 2px;
+      display: none;
+    }
+    #screens.demo-ai .p8-space-demo-tag { display: inline-flex; }
+    /* Hide link-apps + attach entry points on the demo AI's input. The demo
+       AI is a canned experience — wiring apps to it wouldn't do anything,
+       and the attach affordance is equally pointless. Other AIs keep both. */
+    #screens.demo-ai .p8-input-attach,
+    #screens.demo-ai .p8-link-tools {
+      display: none !important;
+    }
     /* Chat body — scrollable, content centered so conversation + welcome
        align with the input box (which is also centered at max 920px). */
     .p8-chat-body {
@@ -5563,6 +5584,9 @@
             <span class="p8-space-sep">/</span>
             <span class="p8-space-ai">
               <span id="p8-nav-title">Shine AI</span>
+              <!-- Demo tag only shown when the user entered via Skip-for-now
+                   (#screens.demo-ai). Marks this as the pre-built demo AI. -->
+              <span class="p8-space-demo-tag" id="p8-space-demo-tag">Demo</span>
               <svg class="p8-space-chevron" viewBox="0 0 20 20" fill="none"
                    stroke="currentColor" stroke-width="1.8"
                    stroke-linecap="round" stroke-linejoin="round">
@@ -6665,6 +6689,12 @@
   function advanceToChat() {
     if (window._p7CtaInterval) { clearInterval(window._p7CtaInterval); window._p7CtaInterval = null; }
     if (window._p7ToP8Timer)   { clearTimeout(window._p7ToP8Timer); window._p7ToP8Timer = null; }
+    // The user has committed to building their own AI, which supersedes
+    // the canned Sarah AI demo. Clear the demo flag so name/role/tag/
+    // input-chrome all revert to the real user's configuration.
+    window._isDemoAi = false;
+    const screens = document.getElementById('screens');
+    if (screens) screens.classList.remove('demo-ai');
     if (typeof syncP8 === 'function') syncP8();
     if (typeof goTo === 'function') goTo(8);
     // Full onboarding finished → mark "Create your AI" done in the
@@ -6874,8 +6904,11 @@
     const welcome = document.getElementById('p8-welcome-wrap');
     if (welcome) welcome.remove();
     appendUserMessage(q);
-    const answer = AI_ANSWERS[q] || genericAIAnswer();
+    const answer = window._isDemoAi
+      ? "I'm a digital person built on Sarah Cheng's data — my answers are drawn from her past work, so they may not be accurate."
+      : (AI_ANSWERS[q] || genericAIAnswer());
     setTimeout(() => appendAIResponse(answer), 400);
+    if (typeof gsComplete === 'function') gsComplete('chatted');
   }
 
   /* Default generic reply for free-text questions that aren't in AI_ANSWERS. */
@@ -6920,7 +6953,11 @@
     const welcome = document.getElementById('p8-welcome-wrap');
     if (welcome) welcome.remove();
     appendUserMessage(text);
-    const answer = AI_ANSWERS[text] || genericAIAnswer();
+    // Demo AI (Skip-for-now) always returns the same disclosure line —
+    // it's a canned experience driven by "Sarah Cheng's" past data.
+    const answer = window._isDemoAi
+      ? "I'm a digital person built on Sarah Cheng's data — my answers are drawn from her past work, so they may not be accurate."
+      : (AI_ANSWERS[text] || genericAIAnswer());
     setTimeout(() => appendAIResponse(answer), 400);
     // Reset input
     inp.value = '';
@@ -6936,8 +6973,11 @@
     const sel = document.querySelector('.av2-opt.selected');
     const avatarSrc = sel ? sel.dataset.src : '';
     const roleVal = (document.getElementById('role-select')?.value || '').trim();
-    const ROLE = roleVal || 'AI Employee';
-    const AI_NAME = 'Shine AI';
+    // Demo variant (Skip-for-now entry) overrides name + role. For normal
+    // onboarding it stays as Shine AI with the selected job title.
+    const isDemo  = !!window._isDemoAi;
+    const ROLE    = isDemo ? 'Product Manager' : (roleVal || 'AI Employee');
+    const AI_NAME = isDemo ? 'Sarah AI' : 'Shine AI';
 
     // Reset the chat area to the welcome view (in case user came back from a
     // previous session where they'd sent a question).
@@ -7395,8 +7435,31 @@
      showing the chat/team page would be confusing. Landing on "Choose an
      option" makes the next step obvious. */
   function skipToNewai() {
+    // Mark the session as the "demo" variant — this is the only entry point
+    // that routes to the canned Sarah AI experience. Everything downstream
+    // keys off window._isDemoAi (name, tag, profile role, input chrome, AI
+    // response). A matching class on #screens drives CSS-level tweaks.
+    window._isDemoAi = true;
+    const screens = document.getElementById('screens');
+    if (screens) screens.classList.add('demo-ai');
+
+    // Pick a random avatar from the onboarding bank by marking one
+    // .av2-opt as .selected — syncP8 / syncAdminView both read
+    // .av2-opt.selected.dataset.src, so this propagates automatically.
+    try {
+      const opts = document.querySelectorAll('.av2-opt');
+      if (opts.length) {
+        opts.forEach(o => o.classList.remove('selected'));
+        const pick = opts[Math.floor(Math.random() * opts.length)];
+        pick.classList.add('selected');
+      }
+    } catch (e) { /* no-op */ }
+
     goTo(8);
     if (typeof switchP8View === 'function') switchP8View('newai');
+    // Propagate the demo identity to the chat welcome card, sidebar chat
+    // row, topnav title, etc.
+    if (typeof syncP8 === 'function') syncP8();
     // Reveal the Getting Started checklist — this is the ONLY path that
     // shows the widget. Full-onboarding users have already done step 1,
     // so the nudge would be noise for them.
@@ -7597,13 +7660,16 @@
     const sel = document.querySelector('.av2-opt.selected');
     const avatarSrc = sel ? sel.dataset.src : '';
     const roleVal = (document.getElementById('role-select')?.value || '').trim();
-    const ROLE = roleVal || 'AI Employee';
+    // Demo variant (Skip-for-now entry) overrides name + role in the
+    // admin profile hero: "Sarah AI" + "Product Manager".
+    const isDemo  = !!window._isDemoAi;
+    const ROLE    = isDemo ? 'Product Manager' : (roleVal || 'AI Employee');
+    const AI_NAME = isDemo ? 'Sarah AI' : 'Shine AI';
 
     const img = document.getElementById('admin-hero-avatar-img');
     if (img && avatarSrc) img.src = avatarSrc;
-    // Name is always "Shine AI"; the job title shows as the subtitle.
     const nameEl = document.getElementById('admin-hero-name');
-    if (nameEl) nameEl.textContent = 'Shine AI';
+    if (nameEl) nameEl.textContent = AI_NAME;
     const descEl = document.getElementById('admin-hero-desc');
     if (descEl) descEl.textContent = ROLE;
     const tagEl = document.getElementById('admin-hero-tag');
