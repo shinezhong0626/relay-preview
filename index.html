@@ -2269,20 +2269,21 @@
     .p8-nav-item.active .nav-icon-filled { display: block; }
     /* Build New AI entry — dashed-frame CTA that reads as "add another"
        rather than a regular sidebar nav row. Centred content, fixed
-       64px height, 16px radius, and a dashed border in a soft grey
-       that darkens on hover. */
+       48px height, 12px radius, soft grey fill, and a 2px dashed
+       border (dash / gap ≈ 2px) in a muted grey that darkens on
+       hover. */
     #p8-nav-newai {
       justify-content: center;
       gap: 8px;
-      height: 64px;
+      height: 48px;
       padding: 0 16px;
       margin: 6px 0 10px;
-      border: 1.5px dashed #c9cfd7;
-      border-radius: 16px;
-      background: transparent;
+      border: 2px dashed #c9cfd7;
+      border-radius: 12px;
+      background: #f3f4f6;
     }
     #p8-nav-newai:hover {
-      background: #f3f5f9;
+      background: #e7ecf2;
       border-color: #014261;
       color: #014261;
     }
