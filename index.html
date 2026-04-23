@@ -2319,23 +2319,39 @@
       padding: 8px;
       display: flex; flex-direction: column; gap: 4px;
     }
-    /* Group-style avatar for handover rows — departing person's face
-       with the Relay assistant mark overlaid in the bottom-right
-       corner so the row reads as "Relay-mediated group chat". */
-    .p8-chat-avatar.group .p8-chat-avatar-main {
-      width: 100%; height: 100%;
+    /* Group-style avatar for handover rows — two overlapping pixel-art
+       portraits: the incoming owner's avatar sits in the top-right
+       (behind) and the departing teammate's avatar sits bottom-left
+       (in front) with a white ring so the row reads as "handover
+       between two people". Layout mirrors the Figma SVG spec:
+       49x49 overall, back = 32x32 @ top-right, front = 33x33 @
+       bottom-left, both 50% radius, front has a 1.5px white stroke. */
+    .p8-chat-avatar.group {
+      position: relative;
+      background: transparent !important;
+    }
+    .p8-chat-avatar.group .p8-chat-avatar-back,
+    .p8-chat-avatar.group .p8-chat-avatar-front {
+      position: absolute;
       border-radius: 50%;
-      object-fit: cover;
+      overflow: hidden;
+      background: #ede9fe;
       display: block;
     }
-    .p8-chat-avatar.group .p8-chat-avatar-mark {
-      position: absolute;
-      right: -2px; bottom: -2px;
-      width: 20px; height: 20px;
-      border-radius: 50%;
+    .p8-chat-avatar.group .p8-chat-avatar-back {
+      top: 0; right: 0;
+      width: 65%; height: 65%;
+    }
+    .p8-chat-avatar.group .p8-chat-avatar-front {
+      bottom: 0; left: 0;
+      width: 68%; height: 68%;
       border: 2px solid #fff;
+      box-sizing: border-box;
+    }
+    .p8-chat-avatar.group img {
+      width: 100%; height: 100%;
       object-fit: cover;
-      background: #fff;
+      display: block;
     }
     /* Placeholder empty-state for the Handover Group list when no
        threads exist yet. */
@@ -9278,6 +9294,10 @@
      wherever a building AI's avatar would otherwise appear (sidebar
      row, profile panel, etc.) until training completes. */
   const _BUILDING_AVATAR_SRC = 'assets/building-avatar.png';
+  /* Cody's pinned avatar index in the onboarding bank. Used wherever
+     Cody needs a pixel-art portrait (group-chat handover avatars,
+     self-built Cody AI) instead of the "C" blue chip. */
+  const _CODY_AVATAR_INDEX = 12;
   function _relayLogoImg() {
     return '<img src="' + _RELAY_LOGO_SRC + '" alt="Relay assistant"/>';
   }
@@ -9681,13 +9701,16 @@
       item.setAttribute('data-handover', 'true');
       // Open the handover as a standalone surface (no Chat/Profile pill).
       item.setAttribute('onclick', 'selectHandoverGroup("' + member.name.replace(/"/g, '&quot;') + '")');
-      // Group avatar: departing person's avatar with the Relay
-      // assistant mark overlaid at the bottom-right — signals "this
-      // is a Relay-mediated group, not a 1:1 chat".
+      // Group avatar: two overlapping pixel-art portraits per the
+      // Figma spec — Cody's pinned avatar sits in the top-right
+      // (behind) and the departing teammate's avatar sits bottom-left
+      // (in front) with a white ring, signalling the handover is a
+      // two-person conversation.
+      const codyAvatarSrc = (opts[_CODY_AVATAR_INDEX] && opts[_CODY_AVATAR_INDEX].dataset.src) || '';
       item.innerHTML =
         '<div class="p8-chat-avatar group">' +
-          '<img class="p8-chat-avatar-main" src="' + src + '" alt=""/>' +
-          '<img class="p8-chat-avatar-mark" src="' + _RELAY_LOGO_SRC + '" alt=""/>' +
+          '<span class="p8-chat-avatar-back"><img src="' + codyAvatarSrc + '" alt=""/></span>' +
+          '<span class="p8-chat-avatar-front"><img src="' + src + '" alt=""/></span>' +
         '</div>' +
         '<div class="p8-chat-info">' +
           '<div class="p8-chat-row-1">' +
