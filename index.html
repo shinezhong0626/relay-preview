@@ -2442,6 +2442,14 @@
        Before this, every row's timestamp rendered in blue which made it
        look like multiple rows were selected. */
     .p8-chat-item.active .p8-chat-time { color: #0089e6; }
+    /* Status colors for handover rows: Active = green, Pending = amber.
+       Override kicks in unless the row is selected (active rows win). */
+    .p8-chat-time.status-active  { color: #059669; }
+    .p8-chat-time.status-pending { color: #c2410c; }
+    .p8-chat-item.active .p8-chat-time.status-active,
+    .p8-chat-item.active .p8-chat-time.status-pending {
+      color: #0089e6;
+    }
     .p8-chat-preview {
       font-size: 14px; line-height: 18px;
       color: #6d7574;
@@ -9177,10 +9185,14 @@
     if (!member) return;
     window._activeMemberName  = member.name;
     window._activeMemberOwned = member.owned;
+    // Entering Chat/Profile clears the handover-active flag — the
+    // handover row shouldn't look selected once the user leaves it.
+    window._activeHandoverGroup = null;
 
-    // Sidebar active state
+    // Sidebar active state — only AI-employee rows (not handover).
     document.querySelectorAll('.p8-sidebar .p8-chat-item').forEach(el => {
-      el.classList.toggle('active', el.getAttribute('data-member') === name);
+      const isHandoverRow = el.getAttribute('data-handover') === 'true';
+      el.classList.toggle('active', !isHandoverRow && el.getAttribute('data-member') === name);
     });
 
     // Pin the avatar source on .av2-opt.selected so the existing sync
@@ -9459,7 +9471,9 @@
             '<div class="ho-member-role">' + member.role + '</div>' +
           '</div>' +
         '</div>' +
-        // Receiver — Alex Kim (the incoming teammate with a real photo)
+        // Receiver — Alex Kim, taking over the departing teammate's
+        // role. Subtitle shows the same job title so the handover
+        // reads as same-role replacement.
         '<div class="ho-member">' +
           '<span class="ho-member-avatar"><img src="' + receiverAvatar + '" alt=""/></span>' +
           '<div class="ho-member-info">' +
@@ -9467,11 +9481,12 @@
               '<span class="ho-member-name">' + receiverName + '</span>' +
               '<span class="ho-member-tag tag-receiver">Receiver</span>' +
             '</div>' +
-            '<div class="ho-member-role">Incoming teammate</div>' +
+            '<div class="ho-member-role">' + member.role + '</div>' +
           '</div>' +
         '</div>' +
         // Cody — org admin observing the handover. Keeps the "C" blue
-        // chip (not a real photo) to match his account chrome.
+        // chip (not a real photo) to match his account chrome. HR is
+        // Cody\u2019s actual job title in the demo.
         '<div class="ho-member">' +
           '<span class="ho-member-avatar" style="background:#2563eb;">C</span>' +
           '<div class="ho-member-info">' +
@@ -9479,7 +9494,7 @@
               '<span class="ho-member-name">Cody</span>' +
               '<span class="ho-member-tag tag-admin">Admin</span>' +
             '</div>' +
-            '<div class="ho-member-role">You</div>' +
+            '<div class="ho-member-role">HR</div>' +
           '</div>' +
         '</div>' +
         // Add member entry — opens the add-member modal.
@@ -9741,8 +9756,11 @@
       // 320px sidebar — "Ana's Handover" vs "Ana Rodríguez's Handover".
       const firstName = departing.split(' ')[0];
       const groupName = firstName + '\u2019s Handover';
+      const isActive = window._activeHandoverGroup === member.name;
       const item = document.createElement('div');
-      item.className = 'p8-chat-item' + (isGen ? ' generating' : '');
+      item.className = 'p8-chat-item'
+        + (isGen ? ' generating' : '')
+        + (isActive ? ' active' : '');
       item.setAttribute('role', 'button');
       item.setAttribute('tabindex', '0');
       item.setAttribute('data-member', member.name);
@@ -9757,6 +9775,7 @@
       // "C" chip elsewhere.
       const departingRealAvatar = _realAvatarFor(departing);
       const receiverAvatar = _HANDOVER_RECEIVER.avatar;
+      const statusClass = isGen ? 'status-pending' : 'status-active';
       item.innerHTML =
         '<div class="p8-chat-avatar group">' +
           '<span class="p8-chat-avatar-back"><img src="' + receiverAvatar + '" alt=""/></span>' +
@@ -9765,7 +9784,7 @@
         '<div class="p8-chat-info">' +
           '<div class="p8-chat-row-1">' +
             '<span class="p8-chat-name">' + groupName + '</span>' +
-            '<span class="p8-chat-time">' + (isGen ? 'Pending' : 'Active') + '</span>' +
+            '<span class="p8-chat-time ' + statusClass + '">' + (isGen ? 'Pending' : 'Active') + '</span>' +
           '</div>' +
           '<div class="p8-chat-row-2">' +
             '<span class="p8-chat-preview">' + (isGen ? 'Waiting to join' : 'Memory snapshot preserved') + '</span>' +
@@ -9788,8 +9807,11 @@
       selectTeamMember(name);
       return;
     }
-    window._activeMemberName  = member.name;
-    window._activeMemberOwned = member.owned;
+    window._activeMemberName    = member.name;
+    window._activeMemberOwned   = member.owned;
+    // Flag the active handover so the list renderer can preserve the
+    // selected state across the rebuild that happens on each open.
+    window._activeHandoverGroup = member.name;
 
     // Sidebar active state — clear AI rows and light up the handover row.
     document.querySelectorAll('.p8-sidebar .p8-chat-item').forEach(el => {
