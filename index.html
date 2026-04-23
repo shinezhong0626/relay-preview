@@ -2317,25 +2317,11 @@
       font-size: 14px; line-height: 18px;
       color: #9aa0a6;
     }
-    /* Pulsing dot on team rows that are still generating. Sits in the
-       bottom-right of the avatar so the "not ready" state is visible
-       from the sidebar without reading the preview text. */
-    .p8-chat-gen-dot {
-      position: absolute;
-      bottom: 0; right: 0;
-      width: 12px; height: 12px;
-      border-radius: 50%;
-      background: #0089e6;
-      border: 2px solid #fff;
-      animation: generating-pulse 1.4s ease-in-out infinite;
-    }
-    @keyframes generating-pulse {
-      0%, 100% { transform: scale(1);   opacity: 1;   }
-      50%      { transform: scale(1.2); opacity: 0.7; }
-    }
-    .p8-chat-avatar { position: relative; }
+    /* Generating team row — preview label sits in the second line as
+       a plain "Building" string in blue so the state is legible but
+       doesn't clutter the avatar with an overlay. */
     .p8-chat-item.generating .p8-chat-preview {
-      color: #0089e6; font-style: italic;
+      color: #0089e6;
     }
     /* Highlight the timestamp only on the currently selected chat row.
        Before this, every row's timestamp rendered in blue which made it
@@ -3226,8 +3212,10 @@
       display: flex; flex-direction: column;
       gap: 24px;
     }
+    /* Heading + sub left-aligned so the type block lines up with the
+       left edge of the white card below. */
     .pending-head {
-      text-align: center;
+      text-align: left;
     }
     /* Onboarding-style big pixel-font title to match page 10/11/13
        heading treatment. */
@@ -3253,51 +3241,21 @@
       gap: 14px;
       box-shadow: 0 2px 8px rgba(7,25,30,0.03);
     }
-    /* Avatar + Building chip, anchoring the card to a real identity. */
-    .pending-avatar {
+    .pending-check {
       align-self: center;
-      position: relative;
-      width: 72px; height: 72px;
-    }
-    .pending-avatar img {
-      width: 100%; height: 100%;
+      width: 48px; height: 48px;
       border-radius: 50%;
-      object-fit: cover;
-      display: block;
-      background: #ede9fe;
-      box-shadow: 0 0 0 1px rgba(7,25,30,0.06);
-      filter: saturate(0.9);
-    }
-    /* Small bottom-right chip anchored half-outside the avatar so it
-       reads as a status overlay. */
-    .pending-avatar-chip {
-      position: absolute;
-      left: 50%;
-      bottom: -8px;
-      transform: translateX(-50%);
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 3px 10px;
-      background: #0089e6;
+      background: #10b981;
       color: #fff;
-      border: 2px solid #fff;
-      border-radius: 999px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 11px; font-weight: 600;
-      letter-spacing: 0.02em;
+      display: flex; align-items: center; justify-content: center;
     }
-    .pending-avatar-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #fff;
-      animation: generating-pulse 1.4s ease-in-out infinite;
-    }
+    .pending-check svg { width: 24px; height: 24px; }
     .pending-card-title {
       align-self: center;
       font-family: 'Poppins', sans-serif;
-      font-size: 18px; font-weight: 600; line-height: 24px;
+      font-size: 20px; font-weight: 600; line-height: 26px;
       color: #07191e;
       text-align: center;
-      margin-top: 12px;
     }
     .pending-share-label {
       font-size: 14px; line-height: 20px;
@@ -7014,16 +6972,10 @@
               <p class="pending-sub">Waiting for the leaver to accept the invitation and link data sources.</p>
             </div>
             <div class="pending-card">
-              <!-- Avatar swapped in for the previous abstract green check.
-                   Chosen pixel-art avatar (or a placeholder) + a bottom-
-                   right "Building" chip so the identity is legible and
-                   the pending state is signaled. -->
-              <div class="pending-avatar">
-                <img id="p8-pending-avatar-img" src="" alt=""/>
-                <span class="pending-avatar-chip">
-                  <span class="pending-avatar-dot"></span>
-                  Building
-                </span>
+              <div class="pending-check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12l4 4 10-10"/>
+                </svg>
               </div>
               <div class="pending-card-title">Offboarding Process Generated</div>
               <div class="pending-share-label">Share this link with <strong id="p8-pending-name">your teammate</strong> to join in Relay</div>
@@ -7918,8 +7870,74 @@
     window._isDemoAi = false;
     const screens = document.getElementById('screens');
     if (screens) screens.classList.remove('demo-ai');
-    if (typeof syncP8 === 'function') syncP8();
-    if (typeof goTo === 'function') goTo(8);
+
+    // Cody flow: "Build your AI self" → Generate should produce Cody AI
+    // as a new team member (not the static Shine AI that's already in
+    // the sidebar). Add it if missing, then auto-select it.
+    if (window._isCodyDemo && typeof _CODY_TEAM !== 'undefined') {
+      const userAiName = (window._currentUserFirstName || 'Cody') + ' AI';
+      let codyAi = _CODY_TEAM.find(m => m.name === userAiName);
+      if (!codyAi) {
+        const roleVal = (document.getElementById('role-select')?.value || '').trim() || 'AI Employee';
+        const selectedAv = document.querySelector('.av2-opt.selected');
+        const opts = Array.from(document.querySelectorAll('.av2-opt'));
+        const avIndex = selectedAv ? opts.indexOf(selectedAv) : 12;
+        codyAi = {
+          name: userAiName,
+          role: roleVal,
+          preview: 'Ready to chat',
+          time: 'Just now',
+          badge: '',
+          active: false,
+          owned: true,
+          avatarIndex: avIndex >= 0 ? avIndex : 12,
+          linkedApps: Array.from(connectedApps || []),
+          departingName: window._currentUserFirstName || 'Cody',
+          handoverUnread: 0,
+          status: 'ready'
+        };
+        _CODY_TEAM.push(codyAi);
+      }
+      // Re-render the sidebar with the new member included.
+      const list = document.querySelector('.p8-chat-list');
+      if (list) {
+        // Rebuild via enterCodyDemo's rendering loop — but we don't
+        // want to reset the user account row, so inline the team render
+        // here. (Matches the structure in enterCodyDemo.)
+        const allOpts = Array.from(document.querySelectorAll('.av2-opt'));
+        list.innerHTML = '';
+        _CODY_TEAM.forEach(member => {
+          const src = (allOpts[member.avatarIndex] && allOpts[member.avatarIndex].dataset.src) || '';
+          const isGen = member.status === 'generating';
+          const item = document.createElement('div');
+          item.className = 'p8-chat-item' + (isGen ? ' generating' : '');
+          item.setAttribute('role', 'button');
+          item.setAttribute('tabindex', '0');
+          item.setAttribute('data-member', member.name);
+          item.setAttribute('data-owned', member.owned ? 'true' : 'false');
+          item.setAttribute('onclick', 'selectTeamMember("' + member.name.replace(/"/g, '&quot;') + '")');
+          item.innerHTML =
+            '<div class="p8-chat-avatar"><img src="' + src + '" alt=""/></div>' +
+            '<div class="p8-chat-info">' +
+              '<div class="p8-chat-row-1">' +
+                '<span class="p8-chat-name">' + member.name + '</span>' +
+                '<span class="p8-chat-time">' + member.time + '</span>' +
+              '</div>' +
+              '<div class="p8-chat-row-2">' +
+                '<span class="p8-chat-preview">' + member.preview + '</span>' +
+                (member.badge ? '<span class="p8-chat-badge">' + member.badge + '</span>' : '') +
+              '</div>' +
+            '</div>';
+          list.appendChild(item);
+        });
+      }
+      goTo(8);
+      selectTeamMember(userAiName);
+    } else {
+      if (typeof syncP8 === 'function') syncP8();
+      if (typeof goTo === 'function') goTo(8);
+    }
+
     // Full onboarding finished → mark "Create your AI" done in the
     // Getting Started checklist.
     if (typeof gsComplete === 'function') gsComplete('created');
@@ -8203,14 +8221,17 @@
     const avatarSrc = sel ? sel.dataset.src : '';
     const roleVal = (document.getElementById('role-select')?.value || '').trim();
     // Demo variant (Skip-for-now entry) overrides name + role. For normal
-    // onboarding it stays as Shine AI with the selected job title.
+    // onboarding it stays as <User> AI with the selected job title.
     // Cody flow sets window._activeMemberName to whichever team member is
     // currently selected (Shine / Ana / Marcus / Priya) so the nav,
-    // welcome card, and sidebar all stay in sync.
+    // welcome card, and sidebar all stay in sync. If no member is
+    // selected (pre-signup onboarding), the AI is named after the
+    // current user (Shine AI / Cody AI).
     const isDemo  = !!window._isDemoAi;
     const activeMember = window._activeMemberName;
+    const userAiName = (window._currentUserFirstName || 'Shine') + ' AI';
     const ROLE    = isDemo ? 'Product Manager' : (roleVal || 'AI Employee');
-    const AI_NAME = isDemo ? 'Sarah AI' : (activeMember || 'Shine AI');
+    const AI_NAME = isDemo ? 'Sarah AI' : (activeMember || userAiName);
 
     // Reset the chat area to the welcome view (in case user came back from a
     // previous session where they'd sent a question).
@@ -8685,8 +8706,9 @@
       departingName: 'Ana Rodríguez', handoverUnread: 2, status: 'ready' },
     // Marcus is the "Build your teammate AI → Generate" demo. It's
     // in 'generating' state: visible in the sidebar, but clicking it
-    // shows the build-in-progress surface rather than a chat.
-    { name: 'Marcus AI', role: 'Engineer',        preview: 'Generating…',           time: 'Building',  badge: '',  active: false, owned: true,  avatarIndex: 6,  linkedApps: ['github', 'linear', 'jira', 'slack'],
+    // shows the build-in-progress surface rather than a chat. Preview
+    // simply reads "Building" — no avatar overlay dot.
+    { name: 'Marcus AI', role: 'Engineer',        preview: 'Building',              time: '',          badge: '',  active: false, owned: true,  avatarIndex: 6,  linkedApps: ['github', 'linear', 'jira', 'slack'],
       departingName: 'Marcus Chen',   handoverUnread: 0, status: 'generating' },
     { name: 'Priya AI',  role: 'Marketing',       preview: 'Campaign draft posted', time: 'Mon',       badge: '',  active: false, owned: true,  avatarIndex: 9,  linkedApps: ['slack', 'gmail', 'gdrive', 'notion'],
       departingName: 'Priya Patel',   handoverUnread: 1, status: 'ready' }
@@ -8697,6 +8719,10 @@
     // demo-ai flag (used by Sarah), the Cody flow is "real existing user"
     // rather than a canned mockup, so we don't need the demo-ai class.
     window._isCodyDemo = true;
+    // Identify the current user so "Build your AI self" creates a
+    // correctly-named AI (Cody AI in this flow, Shine AI in the
+    // onboarding flow).
+    window._currentUserFirstName = 'Cody';
     // Clear any stale Sarah demo state so the Shine AI entry behaves
     // like a regular AI (link tools, attach, etc. all come back).
     window._isDemoAi = false;
@@ -8740,7 +8766,6 @@
         item.innerHTML =
           '<div class="p8-chat-avatar">' +
             '<img src="' + src + '" alt=""/>' +
-            (isGenerating ? '<span class="p8-chat-gen-dot" aria-label="Generating"></span>' : '') +
           '</div>' +
           '<div class="p8-chat-info">' +
             '<div class="p8-chat-row-1">' +
@@ -8828,17 +8853,12 @@
      data-source logos they'll need to connect before the AI can
      actually build. */
   function renderGeneratingView(member) {
-    const nameEl   = document.getElementById('p8-pending-name');
-    const linkEl   = document.getElementById('p8-pending-link');
-    const grid     = document.getElementById('p8-pending-apps');
-    const avatarEl = document.getElementById('p8-pending-avatar-img');
+    const nameEl = document.getElementById('p8-pending-name');
+    const linkEl = document.getElementById('p8-pending-link');
+    const grid   = document.getElementById('p8-pending-apps');
 
     const departing = member.departingName || member.name.replace(/ AI$/, '');
     if (nameEl) nameEl.textContent = departing;
-    if (avatarEl) {
-      const opts = Array.from(document.querySelectorAll('.av2-opt'));
-      avatarEl.src = (opts[member.avatarIndex] && opts[member.avatarIndex].dataset.src) || '';
-    }
     if (linkEl) {
       // Deterministic mock slug derived from the name so the URL
       // doesn't reshuffle on every reopen.
@@ -9549,10 +9569,12 @@
     // Demo variant (Skip-for-now entry) overrides name + role in the
     // admin profile hero: "Sarah AI" + "Product Manager". Cody flow
     // threads its active team member through window._activeMemberName.
+    // The user-AI fallback follows the current user (Cody AI vs Shine AI).
     const isDemo  = !!window._isDemoAi;
     const activeMember = window._activeMemberName;
+    const userAiName = (window._currentUserFirstName || 'Shine') + ' AI';
     const ROLE    = isDemo ? 'Product Manager' : (roleVal || 'AI Employee');
-    const AI_NAME = isDemo ? 'Sarah AI' : (activeMember || 'Shine AI');
+    const AI_NAME = isDemo ? 'Sarah AI' : (activeMember || userAiName);
 
     const img = document.getElementById('admin-hero-avatar-img');
     if (img && avatarSrc) img.src = avatarSrc;
