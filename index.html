@@ -2549,6 +2549,7 @@
       gap: 4px;
     }
     .p8-nav-action-btn {
+      position: relative;
       width: 32px; height: 32px;
       background: transparent;
       border: none;
@@ -2563,6 +2564,33 @@
       color: #07191e;
     }
     .p8-nav-action-btn svg { width: 20px; height: 20px; }
+    /* Custom hover tooltip — uses data-tooltip attribute. Shows a small
+       dark pill below the button after a short delay. Fades in on
+       hover so it doesn't flash while the user scans the nav. */
+    .p8-nav-action-btn[data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f1419;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 16px;
+      white-space: nowrap;
+      padding: 5px 10px;
+      border-radius: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s 0.1s;
+      z-index: 20;
+    }
+    .p8-nav-action-btn[data-tooltip]:hover::after,
+    .p8-nav-action-btn[data-tooltip]:focus-visible::after {
+      opacity: 1;
+    }
     /* Demo tag — only shown for the pre-built Sarah AI that appears when
        the user enters via Skip-for-now. Hidden by default; revealed only
        when #screens has .demo-ai. */
@@ -6032,16 +6060,14 @@
             </div>
           </div>
           <div class="p8-nav-actions">
-            <button class="p8-nav-action-btn" type="button" aria-label="Search">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="9" r="5.5"/>
-                <path d="M13.5 13.5l3 3"/>
+            <button class="p8-nav-action-btn" type="button" aria-label="Search" data-tooltip="Search">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 21.0002L16.66 16.6602M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </button>
-            <button class="p8-nav-action-btn" type="button" aria-label="View profile" onclick="openAiProfilePanel()">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="10" cy="7.5" r="3"/>
-                <path d="M4 17c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+            <button class="p8-nav-action-btn" type="button" aria-label="View profile" data-tooltip="View profile" onclick="openAiProfilePanel()">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.5 19.7958V18.3C7.5 17.8226 7.68964 17.3648 8.02721 17.0272C8.36477 16.6896 8.82261 16.5 9.3 16.5H14.7C15.1774 16.5 15.6352 16.6896 15.9728 17.0272C16.3104 17.3648 16.5 17.8226 16.5 18.3V19.7958M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12ZM14.7 10.2C14.7 11.6912 13.4912 12.9 12 12.9C10.5088 12.9 9.3 11.6912 9.3 10.2C9.3 8.70883 10.5088 7.5 12 7.5C13.4912 7.5 14.7 8.70883 14.7 10.2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </button>
           </div>
