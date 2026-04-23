@@ -2315,7 +2315,28 @@
     }
     .p8-team-tab.active .p8-team-tab-label { display: inline; }
     .p8-handover-list[hidden] { display: none; }
-    .p8-handover-list { padding: 0 12px; }
+    .p8-handover-list {
+      padding: 8px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    /* Group-style avatar for handover rows — departing person's face
+       with the Relay assistant mark overlaid in the bottom-right
+       corner so the row reads as "Relay-mediated group chat". */
+    .p8-chat-avatar.group .p8-chat-avatar-main {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+    .p8-chat-avatar.group .p8-chat-avatar-mark {
+      position: absolute;
+      right: -2px; bottom: -2px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      object-fit: cover;
+      background: #fff;
+    }
     /* Placeholder empty-state for the Handover Group list when no
        threads exist yet. */
     .p8-handover-empty {
@@ -2592,6 +2613,15 @@
       position: relative; /* anchor for the centered tab pill below */
     }
     .p8-main-nav[hidden] { display: none; }
+    /* Simplified left side of the nav — just the AI's name, with an
+       optional Demo tag sitting inline. */
+    .p8-nav-title-wrap {
+      display: inline-flex; align-items: center;
+      gap: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px; font-weight: 600; line-height: 24px;
+      color: #07191e;
+    }
     /* Space switcher — Team / Shine AI breadcrumb that acts as a single
        clickable component. Team (workspace) is gray and acts as the parent
        crumb; Shine AI is the active child with a chevron hinting at the
@@ -6704,16 +6734,14 @@
              (#p8-avtabs-bar) lives inside the nav now and is hidden
              whenever we're not in the Shine AI admin view. -->
         <header class="p8-main-nav">
-          <button class="p8-space-switcher" type="button" aria-label="Team and AI">
-            <span class="p8-space-team">Team</span>
-            <span class="p8-space-sep">/</span>
-            <span class="p8-space-ai">
-              <span id="p8-nav-title">Shine AI</span>
-              <!-- Demo tag only shown when the user entered via Skip-for-now
-                   (#screens.demo-ai). Marks this as the pre-built demo AI. -->
-              <span class="p8-space-demo-tag" id="p8-space-demo-tag">Demo</span>
-            </span>
-          </button>
+          <!-- Just the AI name in the nav — no "Team /" prefix, no
+               right-side icons. The tab pill sits centered via
+               absolute positioning (see .p8-avtabs-bar CSS). -->
+          <div class="p8-nav-title-wrap">
+            <span id="p8-nav-title">Shine AI</span>
+            <!-- Demo tag only shown when the user entered via Skip-for-now. -->
+            <span class="p8-space-demo-tag" id="p8-space-demo-tag">Demo</span>
+          </div>
           <div class="p8-avtabs-bar" id="p8-avtabs-bar" hidden>
             <div class="admin-tabs" role="tablist" aria-label="Avatar view">
               <button class="admin-tab active" id="av-tab-chat" type="button"
@@ -6722,33 +6750,13 @@
                 <span>Chat</span>
                 <span class="admin-tab-count" id="av-tab-chat-count" hidden></span>
               </button>
-              <!-- Handover tab — only shown for AIs the current user owns.
-                   selectTeamMember() toggles this via data-owned. -->
-              <button class="admin-tab" id="av-tab-handover" type="button"
-                      role="tab" aria-selected="false" hidden
-                      onclick="switchAvatarTab('handover')">
-                <span>Handover</span>
-                <span class="admin-tab-count" id="av-tab-handover-count" hidden></span>
-              </button>
               <button class="admin-tab" id="av-tab-profile" type="button"
                       role="tab" aria-selected="false"
                       onclick="switchAvatarTab('profile')">
-                <span>Admin</span>
+                <span>Profile</span>
                 <span class="admin-tab-count" id="av-tab-profile-count" hidden></span>
               </button>
             </div>
-          </div>
-          <div class="p8-nav-actions">
-            <button class="p8-nav-action-btn" type="button" aria-label="Search" data-tooltip="Search">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 21.0002L16.66 16.6602M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-            <button class="p8-nav-action-btn" type="button" aria-label="View profile" data-tooltip="View profile" onclick="openAiProfilePanel()">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7.5 19.7958V18.3C7.5 17.8226 7.68964 17.3648 8.02721 17.0272C8.36477 16.6896 8.82261 16.5 9.3 16.5H14.7C15.1774 16.5 15.6352 16.6896 15.9728 17.0272C16.3104 17.3648 16.5 17.8226 16.5 18.3V19.7958M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12ZM14.7 10.2C14.7 11.6912 13.4912 12.9 12 12.9C10.5088 12.9 9.3 11.6912 9.3 10.2C9.3 8.70883 10.5088 7.5 12 7.5C13.4912 7.5 14.7 8.70883 14.7 10.2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
           </div>
         </header>
         <div class="p8-chat-body" id="p8-chat-body">
@@ -9188,18 +9196,16 @@
     // IDs, so syncP8 won't accidentally overwrite them.
     if (typeof syncP8 === 'function') syncP8();
 
-    // Ownership-aware pill: hidden for Shine AI (not created by Cody),
-    // full 3-tab pill for Ana / Marcus / Priya. The Handover tab toggles
-    // alongside pill visibility since non-owned AIs also can't be handed
-    // over.
-    const avtabsBar  = document.getElementById('p8-avtabs-bar');
-    const handoverTab = document.getElementById('av-tab-handover');
-    if (avtabsBar) avtabsBar.hidden = !member.owned;
-    if (handoverTab) handoverTab.hidden = !member.owned;
+    // Pill visibility — shown for both owned and shared AIs so the
+    // user can always switch between Chat and Profile. (Handover is
+    // no longer a tab on the AI; it's its own sidebar entry.)
+    const avtabsBar = document.getElementById('p8-avtabs-bar');
+    if (avtabsBar) avtabsBar.hidden = false;
 
-    // Refresh the per-tab unread badges and the handover chat content
-    // for the newly-selected member.
+    // Refresh the per-tab unread badges.
     updateTabUnreadCounts(member);
+    // Keep the handover-body content fresh so when the user opens a
+    // Handover Group entry from the sidebar, the body is ready.
     renderHandoverChat(member);
   }
 
@@ -9642,9 +9648,9 @@
     if (isHO) renderHandoverGroupsList();
   }
 
-  /* Populate the Handover Group list with one row per owned AI that's
-     currently in a handover thread. Rendered on demand when the user
-     flips to the Handover tab. */
+  /* Populate the Handover Group list — each row is a standalone group
+     chat (departing teammate + Relay assistant + Cody) surfaced at
+     the sidebar level rather than nested under an AI's tabs. */
   function renderHandoverGroupsList() {
     const wrap = document.getElementById('p8-handover-list');
     if (!wrap) return;
@@ -9665,28 +9671,91 @@
         ? _BUILDING_AVATAR_SRC
         : ((opts[member.avatarIndex] && opts[member.avatarIndex].dataset.src) || '');
       const unread = member.handoverUnread || 0;
+      const departing = member.departingName || member.name.replace(/ AI$/, '');
+      const groupName = departing + '\u2019s Handover';
       const item = document.createElement('div');
       item.className = 'p8-chat-item' + (isGen ? ' generating' : '');
       item.setAttribute('role', 'button');
       item.setAttribute('tabindex', '0');
       item.setAttribute('data-member', member.name);
-      // Clicking a handover-group row opens the AI on its Handover tab.
-      item.setAttribute('onclick', 'selectTeamMember("' + member.name.replace(/"/g, '&quot;') + '");' +
-                                    (isGen ? '' : 'switchAvatarTab("handover");'));
+      item.setAttribute('data-handover', 'true');
+      // Open the handover as a standalone surface (no Chat/Profile pill).
+      item.setAttribute('onclick', 'selectHandoverGroup("' + member.name.replace(/"/g, '&quot;') + '")');
+      // Group avatar: departing person's avatar with the Relay
+      // assistant mark overlaid at the bottom-right — signals "this
+      // is a Relay-mediated group, not a 1:1 chat".
       item.innerHTML =
-        '<div class="p8-chat-avatar"><img src="' + src + '" alt=""/></div>' +
+        '<div class="p8-chat-avatar group">' +
+          '<img class="p8-chat-avatar-main" src="' + src + '" alt=""/>' +
+          '<img class="p8-chat-avatar-mark" src="' + _RELAY_LOGO_SRC + '" alt=""/>' +
+        '</div>' +
         '<div class="p8-chat-info">' +
           '<div class="p8-chat-row-1">' +
-            '<span class="p8-chat-name">' + member.name + '</span>' +
-            '<span class="p8-chat-time">' + (isGen ? 'Pending' : 'Handover') + '</span>' +
+            '<span class="p8-chat-name">' + groupName + '</span>' +
+            '<span class="p8-chat-time">' + (isGen ? 'Pending' : 'Active') + '</span>' +
           '</div>' +
           '<div class="p8-chat-row-2">' +
-            '<span class="p8-chat-preview">' + ((member.departingName || '') + ' → Cody') + '</span>' +
+            '<span class="p8-chat-preview">' + (isGen ? 'Waiting to join' : 'Memory snapshot preserved') + '</span>' +
             (unread ? '<span class="p8-chat-badge">' + unread + '</span>' : '') +
           '</div>' +
         '</div>';
       wrap.appendChild(item);
     });
+  }
+
+  /* Open a handover group as a standalone main-column surface. No
+     Chat/Profile pill — handover isn't a tab on the AI anymore, it's
+     its own top-level entry. */
+  function selectHandoverGroup(name) {
+    const member = (typeof _CODY_TEAM !== 'undefined') ? _CODY_TEAM.find(m => m.name === name) : null;
+    if (!member) return;
+    if (member.status === 'generating') {
+      // Still pending — route to the usual pending surface rather than
+      // opening a half-built handover thread.
+      selectTeamMember(name);
+      return;
+    }
+    window._activeMemberName  = member.name;
+    window._activeMemberOwned = member.owned;
+
+    // Sidebar active state — clear AI rows and light up the handover row.
+    document.querySelectorAll('.p8-sidebar .p8-chat-item').forEach(el => {
+      el.classList.toggle('active', el.getAttribute('data-member') === name && el.getAttribute('data-handover') === 'true');
+    });
+
+    // Paint the handover body and hide the chat/admin/newai bodies.
+    const chatBody      = document.getElementById('p8-chat-body');
+    const adminBody     = document.getElementById('p8-admin-body');
+    const newaiBody     = document.getElementById('p8-newai-body');
+    const generatingBody = document.getElementById('p8-generating-body');
+    const handoverBody  = document.getElementById('p8-handover-body');
+    const inputArea     = document.getElementById('p8-input-area');
+    const avtabsBar     = document.getElementById('p8-avtabs-bar');
+    const p8Main        = document.querySelector('.p8-main');
+    if (chatBody)       chatBody.hidden = true;
+    if (adminBody)      adminBody.hidden = true;
+    if (newaiBody)      newaiBody.hidden = true;
+    if (generatingBody) generatingBody.hidden = true;
+    if (handoverBody)   handoverBody.hidden = false;
+    if (inputArea)      inputArea.hidden = true;
+    // Hide the Chat/Profile pill — handover is standalone, not a tab.
+    if (avtabsBar)      avtabsBar.hidden = true;
+    if (p8Main)         p8Main.classList.remove('shine-chat-tab');
+
+    // Topnav title becomes "<Departing>'s Handover".
+    const titleEl = document.getElementById('p8-nav-title');
+    const departing = member.departingName || member.name.replace(/ AI$/, '');
+    if (titleEl) titleEl.textContent = departing + '\u2019s Handover';
+
+    // Clear the handover unread count for this group.
+    if (typeof _CODY_TEAM !== 'undefined') {
+      const m = _CODY_TEAM.find(x => x.name === name);
+      if (m) m.handoverUnread = 0;
+    }
+    // Re-render the list so the badge update is reflected.
+    renderHandoverGroupsList();
+    // Populate the handover chat content for this member.
+    renderHandoverChat(member);
   }
 
   /* Sidebar "Build New AI" entry. Now opens a modal with the two
