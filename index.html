@@ -7951,8 +7951,10 @@
         const allOpts = Array.from(document.querySelectorAll('.av2-opt'));
         list.innerHTML = '';
         _CODY_TEAM.forEach(member => {
-          const src = (allOpts[member.avatarIndex] && allOpts[member.avatarIndex].dataset.src) || '';
           const isGen = member.status === 'generating';
+          const src = isGen
+            ? _BUILDING_AVATAR_SRC
+            : ((allOpts[member.avatarIndex] && allOpts[member.avatarIndex].dataset.src) || '');
           const item = document.createElement('div');
           item.className = 'p8-chat-item' + (isGen ? ' generating' : '');
           item.setAttribute('role', 'button');
@@ -8911,8 +8913,11 @@
 
       list.innerHTML = '';
       _CODY_TEAM.forEach(member => {
-        const src = avatarFor(member);
         const isGenerating = member.status === 'generating';
+        // Generating AIs use the shared building placeholder instead of
+        // the pinned av2-opt avatar — the real face only shows up once
+        // training completes.
+        const src = isGenerating ? _BUILDING_AVATAR_SRC : avatarFor(member);
         const item = document.createElement('div');
         item.className = 'p8-chat-item' + (member.active ? ' active' : '') + (isGenerating ? ' generating' : '');
         item.setAttribute('role', 'button');
@@ -9081,6 +9086,10 @@
   /* Relay assistant brand mark — served from assets/relay-assistant.png
      (the official R-on-gradient circle from the onboarding folder). */
   const _RELAY_LOGO_SRC = 'assets/relay-assistant.png';
+  /* Default placeholder avatar for AIs in 'generating' state — shown
+     wherever a building AI's avatar would otherwise appear (sidebar
+     row, profile panel, etc.) until training completes. */
+  const _BUILDING_AVATAR_SRC = 'assets/building-avatar.png';
   function _relayLogoImg() {
     return '<img src="' + _RELAY_LOGO_SRC + '" alt="Relay assistant"/>';
   }
@@ -9500,7 +9509,7 @@
     if (!panel) return;
     // Copy the current AI's identity into the panel.
     const sel = document.querySelector('.av2-opt.selected');
-    const avatarSrc = sel ? sel.dataset.src : '';
+    let avatarSrc = sel ? sel.dataset.src : '';
     const isDemo = !!window._isDemoAi;
     const activeMember = window._activeMemberName;
     const userAiName = (window._currentUserFirstName || 'Shine') + ' AI';
@@ -9508,6 +9517,12 @@
     const ROLE = isDemo ? 'Product Manager'
                         : ((document.getElementById('role-select')?.value || '').trim() || 'AI Employee');
 
+    // Generating AI → building placeholder avatar instead of the
+    // pinned av2-opt portrait.
+    if (window._isCodyDemo && activeMember && typeof _CODY_TEAM !== 'undefined') {
+      const m = _CODY_TEAM.find(x => x.name === activeMember);
+      if (m && m.status === 'generating') avatarSrc = _BUILDING_AVATAR_SRC;
+    }
     const img = document.getElementById('p8-ai-panel-avatar-img');
     if (img) img.src = avatarSrc;
     const nameEl = document.getElementById('p8-ai-panel-name');
