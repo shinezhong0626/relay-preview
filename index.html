@@ -2457,11 +2457,22 @@
       font-size: 14px; line-height: 18px;
       color: #9aa0a6;
     }
-    /* Generating team row — "Building" sits in the second line in the
-       same muted gray as every other preview so the row doesn't read
-       as higher-priority than finished AIs. State comes through via
-       the preview text itself, not a color accent. */
-    /* (no override — preview inherits the default .p8-chat-preview gray) */
+    /* Generating team row — "Building" pill sits inline after the AI
+       name (row-1) in a light-blue tone; the subtitle reads "Waiting…"
+       in the default muted preview gray. */
+    .p8-chat-building-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 8px;
+      background: #DBEAFE;
+      color: #1D4ED8;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 16px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
     /* Shared-with-you badge — inline icon after the AI name on rows
        the current user doesn't own. 16x16 share glyph in Relay orange
        so it reads as a distinct "inherited" affordance. */
@@ -3514,7 +3525,9 @@
        floating info panels (Progress + Group Member). */
     .p8-handover-body {
       flex: 1; min-height: 0;
-      background: #fff;
+      /* Matches the Chats column background so handover reads as a
+         regular conversation surface. */
+      background: #f7f8fb;
       font-family: 'Poppins', sans-serif;
       display: flex;
       flex-direction: row;
@@ -3524,6 +3537,7 @@
       flex: 1; min-width: 0;
       display: flex; flex-direction: column;
       min-height: 0;
+      background: #f7f8fb;
     }
     /* Scrollable message list. align-items: center + per-message
        width:100% / max-width:920px lines every message's left edge up
@@ -3541,7 +3555,7 @@
       max-width: 920px;
     }
     .ho-msg-avatar {
-      width: 36px; height: 36px;
+      width: 40px; height: 40px;
       border-radius: 50%;
       overflow: hidden;
       background: #ede9fe;
@@ -3549,7 +3563,7 @@
       border: 1px solid rgba(7,25,30,0.08);
       display: flex; align-items: center; justify-content: center;
       color: #fff; font-family: 'Poppins', sans-serif;
-      font-size: 13px; font-weight: 600;
+      font-size: 14px; font-weight: 600;
     }
     .ho-msg-avatar img,
     .ho-msg-avatar svg { width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -3571,10 +3585,39 @@
       border-radius: 4px;
       padding: 1px 6px;
     }
+    /* Default (member-sent) message bubble: white card on the grey
+       handover background so each message reads as a distinct turn.
+       align-self: flex-start keeps the bubble hug-width rather than
+       stretching to fill the flex-column body. */
+    .ho-msg-body { align-items: flex-start; }
     .ho-msg-text {
+      align-self: flex-start;
       font-size: 14px; line-height: 22px;
       color: #07191e;
       white-space: pre-wrap;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 10px 14px;
+      box-shadow: 0 1px 2px rgba(7,25,30,0.04);
+      max-width: 100%;
+    }
+    /* Self (Cody) message: blue bubble aligned to the right, no avatar,
+       no name header — matches the main chat's .p8-msg-user style. */
+    .ho-msg.self {
+      justify-content: flex-end;
+    }
+    .ho-msg.self .ho-msg-avatar { display: none; }
+    .ho-msg.self .ho-msg-body {
+      align-items: flex-end;
+    }
+    .ho-msg.self .ho-msg-head { display: none; }
+    .ho-msg.self .ho-msg-text {
+      align-self: flex-end;
+      background: #d0eaff;
+      color: #07191e;
+      border-radius: 16px 16px 4px 16px;
+      box-shadow: none;
+      max-width: 640px;
     }
     /* System notice row (e.g. "Handover started") */
     .ho-msg.system {
@@ -3582,13 +3625,16 @@
       max-width: 480px;
       justify-content: center;
     }
+    .ho-msg.system .ho-msg-body { align-items: center; }
     .ho-msg.system .ho-msg-text {
+      align-self: center;
       font-size: 12px;
       color: #6b7280;
       text-align: center;
-      background: #f3f5f9;
+      background: #eef1f5;
       padding: 6px 12px;
       border-radius: 999px;
+      box-shadow: none;
     }
     /* Input wrapper — mirrors the main chat's .p8-input-area exactly
        (same 16px padding top + bottom) but sits as a static flex item
@@ -3600,7 +3646,7 @@
       padding: 16px 0;
       display: flex; flex-direction: column; align-items: center;
       flex-shrink: 0;
-      background: #fff;
+      background: transparent;
     }
 
     /* Right-hand info column — two stacked collapsible panels.
@@ -7162,8 +7208,9 @@
                  .ho-chat-col — see the next block. -->
             <!-- Input is structurally identical to the main chat's
                  .p8-input-box — same size, shadow, attach icon, Deep
-                 Research pill, and send button. Only difference: no
-                 "Link tools to Relay" footer bar underneath. -->
+                 Research pill, and send button. Includes the same
+                 "Link tools to Relay" footer bar underneath so the
+                 handover surface matches the Chats view 1:1. -->
             <div class="ho-input-wrap">
               <div class="p8-input-box" onclick="document.getElementById('ho-input-field')?.focus()">
                 <textarea class="p8-input-text" id="ho-input-field" rows="1" placeholder="Message this handover…"></textarea>
@@ -7188,6 +7235,31 @@
                       <path d="M10 16V4M5.5 8.5L10 4l4.5 4.5"/>
                     </svg>
                   </button>
+                </div>
+              </div>
+              <div class="p8-link-tools" role="button" tabindex="0" aria-label="Link tools to Relay" onclick="openLinkAppsModal()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openLinkAppsModal();}">
+                <span class="p8-link-tools-text">Link tools to Relay</span>
+                <div class="p8-link-tools-right">
+                  <div class="p8-link-tools-logos">
+                    <div class="p8-link-logo" title="Figma">
+                      <svg viewBox="0 0 24 24" width="14" height="14"><path d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.354-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.02s1.354 3.018 3.019 3.018h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 10.98c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.019 3.019 3.019h3.117v-6.038H8.148zm4.587 8.981h-4.588c-2.476 0-4.49-2.014-4.49-4.49 0-2.476 2.014-4.49 4.49-4.49h4.588v8.98zm-4.588-7.509c-1.665 0-3.019 1.354-3.019 3.019 0 1.664 1.354 3.018 3.019 3.018h3.117v-6.037H8.147zm10.148.531c0 2.476-2.014 4.49-4.49 4.49-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49c2.476 0 4.49 2.014 4.49 4.49z" fill="#F24E1E"/></svg>
+                    </div>
+                    <div class="p8-link-logo" title="Notion">
+                      <svg viewBox="0 0 24 24" width="14" height="14"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466l1.823 1.447zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.14c-.093-.514.28-.887.747-.933l3.222-.187z" fill="#191919"/></svg>
+                    </div>
+                    <div class="p8-link-logo" title="Slack">
+                      <svg viewBox="0 0 24 24" width="14" height="14"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zm2.521-10.123a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zm0 1.271a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zm10.122 2.521a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.52V8.834zm-1.268 0a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zm-2.523 10.122a2.527 2.527 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.52h2.52zm0-1.268a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#4A154B"/></svg>
+                    </div>
+                    <div class="p8-link-logo" title="Linear">
+                      <svg viewBox="0 0 24 24" width="14" height="14"><path d="M3.38 9.6c.07.07.17.07.24 0L9.6 3.62a.17.17 0 0 0 0-.25A12.12 12.12 0 0 0 3.38 9.6zm-.49.93a.17.17 0 0 0 0 .2 12.12 12.12 0 0 0 10.38 5.32.17.17 0 0 0 .1-.3L3.1 10.28a.17.17 0 0 0-.2 0zm1.08 6.3a.17.17 0 0 0 0 .24 12.12 12.12 0 0 0 8.3 3.43.17.17 0 0 0 .1-.29l-8.4-3.38zm-1.32-9.7A12.1 12.1 0 0 1 9.37 2.8a.17.17 0 0 0-.24 0L3.38 6.3a.17.17 0 0 0 0 .24l2.26 2.26a.17.17 0 0 0 .24 0l3.38-3.38a.17.17 0 0 0-.24-.24L5.88 7.42 4.07 5.61A11.77 11.77 0 0 1 9.37 3.1a.17.17 0 0 0-.24-.24 12.1 12.1 0 0 0-5.68 4.27zm13.6-3.74A12.1 12.1 0 0 1 21.2 9.4a.17.17 0 0 0 .24-.24A12.1 12.1 0 0 0 14.7 3.1a.17.17 0 0 0 0 .3zm3.62 14A12.12 12.12 0 0 0 21.2 14a.17.17 0 0 0-.3 0 12.12 12.12 0 0 0-1.43 4.12.17.17 0 0 0 .3.07zm-1.13 1.73a.17.17 0 0 0 .25 0 12.12 12.12 0 0 0 2.11-2.86.17.17 0 0 0-.29-.17 12.12 12.12 0 0 0-2.07 2.78.17.17 0 0 0 0 .25z" fill="#5E6AD2"/></svg>
+                    </div>
+                    <div class="p8-link-logo" title="Google Drive">
+                      <svg viewBox="0 0 24 24" width="14" height="14"><path d="M6.28 2.788 1.142 12l4.57 7.928h11.576L22 12 16.862 2.788zm-.93 16.212L1.86 12.75h20.28l-3.49 6.25H5.35zm10.43-15-4.43 7.676L6.84 4.005h9.94zm-5.4 8.5H2.905l4.57-7.926 3.905 7.926z" fill="#4285F4"/></svg>
+                    </div>
+                  </div>
+                  <svg class="p8-link-chevron" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M7.5 5l5 5-5 5"/>
+                  </svg>
                 </div>
               </div>
             </div>
@@ -9141,7 +9213,7 @@
     // in 'generating' state: visible in the sidebar, but clicking it
     // shows the build-in-progress surface rather than a chat. Preview
     // simply reads "Building" — no avatar overlay dot.
-    { name: 'Marcus AI', role: 'Engineer',        preview: 'Building',              time: '',          badge: '',  active: false, owned: true,  avatarIndex: 6,  linkedApps: ['github', 'linear', 'jira', 'slack'],
+    { name: 'Marcus AI', role: 'Engineer',        preview: 'Waiting\u2026',        time: '',          badge: '',  active: false, owned: true,  avatarIndex: 6,  linkedApps: ['github', 'linear', 'jira', 'slack'],
       departingName: 'Marcus Chen',   handoverUnread: 0, status: 'generating' },
     { name: 'Priya AI',  role: 'Marketing',       preview: 'Campaign draft posted', time: 'Mon',       badge: '',  active: false, owned: true,  avatarIndex: 9,  linkedApps: ['slack', 'gmail', 'gdrive', 'notion'],
       departingName: 'Priya Patel',   handoverUnread: 1, status: 'ready' }
@@ -9206,6 +9278,7 @@
               '</svg>' +
             '</span>'
           : '';
+        const buildingTag = isGenerating ? '<span class="p8-chat-building-tag">Building</span>' : '';
         item.innerHTML =
           '<div class="p8-chat-avatar">' +
             '<img src="' + src + '" alt=""/>' +
@@ -9214,6 +9287,7 @@
             '<div class="p8-chat-row-1">' +
               '<span class="p8-chat-name">' + member.name + '</span>' +
               sharedBadge +
+              buildingTag +
               '<span class="p8-chat-time">' + member.time + '</span>' +
             '</div>' +
             '<div class="p8-chat-row-2">' +
@@ -9432,7 +9506,10 @@
       { who: 'relay',     text: "I'm Relay assistant. I'll preserve " + aiName + "'s memory and context during this handover so " + receiverName + " can pick up without losing anything." },
       { who: 'departing', text: "Here's the short version: " + aiName + " already covers the weekly review, sprint tracking, and stakeholder updates. Context lives in " + linkedLabel + '.' },
       { who: 'relay',     text: 'Memory snapshot preserved. ' + (member.linkedApps || []).length + ' linked apps transferred. No permissions changed yet — ' + receiverName + ' will need to confirm access.' },
-      { who: 'receiver',  text: "Got it — I'll review the pinned conversations tomorrow morning and flag anything unclear." }
+      { who: 'receiver',  text: "Got it — I'll review the pinned conversations tomorrow morning and flag anything unclear." },
+      // Cody's own message — renders as a blue bubble, right-aligned,
+      // mirroring the main chat's user-message style.
+      { who: 'self',      text: "Thanks \u2014 I'll join the review tomorrow." }
     ];
 
     body.innerHTML = '';
@@ -9441,6 +9518,15 @@
       if (m.kind === 'system') {
         row.className = 'ho-msg system';
         row.innerHTML = '<div class="ho-msg-body"><div class="ho-msg-text">' + m.text + '</div></div>';
+        body.appendChild(row);
+        return;
+      }
+      if (m.who === 'self') {
+        row.className = 'ho-msg self';
+        row.innerHTML =
+          '<div class="ho-msg-body">' +
+            '<div class="ho-msg-text">' + m.text + '</div>' +
+          '</div>';
         body.appendChild(row);
         return;
       }
@@ -9829,7 +9915,12 @@
       // "C" chip elsewhere.
       const departingRealAvatar = _realAvatarFor(departing);
       const receiverAvatar = _HANDOVER_RECEIVER.avatar;
-      const statusClass = isGen ? 'status-pending' : 'status-active';
+      // Status pills (Active/Pending) removed per latest design — the
+      // row now reads like a regular chat row: last-message preview
+      // in the subtitle, no coloured state label.
+      const lastMsg = isGen
+        ? 'Waiting to join\u2026'
+        : 'You: Thanks \u2014 I\u2019ll join the review tomorrow.';
       item.innerHTML =
         '<div class="p8-chat-avatar group">' +
           '<span class="p8-chat-avatar-back"><img src="' + receiverAvatar + '" alt=""/></span>' +
@@ -9838,10 +9929,9 @@
         '<div class="p8-chat-info">' +
           '<div class="p8-chat-row-1">' +
             '<span class="p8-chat-name">' + groupName + '</span>' +
-            '<span class="p8-chat-time ' + statusClass + '">' + (isGen ? 'Pending' : 'Active') + '</span>' +
           '</div>' +
           '<div class="p8-chat-row-2">' +
-            '<span class="p8-chat-preview">' + (isGen ? 'Waiting to join' : 'Memory snapshot preserved') + '</span>' +
+            '<span class="p8-chat-preview">' + lastMsg + '</span>' +
             (unread ? '<span class="p8-chat-badge">' + unread + '</span>' : '') +
           '</div>' +
         '</div>';
