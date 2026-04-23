@@ -3202,16 +3202,20 @@
       display: flex; flex-direction: column;
       min-height: 0;
     }
-    /* Scrollable message list */
+    /* Scrollable message list. align-items: center + per-message
+       width:100% / max-width:920px lines every message's left edge up
+       with the input-box below (which is also 920px max, centered). */
     .ho-chat-body {
       flex: 1; min-height: 0;
       overflow-y: auto;
       padding: 24px 40px 16px;
-      display: flex; flex-direction: column; gap: 18px;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 18px;
     }
     .ho-msg {
       display: flex; align-items: flex-start; gap: 12px;
-      max-width: 720px;
+      width: 100%;
+      max-width: 920px;
     }
     .ho-msg-avatar {
       width: 36px; height: 36px;
