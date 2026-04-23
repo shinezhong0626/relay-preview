@@ -8339,27 +8339,11 @@
     renderHandoverChat(member);
   }
 
-  /* Relay AI brand mark — a blue→orange gradient circle with a white
-     "R". Rendered inline so chat bubbles + member list share the same
-     identity without loading an external asset. Unique gradient id per
-     invocation so multiple copies on the page render correctly. */
-  let _relayLogoCounter = 0;
-  function _relayLogoSvg() {
-    _relayLogoCounter += 1;
-    const id = 'relay-g-' + _relayLogoCounter;
-    return '<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">' +
-      '<defs>' +
-        '<linearGradient id="' + id + '" x1="18%" y1="14%" x2="86%" y2="90%">' +
-          '<stop offset="0%" stop-color="#4c8df6"/>' +
-          '<stop offset="55%" stop-color="#8fbdf7"/>' +
-          '<stop offset="100%" stop-color="#f89a6e"/>' +
-        '</linearGradient>' +
-      '</defs>' +
-      '<circle cx="20" cy="20" r="20" fill="url(#' + id + ')"/>' +
-      '<text x="20" y="27.5" text-anchor="middle" fill="#ffffff" ' +
-        'font-family="Poppins, Inter, -apple-system, sans-serif" ' +
-        'font-size="20" font-weight="700">R</text>' +
-    '</svg>';
+  /* Relay assistant brand mark — served from assets/relay-assistant.png
+     (the official R-on-gradient circle from the onboarding folder). */
+  const _RELAY_LOGO_SRC = 'assets/relay-assistant.png';
+  function _relayLogoImg() {
+    return '<img src="' + _RELAY_LOGO_SRC + '" alt="Relay assistant"/>';
   }
 
   /* Render the Handover group chat for the currently selected team
@@ -8390,7 +8374,7 @@
 
     const msgs = [
       { kind: 'system', text: 'Handover chat created · ' + departing + ' → Cody' },
-      { who: 'relay',     text: "I'm Relay AI. I'll preserve " + aiName + "'s memory and context during this handover so Cody can pick up without losing anything." },
+      { who: 'relay',     text: "I'm Relay assistant. I'll preserve " + aiName + "'s memory and context during this handover so Cody can pick up without losing anything." },
       { who: 'departing', text: "Here's the short version: " + aiName + " already covers the weekly review, sprint tracking, and stakeholder updates. Context lives in " + linkedLabel + '.' },
       { who: 'relay',     text: 'Memory snapshot preserved. ' + (member.linkedApps || []).length + ' linked apps transferred. No permissions changed yet — Cody will need to confirm access.' },
       { who: 'cody',      text: "Got it — I'll review the pinned conversations tomorrow morning and flag anything unclear." }
@@ -8408,9 +8392,9 @@
       row.className = 'ho-msg';
       let avatarHtml, senderName, tag;
       if (m.who === 'relay') {
-        avatarHtml = '<span class="ho-msg-avatar">' + _relayLogoSvg() + '</span>';
-        senderName = 'Relay AI';
-        tag = 'Bot';
+        avatarHtml = '<span class="ho-msg-avatar">' + _relayLogoImg() + '</span>';
+        senderName = 'Relay assistant';
+        tag = '';   // no tag — "assistant" is already in the name
       } else if (m.who === 'cody') {
         avatarHtml = '<span class="ho-msg-avatar" style="background:#2563eb;">C</span>';
         senderName = 'Cody';
@@ -8425,7 +8409,7 @@
         '<div class="ho-msg-body">' +
           '<div class="ho-msg-head">' +
             '<span class="ho-msg-name">' + senderName + '</span>' +
-            '<span class="ho-msg-tag">' + tag + '</span>' +
+            (tag ? '<span class="ho-msg-tag">' + tag + '</span>' : '') +
           '</div>' +
           '<div class="ho-msg-text">' + m.text + '</div>' +
         '</div>';
@@ -8469,10 +8453,10 @@
           '</div>' +
         '</div>' +
         '<div class="ho-member">' +
-          '<span class="ho-member-avatar">' + _relayLogoSvg() + '</span>' +
+          '<span class="ho-member-avatar">' + _relayLogoImg() + '</span>' +
           '<div class="ho-member-info">' +
-            '<div class="ho-member-name">Relay AI</div>' +
-            '<div class="ho-member-role">Bot · mediator</div>' +
+            '<div class="ho-member-name">Relay assistant</div>' +
+            '<div class="ho-member-role">Mediator</div>' +
           '</div>' +
         '</div>' +
         '<div class="ho-member">' +
