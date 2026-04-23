@@ -121,17 +121,22 @@
       transform: translateY(-1px);
       box-shadow: 0 6px 20px rgba(1,66,97,0.06);
     }
+    /* Matches the sidebar user avatar (.p8-user-avatar-sq) so Shine
+       and Cody look the same across the demo picker and the running
+       product. Shine = #ae3906 (same as the default sidebar Shine
+       avatar); Cody = #2563eb (the blue we swap in after entering
+       Cody's flow). */
     .demo-user-avatar {
-      width: 42px; height: 42px;
+      width: 40px; height: 40px;
       border-radius: 50%;
       color: #fff;
       font-family: 'Poppins', sans-serif;
-      font-weight: 500; font-size: 16px;
-      letter-spacing: 0.5px;
+      font-weight: 500; font-size: 18.75px;
+      letter-spacing: 0.75px;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .demo-user-avatar.shine { background: #7c5cff; }
+    .demo-user-avatar.shine { background: #ae3906; }
     .demo-user-avatar.cody  { background: #2563eb; }
     .demo-user-info {
       flex: 1; min-width: 0;
@@ -5855,6 +5860,16 @@
             <div class="p8-logo-text">relay</div>
           </div>
           <div class="p8-topbar-icons">
+            <!-- Search moved here, sitting to the left of Notifications.
+                 Previously it lived below "Build New AI" as its own nav
+                 row; folded into the topbar icon cluster so the nav list
+                 stays focused on actions, not utilities. -->
+            <button class="p8-icon-btn" aria-label="Search">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="9" r="5.5"/>
+                <path d="M13.5 13.5l3 3"/>
+              </svg>
+            </button>
             <button class="p8-icon-btn" aria-label="Notifications">
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M10 2a5 5 0 0 0-5 5v3l-1.5 2.5h13L15 10V7a5 5 0 0 0-5-5z"/>
@@ -5884,14 +5899,8 @@
             </svg>
             Build New AI
           </div>
-          <div class="p8-nav-item" onclick="switchP8View('chat')">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="9" cy="9" r="5.5"/>
-              <path d="M13.5 13.5l3 3"/>
-            </svg>
-            Search
-          </div>
-          <!-- Avatar Admin sidebar entry removed — Shine AI in TEAM is now the
+          <!-- Search relocated to the topbar icon cluster (next to Notifications).
+               Avatar Admin sidebar entry removed — Shine AI in TEAM is now the
                single entry point; the page opens with Profile / Chat tabs. -->
         </nav>
         <div class="p8-team-section">
