@@ -3395,6 +3395,179 @@
       font-size: 11px; line-height: 14px;
       color: #9aa0a6;
     }
+    /* "Add member" affordance at the bottom of the members list. Reads
+       as a dashed-border ghost row so it's clearly an add-slot rather
+       than another member. */
+    .ho-member-add {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px;
+      margin-top: 4px;
+      background: transparent;
+      border: 1px dashed #c8cdd3;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      font-family: 'Poppins', sans-serif;
+      color: #4b5563;
+      transition: background 0.12s, border-color 0.12s, color 0.12s;
+    }
+    .ho-member-add:hover {
+      background: #f7f8fb;
+      border-color: #9aa0a6;
+      color: #07191e;
+    }
+    .ho-member-add-icon {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: #f3f5f9;
+      color: #6b7280;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .ho-member-add-icon svg { width: 16px; height: 16px; }
+    .ho-member-add-label {
+      font-size: 13px; font-weight: 500;
+      text-align: left;
+    }
+
+    /* ── Add-member modal (Cody pulls teammates into the handover) ── */
+    .ho-add-overlay {
+      position: fixed; inset: 0;
+      background: rgba(7,25,30,0.45);
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 40;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .ho-add-overlay.show {
+      display: flex;
+      opacity: 1;
+    }
+    .ho-add-modal {
+      width: 480px;
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 80px);
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(7,25,30,0.25);
+      padding: 22px 22px 16px;
+      display: flex; flex-direction: column;
+      gap: 14px;
+      font-family: 'Poppins', sans-serif;
+    }
+    .ho-add-head {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px;
+    }
+    .ho-add-title {
+      font-size: 18px; font-weight: 600; line-height: 24px;
+      color: #07191e;
+    }
+    .ho-add-sub {
+      font-size: 13px; line-height: 18px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+    .ho-add-close {
+      background: transparent; border: none;
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      color: #9aa0a6;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.12s, color 0.12s;
+    }
+    .ho-add-close:hover { background: #f3f5f9; color: #07191e; }
+    .ho-add-search-wrap {
+      position: relative;
+    }
+    .ho-add-search-icon {
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: #9aa0a6;
+    }
+    .ho-add-search {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px 0 36px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      color: #07191e;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .ho-add-search:focus { border-color: #0089e6; }
+    .ho-add-list {
+      flex: 1; min-height: 0;
+      overflow-y: auto;
+      display: flex; flex-direction: column;
+      gap: 4px;
+      margin: 0 -6px;
+      padding: 0 6px;
+    }
+    .ho-add-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 8px;
+      border-radius: 10px;
+      transition: background 0.12s;
+    }
+    .ho-add-row:hover { background: #f7f8fb; }
+    .ho-add-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #ede9fe;
+      border: 1px solid rgba(7,25,30,0.08);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 600;
+    }
+    .ho-add-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ho-add-info {
+      flex: 1; min-width: 0;
+    }
+    .ho-add-name {
+      font-size: 14px; font-weight: 500; line-height: 20px;
+      color: #07191e;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ho-add-role {
+      font-size: 12px; line-height: 16px;
+      color: #6b7280;
+    }
+    .ho-add-btn {
+      height: 30px;
+      padding: 0 14px;
+      background: #07191e;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px; font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .ho-add-btn:hover { background: #000; }
+    .ho-add-done {
+      font-size: 12px; font-weight: 500;
+      color: #10b981;
+      background: #d1fae5;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .ho-add-empty {
+      padding: 18px 12px;
+      text-align: center;
+      font-size: 13px;
+      color: #9aa0a6;
+    }
 
     /* ── Tab unread count badge (Chat / Handover / Admin) ──
        Small blue pill that sits to the right of the tab label. Hidden
@@ -6674,6 +6847,35 @@
     </div>
   </div>
 
+  <!-- ═══════════ Handover → Add member modal ═══════════
+       Cody (org owner) can pull teammates into the handover thread
+       from this picker. Stubbed list — selections are visual only. -->
+  <div class="ho-add-overlay" id="ho-add-overlay" role="dialog" aria-modal="true" aria-labelledby="ho-add-title" onclick="if(event.target===this)closeHoAddMember()">
+    <div class="ho-add-modal">
+      <div class="ho-add-head">
+        <div>
+          <div class="ho-add-title" id="ho-add-title">Add members to handover</div>
+          <div class="ho-add-sub">Invite teammates who need context for the transfer.</div>
+        </div>
+        <button class="ho-add-close" type="button" aria-label="Close" onclick="closeHoAddMember()">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 5l10 10M15 5L5 15"/>
+          </svg>
+        </button>
+      </div>
+      <div class="ho-add-search-wrap">
+        <svg viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="ho-add-search-icon">
+          <circle cx="9" cy="9" r="5.5"/>
+          <path d="M13.5 13.5l3 3"/>
+        </svg>
+        <input type="text" class="ho-add-search" id="ho-add-search" placeholder="Search teammates…" autocomplete="off" oninput="filterHoAddList()"/>
+      </div>
+      <div class="ho-add-list" id="ho-add-list">
+        <!-- Populated by _renderHoAddList() -->
+      </div>
+    </div>
+  </div>
+
   <!-- ═══════════ PAGE 9: Handover intro — 3-step overview ═══════════ -->
   <div class="screen" id="page9">
     <div class="handover-page">
@@ -8458,7 +8660,9 @@
     // Group Member panel — Relay assistant is pinned to the top (no
     // tag, it's always the mediator). Human members show their role
     // tag inline next to the name (Departing / Receiver) with their
-    // actual job title on the second line.
+    // actual job title on the second line. Last row is the "Add
+    // member" affordance (Cody is the org owner in this demo, so he
+    // can pull teammates into the handover thread).
     if (membersList) {
       membersList.innerHTML =
         // Relay assistant — always first
@@ -8492,8 +8696,86 @@
             '</div>' +
             '<div class="ho-member-role">You</div>' +
           '</div>' +
-        '</div>';
+        '</div>' +
+        // Add member entry — opens the add-member modal.
+        '<button class="ho-member-add" type="button" onclick="openHoAddMember()">' +
+          '<span class="ho-member-add-icon">' +
+            '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path d="M10 4v12M4 10h12"/>' +
+            '</svg>' +
+          '</span>' +
+          '<span class="ho-member-add-label">Add member</span>' +
+        '</button>';
     }
+  }
+
+  /* Mock teammates Cody can pull into the handover thread. */
+  const _HO_TEAMMATES = [
+    { name: 'Leo Park',      role: 'Product Designer',  avatarIndex: 2,  initial: 'L', color: '#7c5cff' },
+    { name: 'Maya Okafor',   role: 'Engineering Lead',  avatarIndex: 5,  initial: 'M', color: '#10b981' },
+    { name: 'Jun Tanaka',    role: 'Data Scientist',    avatarIndex: 8,  initial: 'J', color: '#f59e0b' },
+    { name: 'Noa Levy',      role: 'Customer Success',  avatarIndex: 11, initial: 'N', color: '#ec4899' },
+    { name: 'Sam Rivera',    role: 'Operations',        avatarIndex: 1,  initial: 'S', color: '#0ea5e9' },
+    { name: 'Yara Haddad',   role: 'Security',          avatarIndex: 4,  initial: 'Y', color: '#ef4444' }
+  ];
+  const _HO_ADDED_TEAMMATES = new Set();
+
+  function openHoAddMember() {
+    const overlay = document.getElementById('ho-add-overlay');
+    if (!overlay) return;
+    _renderHoAddList('');
+    overlay.classList.add('show');
+    const search = document.getElementById('ho-add-search');
+    if (search) { search.value = ''; setTimeout(() => search.focus(), 40); }
+  }
+
+  function closeHoAddMember() {
+    const overlay = document.getElementById('ho-add-overlay');
+    if (overlay) overlay.classList.remove('show');
+  }
+
+  function _renderHoAddList(q) {
+    const list = document.getElementById('ho-add-list');
+    if (!list) return;
+    const query = (q || '').trim().toLowerCase();
+    list.innerHTML = '';
+    const results = _HO_TEAMMATES.filter(t => !query || t.name.toLowerCase().includes(query) || t.role.toLowerCase().includes(query));
+    if (!results.length) {
+      list.innerHTML = '<div class="ho-add-empty">No teammates match "' + q + '"</div>';
+      return;
+    }
+    const opts = Array.from(document.querySelectorAll('.av2-opt'));
+    results.forEach(t => {
+      const imgSrc = (opts[t.avatarIndex] && opts[t.avatarIndex].dataset.src) || '';
+      const alreadyIn = _HO_ADDED_TEAMMATES.has(t.name);
+      const row = document.createElement('div');
+      row.className = 'ho-add-row';
+      row.innerHTML =
+        (imgSrc
+          ? '<span class="ho-add-avatar"><img src="' + imgSrc + '" alt=""/></span>'
+          : '<span class="ho-add-avatar initial" style="background:' + t.color + '">' + t.initial + '</span>') +
+        '<div class="ho-add-info">' +
+          '<div class="ho-add-name">' + t.name + '</div>' +
+          '<div class="ho-add-role">' + t.role + '</div>' +
+        '</div>' +
+        (alreadyIn
+          ? '<span class="ho-add-done">Added</span>'
+          : '<button class="ho-add-btn" type="button" data-name="' + t.name + '">Add</button>');
+      list.appendChild(row);
+    });
+    // Wire Add buttons
+    list.querySelectorAll('.ho-add-btn').forEach(btn => {
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        const name = btn.getAttribute('data-name');
+        _HO_ADDED_TEAMMATES.add(name);
+        _renderHoAddList(document.getElementById('ho-add-search')?.value || '');
+      });
+    });
+  }
+
+  function filterHoAddList() {
+    _renderHoAddList(document.getElementById('ho-add-search')?.value || '');
   }
 
   /* Collapse/expand one of the right-hand handover panels. */
