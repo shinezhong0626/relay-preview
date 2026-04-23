@@ -2692,6 +2692,24 @@
       position: relative; /* anchor for the centered tab pill below */
     }
     .p8-main-nav[hidden] { display: none; }
+    /* Delete-AI icon button (right-aligned). Only surfaced while the
+       active AI is in 'generating' state — lets Cody terminate the
+       creation flow and remove the placeholder row. Hidden in every
+       other view. */
+    .p8-nav-delete {
+      margin-left: auto;
+      width: 32px; height: 32px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: #6b7280;
+      cursor: pointer;
+      transition: background-color 0.15s, color 0.15s;
+    }
+    .p8-nav-delete:hover { background: #f3f5f9; color: #dc2626; }
+    .p8-nav-delete svg { width: 20px; height: 20px; display: block; }
+    .p8-nav-delete[hidden] { display: none; }
     /* Simplified left side of the nav — just the AI's name, with an
        optional Demo tag sitting inline. */
     .p8-nav-title-wrap {
@@ -6885,6 +6903,22 @@
               </button>
             </div>
           </div>
+          <!-- Delete-AI button — only visible when the current AI is in
+               'generating' state (Marcus flow). Click fully aborts the
+               creation flow, removes the row from the team list, and
+               drops Cody back onto Shine AI. -->
+          <button class="p8-nav-delete" id="p8-nav-delete" type="button"
+                  hidden aria-label="Delete AI and end creation flow"
+                  onclick="deleteGeneratingAi()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18"/>
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              <path d="M10 11v6"/>
+              <path d="M14 11v6"/>
+            </svg>
+          </button>
         </header>
         <div class="p8-chat-body" id="p8-chat-body">
           <div class="p8-welcome-wrap" id="p8-welcome-wrap">
@@ -9342,6 +9376,11 @@
       switchP8View('generating');
       renderGeneratingView(member);
       if (typeof syncP8 === 'function') syncP8();
+      // Override the nav title so Cody reads "<AI>'s Creation Flow"
+      // while the build is still in progress — syncP8 sets it to the
+      // plain AI name, so we re-apply after the fact.
+      const navTitle = document.getElementById('p8-nav-title');
+      if (navTitle) navTitle.textContent = member.name + "\u2019s Creation Flow";
       return;
     }
 
@@ -9427,6 +9466,35 @@
      post-generate state should act as exit/close. Drops the user back
      onto Shine AI (the default landing row in Cody's team). */
   function exitGeneratingView() {
+    selectTeamMember('Shine AI');
+  }
+
+  /* Delete (terminate) the current generating AI. Triggered by the
+     trash-can button in the top nav while the "<AI>'s Creation Flow"
+     surface is open. Removes the AI from _CODY_TEAM, prunes its
+     sidebar row, and routes Cody back onto Shine AI. Confirm guard
+     prevents accidental clicks — the action is destructive. */
+  function deleteGeneratingAi() {
+    const name = window._activeMemberName;
+    if (!name || typeof _CODY_TEAM === 'undefined') return;
+    const member = _CODY_TEAM.find(m => m.name === name);
+    if (!member || member.status !== 'generating') return;
+    const confirmed = window.confirm(
+      'Delete ' + name + ' and end the creation flow?\n\n' +
+      'This will remove the AI and all its pending context. You can\'t undo this.'
+    );
+    if (!confirmed) return;
+    // Drop the member from the team array.
+    const idx = _CODY_TEAM.findIndex(m => m.name === name);
+    if (idx >= 0) _CODY_TEAM.splice(idx, 1);
+    // Remove its sidebar row from both chat + handover lists.
+    document
+      .querySelectorAll('.p8-sidebar .p8-chat-item[data-member="' + name + '"]')
+      .forEach(el => el.remove());
+    // Clear active state so the next selection can take over cleanly.
+    window._activeMemberName = null;
+    window._activeMemberOwned = null;
+    // Route back to Shine AI (the default row in Cody's team).
     selectTeamMember('Shine AI');
   }
 
@@ -10283,11 +10351,14 @@
     const topNav    = document.querySelector('.p8-main .p8-main-nav');
     const p8Main    = document.querySelector('.p8-main');
     const avtabsBar = document.getElementById('p8-avtabs-bar');
+    const deleteBtn = document.getElementById('p8-nav-delete');
     if (!chatBody || !adminBody) return;
     // Hide the handover + generating bodies on every view switch;
     // they're revealed only when their own code path runs.
     if (handoverBody) handoverBody.hidden = true;
     if (generatingBody) generatingBody.hidden = true;
+    // Delete button only appears in the generating view.
+    if (deleteBtn) deleteBtn.hidden = mode !== 'generating';
 
     if (mode === 'generating') {
       chatBody.hidden = true;
