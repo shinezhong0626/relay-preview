@@ -1878,14 +1878,17 @@
     /* Use GeistPixel for the success title (already set on .loading-title),
        but drop the nowrap so the headline can wrap gracefully on narrow screens. */
     .loading-body.success .loading-title { white-space: normal; }
-    /* Override the subtitle font to Poppins per spec. */
+    /* Override the subtitle font to Poppins per spec.
+       white-space: nowrap keeps the sentence on a single line so the
+       success page reads as one clean banner statement; max-width is
+       dropped so the line can be as wide as it needs to be. */
     .loading-body.success .loading-sub {
       font-family: 'Poppins', sans-serif;
       font-size: 15px; line-height: 22px;
       letter-spacing: 0;
       color: #6b7280;
-      max-width: 520px;
       margin: 0 auto;
+      white-space: nowrap;
     }
     /* Hide the shimmer status row in the success state. */
     .loading-body.success .p7-thinking { display: none; }
