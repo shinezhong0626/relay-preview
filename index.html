@@ -3599,6 +3599,59 @@
       text-align: left;
     }
 
+    /* ── Build New AI → Choose an option modal ──
+       Shown when the sidebar "Build New AI" is clicked. Reuses the
+       page-2 .choice-card visual language inside a centered modal. */
+    .newai-choice-overlay-modal {
+      position: fixed; inset: 0;
+      background: rgba(7,25,30,0.45);
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 40;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .newai-choice-overlay-modal.show {
+      display: flex;
+      opacity: 1;
+    }
+    .newai-choice-modal {
+      width: 760px;
+      max-width: calc(100vw - 48px);
+      max-height: calc(100vh - 80px);
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(7,25,30,0.25);
+      padding: 24px 24px 28px;
+      display: flex; flex-direction: column;
+      gap: 20px;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+    }
+    .newai-choice-modal-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
+    }
+    .newai-choice-modal-title {
+      font-family: 'GeistPixel', monospace;
+      font-size: 22px; font-weight: 600; line-height: 1.2;
+      color: #07191e;
+    }
+    .newai-choice-modal-close {
+      background: transparent; border: none;
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      color: #9aa0a6;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.12s, color 0.12s;
+    }
+    .newai-choice-modal-close:hover { background: #f3f5f9; color: #07191e; }
+    .newai-choice-modal-cards {
+      max-width: none;
+    }
+
     /* ── Add-member modal (Cody pulls teammates into the handover) ── */
     .ho-add-overlay {
       position: fixed; inset: 0;
@@ -7094,6 +7147,52 @@
     </div>
   </div>
 
+  <!-- ═══════════ Build New AI → Choose an option modal ═══════════
+       Opened by the sidebar "+ Build New AI" entry. Two choice cards
+       that route into the existing wizard pages (3 = Build your AI
+       self, 9 = Build your teammate AI). Reuses the page-2 card style
+       so the visual language matches the pre-signup flow. -->
+  <div class="newai-choice-overlay-modal" id="newai-choice-overlay-modal" role="dialog" aria-modal="true" aria-labelledby="newai-choice-title" onclick="if(event.target===this)closeNewAiChoiceModal()">
+    <div class="newai-choice-modal">
+      <div class="newai-choice-modal-head">
+        <div class="newai-choice-modal-title" id="newai-choice-title">Choose An Option</div>
+        <button class="newai-choice-modal-close" type="button" aria-label="Close" onclick="closeNewAiChoiceModal()">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 5l10 10M15 5L5 15"/>
+          </svg>
+        </button>
+      </div>
+      <div class="choice-cards newai-choice-modal-cards">
+        <div class="choice-card left" onclick="pickBuildChoice(3)" style="cursor:pointer">
+          <div class="choice-card-image blue">
+            <img src="assets/build-your-ai-self.png" alt="Build your AI self" />
+          </div>
+          <div class="card-text">
+            <div class="choice-title">Build your AI self</div>
+            <div class="choice-desc">Learns how you work and handles your tasks 24/7 — as a Slack bot.</div>
+          </div>
+          <button class="card-btn blue-btn" type="button" onclick="event.stopPropagation();pickBuildChoice(3)">
+            Start build
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
+          </button>
+        </div>
+        <div class="choice-card right" onclick="pickBuildChoice(9)" style="cursor:pointer">
+          <div class="choice-card-image peach">
+            <img src="assets/build-your-teammate.png" alt="Build your teammate" />
+          </div>
+          <div class="card-text">
+            <div class="choice-title">Build your teammate AI</div>
+            <div class="choice-desc">Capture their knowledge before they go. Your team keeps working with them.</div>
+          </div>
+          <button class="card-btn peach-btn" type="button" onclick="event.stopPropagation();pickBuildChoice(9)">
+            Start build
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══════════ Handover → Add member modal ═══════════
        Cody (org owner) can pull teammates into the handover thread
        from this picker. Stubbed list — selections are visual only. -->
@@ -9438,34 +9537,51 @@
   // Initialize on DOMContentLoaded (also called defensively from goTo).
   document.addEventListener('DOMContentLoaded', () => { gsSyncProgress(); });
 
-  /* Sidebar "Build New AI" entry. Re-enters the onboarding flow at Step 1
-     (Page 2 — choose-an-option). Because the user is already inside the
-     product, we mark the screens container with .no-skip so the Skip-for-now
-     topnav button is hidden for the duration of this pass. The flag is
-     cleared by goTo(8) when the flow completes, so a future pre-signup
-     visitor still sees Skip. */
+  /* Sidebar "Build New AI" entry. Now opens a modal with the two
+     choice cards instead of swapping the main column to an embedded
+     newai view. The .no-skip sentinel still gets set so the wizard
+     pages (3/9 onwards) treat Back as "close" and skip-for-now is
+     suppressed for the duration. */
   function startBuildNewAI() {
-    // Show the Choose-an-option page inside the p8 main column (sidebar
-    // stays visible). The .no-skip flag is still set so that when the user
-    // picks a card and enters the full-screen wizard (page 3 / 9), the
-    // Skip-for-now button is suppressed throughout.
     const s = document.getElementById('screens');
     if (s) s.classList.add('no-skip');
-    switchP8View('newai');
+    openNewAiChoiceModal();
   }
 
-  /* Shared "back to Choose-an-option" helper. If the user launched the
-     wizard from inside the product (Build New AI in the sidebar), the
-     Choose-an-option view lives embedded inside page 8 — send them back
-     there, NOT to the full-screen page 2. Otherwise fall back to page 2. */
+  /* Open/close the Choose-an-option modal. */
+  function openNewAiChoiceModal() {
+    const overlay = document.getElementById('newai-choice-overlay-modal');
+    if (!overlay) return;
+    overlay.classList.add('show');
+    document.addEventListener('keydown', _newAiChoiceEscHandler);
+  }
+  function closeNewAiChoiceModal() {
+    const overlay = document.getElementById('newai-choice-overlay-modal');
+    if (overlay) overlay.classList.remove('show');
+    document.removeEventListener('keydown', _newAiChoiceEscHandler);
+  }
+  function _newAiChoiceEscHandler(e) {
+    if (e.key === 'Escape') closeNewAiChoiceModal();
+  }
+  /* Called by each choice card — close the modal, then route into
+     the wizard. Setting .no-skip (already set by startBuildNewAI) is
+     idempotent. */
+  function pickBuildChoice(page) {
+    closeNewAiChoiceModal();
+    goTo(page);
+  }
+
+  /* Shared "back to Choose-an-option" helper. Re-opens the modal if
+     the user was in the Build-New-AI flow (.no-skip sentinel set),
+     otherwise falls back to the pre-signup page 2. */
   function backToBuildOptions() {
     const s = document.getElementById('screens');
     if (s && s.classList.contains('no-skip')) {
       goTo(8);
-      if (typeof switchP8View === 'function') switchP8View('newai');
-      // goTo(8) clears the no-skip flag on entry; re-set it so the wizard
-      // stays Skip-less if the user re-enters via a choice card.
+      // goTo(8) clears the no-skip flag on entry; re-set it and open
+      // the modal so the user can pick again without losing context.
       s.classList.add('no-skip');
+      openNewAiChoiceModal();
     } else {
       goTo(2);
     }
