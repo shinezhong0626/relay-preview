@@ -3263,44 +3263,18 @@
       padding: 6px 12px;
       border-radius: 999px;
     }
-    /* Input bar at the bottom, mirroring the main chat input. */
-    .ho-input-area {
-      padding: 12px 40px 20px;
+    /* Input wrapper — mirrors the main chat's .p8-input-area layout
+       (centered column, 16px padding) without the absolute positioning
+       (handover uses flex-column, not absolute-over-chat). The inner
+       .p8-input-box style is reused directly so the textarea, attach
+       icon, Deep Research pill, and send button are visually identical
+       to the single-AI chat input. No .p8-link-tools bar is rendered. */
+    .ho-input-wrap {
+      padding: 16px 0 24px;
+      display: flex; flex-direction: column; align-items: center;
+      flex-shrink: 0;
       background: #fff;
-      flex-shrink: 0;
     }
-    .ho-input-box {
-      max-width: 920px; width: 100%;
-      margin: 0 auto;
-      background: #fdfefe;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 10px 12px;
-      display: flex; align-items: center; gap: 10px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-    }
-    .ho-input-text {
-      flex: 1;
-      resize: none;
-      border: none;
-      outline: none;
-      background: transparent;
-      font-family: 'Poppins', sans-serif;
-      font-size: 14px; line-height: 22px;
-      color: #07191e;
-      max-height: 120px;
-    }
-    .ho-input-send {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      background: #07191e;
-      color: #fff;
-      border: none;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .ho-input-send svg { width: 18px; height: 18px; }
 
     /* Right-hand info column — two stacked collapsible panels.
        Width matches .p8-ai-panel (320px) so the right side reads as
@@ -6589,14 +6563,35 @@
             <div class="ho-chat-body" id="ho-chat-body">
               <!-- Messages injected by renderHandoverChat(). -->
             </div>
-            <div class="ho-input-area">
-              <div class="ho-input-box">
-                <textarea class="ho-input-text" rows="1" placeholder="Message this handover…"></textarea>
-                <button class="ho-input-send" type="button" aria-label="Send">
-                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M10 16V4M5.5 8.5L10 4l4.5 4.5"/>
-                  </svg>
-                </button>
+            <!-- Input is structurally identical to the main chat's
+                 .p8-input-box — same size, shadow, attach icon, Deep
+                 Research pill, and send button. Only difference: no
+                 "Link tools to Relay" footer bar underneath. -->
+            <div class="ho-input-wrap">
+              <div class="p8-input-box" onclick="document.getElementById('ho-input-field')?.focus()">
+                <textarea class="p8-input-text" id="ho-input-field" rows="1" placeholder="Message this handover…"></textarea>
+                <div class="p8-input-footer">
+                  <div class="p8-input-left">
+                    <button class="p8-input-attach" aria-label="Attach">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 12l-8.5 8.5a4.5 4.5 0 0 1-6.36-6.36L13.5 5.8a3 3 0 0 1 4.24 4.24L9.2 18.58a1.5 1.5 0 0 1-2.12-2.12l7.42-7.42"/>
+                      </svg>
+                    </button>
+                    <button class="p8-deep-research" type="button" aria-label="Deep Research">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.0004 13C12.5527 13 13.0004 12.5523 13.0004 12C13.0004 11.4477 12.5527 11 12.0004 11C11.4481 11 11.0004 11.4477 11.0004 12C11.0004 12.5523 11.4481 13 12.0004 13Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M20.2004 20.1999C22.2404 18.1699 20.2204 12.8399 15.7004 8.29989C11.1604 3.77989 5.83037 1.75989 3.80037 3.79989C1.76037 5.82989 3.78037 11.1599 8.30037 15.6999C12.8404 20.2199 18.1704 22.2399 20.2004 20.1999Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M15.7004 15.6999C20.2204 11.1599 22.2404 5.82989 20.2004 3.79989C18.1704 1.75989 12.8404 3.77989 8.30037 8.29989C3.78037 12.8399 1.76037 18.1699 3.80037 20.1999C5.83037 22.2399 11.1604 20.2199 15.7004 15.6999Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      Deep Research
+                    </button>
+                  </div>
+                  <button class="p8-input-send" type="button" aria-label="Send">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M10 16V4M5.5 8.5L10 4l4.5 4.5"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
