@@ -2317,6 +2317,26 @@
       font-size: 14px; line-height: 18px;
       color: #9aa0a6;
     }
+    /* Pulsing dot on team rows that are still generating. Sits in the
+       bottom-right of the avatar so the "not ready" state is visible
+       from the sidebar without reading the preview text. */
+    .p8-chat-gen-dot {
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: #0089e6;
+      border: 2px solid #fff;
+      animation: generating-pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes generating-pulse {
+      0%, 100% { transform: scale(1);   opacity: 1;   }
+      50%      { transform: scale(1.2); opacity: 0.7; }
+    }
+    .p8-chat-avatar { position: relative; }
+    .p8-chat-item.generating .p8-chat-preview {
+      color: #0089e6; font-style: italic;
+    }
     /* Highlight the timestamp only on the currently selected chat row.
        Before this, every row's timestamp rendered in blue which made it
        look like multiple rows were selected. */
@@ -3183,6 +3203,127 @@
       gap: 28px;
     }
     .p8-newai-body[hidden] { display: none; }
+
+    /* ── Generating view (build-in-progress AI) ──
+       Shown when a team member's status is 'generating'. Replaces the
+       chat/admin surface with a calming progress card so the user
+       knows their AI is still being built. */
+    .p8-generating-body {
+      flex: 1; min-height: 0;
+      overflow-y: auto;
+      background: #fafbfc;
+      padding: 48px 48px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      font-family: 'Poppins', sans-serif;
+    }
+    .p8-generating-body[hidden] { display: none; }
+    .generating-card {
+      max-width: 560px; width: 100%;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 36px;
+      display: flex; flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+    .generating-avatar {
+      position: relative;
+      width: 96px; height: 96px;
+    }
+    .generating-avatar img {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      filter: grayscale(0.15);
+    }
+    .generating-avatar-spinner {
+      position: absolute; inset: -6px;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: #0089e6;
+      border-right-color: #0089e6;
+      animation: generating-spin 1.1s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes generating-spin { to { transform: rotate(360deg); } }
+    .generating-title {
+      font-size: 22px; font-weight: 600; line-height: 28px;
+      color: #07191e;
+      margin: 0;
+    }
+    .generating-desc {
+      font-size: 14px; line-height: 22px;
+      color: #6b7280;
+      margin: 0;
+      max-width: 440px;
+    }
+    .generating-progress {
+      width: 100%;
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .generating-progress-bar {
+      height: 100%;
+      width: 42%;
+      background: linear-gradient(90deg, #4c8df6, #f89a6e);
+      border-radius: 999px;
+      animation: generating-progress 2.6s ease-in-out infinite;
+    }
+    @keyframes generating-progress {
+      0%   { transform: translateX(-40%); }
+      50%  { transform: translateX(0); }
+      100% { transform: translateX(120%); }
+    }
+    .generating-steps {
+      width: 100%;
+      max-width: 380px;
+      list-style: none;
+      padding: 4px 0 0;
+      margin: 4px 0 0;
+      display: flex; flex-direction: column; gap: 8px;
+      text-align: left;
+    }
+    .generating-step {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; line-height: 18px;
+      color: #9aa0a6;
+    }
+    .generating-step::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #d1d5db;
+      flex-shrink: 0;
+    }
+    .generating-step.done { color: #10b981; }
+    .generating-step.done::before { background: #10b981; }
+    .generating-step.active { color: #07191e; font-weight: 500; }
+    .generating-step.active::before {
+      background: #0089e6;
+      box-shadow: 0 0 0 3px rgba(0,137,230,0.22);
+    }
+    .generating-close {
+      margin-top: 12px;
+      height: 40px;
+      padding: 0 22px;
+      background: #fff;
+      color: #07191e;
+      border: 1px solid rgba(7,25,30,0.2);
+      border-radius: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .generating-close:hover { background: #f7f8fb; }
 
     /* ── Handover body ──
        Structurally mirrors the main chat column: scrollable messages +
@@ -6739,6 +6880,15 @@
             <div class="ho-chat-body" id="ho-chat-body">
               <!-- Messages injected by renderHandoverChat(). -->
             </div>
+            <!-- GENERATING VIEW — shown when the selected team member is
+                 in 'generating' state (e.g. after the Build-teammate-AI
+                 → Generate click). Hides Chat/Admin/Handover tabs since
+                 the AI isn't ready for interaction yet. Close button
+                 exits back to the default AI. -->
+            <!-- Note: placed as a sibling of the input rather than the
+                 chat body so it covers the whole main column. The
+                 #p8-generating-body below actually lives outside
+                 .ho-chat-col — see the next block. -->
             <!-- Input is structurally identical to the main chat's
                  .p8-input-box — same size, shadow, attach icon, Deep
                  Research pill, and send button. Only difference: no
@@ -6798,6 +6948,30 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <!-- GENERATING VIEW — shown when the selected team member is in
+             'generating' state. The AI was just created via Build your
+             teammate AI → Generate, and is still being trained. No
+             chat, no admin — just a progress card. -->
+        <div class="p8-generating-body" id="p8-generating-body" hidden>
+          <div class="generating-card">
+            <div class="generating-avatar">
+              <img id="p8-generating-avatar-img" src="" alt=""/>
+              <span class="generating-avatar-spinner" aria-hidden="true"></span>
+            </div>
+            <h2 class="generating-title">Building <span id="p8-generating-name">your AI</span></h2>
+            <p class="generating-desc">We're ingesting the last 12 months of context, training a voice &amp; style model, and calibrating the memory snapshot. This usually takes 10–15 minutes. You can close this and come back later — we'll notify you when it's ready.</p>
+            <div class="generating-progress">
+              <div class="generating-progress-bar"></div>
+            </div>
+            <ul class="generating-steps">
+              <li class="generating-step done">Ingested emails, chats, and docs</li>
+              <li class="generating-step active">Training voice &amp; style model</li>
+              <li class="generating-step">Calibrating memory snapshot</li>
+            </ul>
+            <button class="generating-close" type="button" onclick="exitGeneratingView()">Close</button>
           </div>
         </div>
       </main>
@@ -8432,13 +8606,16 @@
      (Chat / Handover / Admin). */
   const _CODY_TEAM = [
     { name: 'Shine AI',  role: 'UI Designer',     preview: 'welcome to relay',      time: 'Just now',  badge: '1', active: true,  owned: false, avatarIndex: 0,  linkedApps: ['slack', 'figma', 'notion', 'gdrive'],
-      departingName: 'Shine Zhong',   handoverUnread: 0 },
+      departingName: 'Shine Zhong',   handoverUnread: 0, status: 'ready' },
     { name: 'Ana AI',    role: 'Product Manager', preview: 'Sprint recap is ready', time: '2h',        badge: '',  active: false, owned: true,  avatarIndex: 3,  linkedApps: ['slack', 'notion', 'jira', 'linear'],
-      departingName: 'Ana Rodríguez', handoverUnread: 2 },
-    { name: 'Marcus AI', role: 'Engineer',        preview: 'CI is green again',     time: 'Yesterday', badge: '',  active: false, owned: true,  avatarIndex: 6,  linkedApps: ['github', 'linear', 'jira', 'slack'],
-      departingName: 'Marcus Chen',   handoverUnread: 0 },
+      departingName: 'Ana Rodríguez', handoverUnread: 2, status: 'ready' },
+    // Marcus is the "Build your teammate AI → Generate" demo. It's
+    // in 'generating' state: visible in the sidebar, but clicking it
+    // shows the build-in-progress surface rather than a chat.
+    { name: 'Marcus AI', role: 'Engineer',        preview: 'Generating…',           time: 'Building',  badge: '',  active: false, owned: true,  avatarIndex: 6,  linkedApps: ['github', 'linear', 'jira', 'slack'],
+      departingName: 'Marcus Chen',   handoverUnread: 0, status: 'generating' },
     { name: 'Priya AI',  role: 'Marketing',       preview: 'Campaign draft posted', time: 'Mon',       badge: '',  active: false, owned: true,  avatarIndex: 9,  linkedApps: ['slack', 'gmail', 'gdrive', 'notion'],
-      departingName: 'Priya Patel',   handoverUnread: 1 }
+      departingName: 'Priya Patel',   handoverUnread: 1, status: 'ready' }
   ];
 
   function enterCodyDemo() {
@@ -8474,12 +8651,14 @@
       list.innerHTML = '';
       _CODY_TEAM.forEach(member => {
         const src = avatarFor(member);
+        const isGenerating = member.status === 'generating';
         const item = document.createElement('div');
-        item.className = 'p8-chat-item' + (member.active ? ' active' : '');
+        item.className = 'p8-chat-item' + (member.active ? ' active' : '') + (isGenerating ? ' generating' : '');
         item.setAttribute('role', 'button');
         item.setAttribute('tabindex', '0');
         item.setAttribute('data-member', member.name);
         item.setAttribute('data-owned', member.owned ? 'true' : 'false');
+        if (isGenerating) item.setAttribute('data-status', 'generating');
         // All four members are clickable in the Cody flow. Route through
         // a shared selectTeamMember helper that owns the pill + view
         // toggling based on data-owned.
@@ -8487,6 +8666,7 @@
         item.innerHTML =
           '<div class="p8-chat-avatar">' +
             '<img src="' + src + '" alt=""/>' +
+            (isGenerating ? '<span class="p8-chat-gen-dot" aria-label="Generating"></span>' : '') +
           '</div>' +
           '<div class="p8-chat-info">' +
             '<div class="p8-chat-row-1">' +
@@ -8533,6 +8713,16 @@
     const roleSelect = document.getElementById('role-select');
     if (roleSelect) roleSelect.value = member.role;
 
+    // Generating-state members (e.g. the "Build your teammate AI →
+    // Generate" output) show a build-in-progress surface instead of
+    // the Chat / Admin / Handover pill.
+    if (member.status === 'generating') {
+      switchP8View('generating');
+      renderGeneratingView(member);
+      if (typeof syncP8 === 'function') syncP8();
+      return;
+    }
+
     // Enter the Shine-AI-style surface (admin body available), then
     // default to the Chat tab so the user lands in conversation.
     switchP8View('admin');
@@ -8556,6 +8746,27 @@
     // for the newly-selected member.
     updateTabUnreadCounts(member);
     renderHandoverChat(member);
+  }
+
+  /* Populate the generating view for the selected team member. Shows
+     the avatar, name, a progress bar animation, and a 3-step build
+     checklist that reads as "currently training". Close exits to the
+     first ready AI in the team (Shine AI). */
+  function renderGeneratingView(member) {
+    const nameEl = document.getElementById('p8-generating-name');
+    const avatarEl = document.getElementById('p8-generating-avatar-img');
+    if (nameEl) nameEl.textContent = member.name;
+    if (avatarEl) {
+      const opts = Array.from(document.querySelectorAll('.av2-opt'));
+      avatarEl.src = (opts[member.avatarIndex] && opts[member.avatarIndex].dataset.src) || '';
+    }
+  }
+
+  /* "Close" in the generating view — per the user ask, back from the
+     post-generate state should act as exit/close. Drops the user back
+     onto Shine AI (the default landing row in Cody's team). */
+  function exitGeneratingView() {
+    selectTeamMember('Shine AI');
   }
 
   /* Relay assistant brand mark — served from assets/relay-assistant.png
@@ -9123,14 +9334,30 @@
     const adminBody = document.getElementById('p8-admin-body');
     const newaiBody = document.getElementById('p8-newai-body');
     const handoverBody = document.getElementById('p8-handover-body');
+    const generatingBody = document.getElementById('p8-generating-body');
     const inputArea = document.getElementById('p8-input-area');
     const topNav    = document.querySelector('.p8-main .p8-main-nav');
     const p8Main    = document.querySelector('.p8-main');
     const avtabsBar = document.getElementById('p8-avtabs-bar');
     if (!chatBody || !adminBody) return;
-    // Hide the handover body on every view switch; switchAvatarTab
-    // re-reveals it only when Handover is explicitly selected.
+    // Hide the handover + generating bodies on every view switch;
+    // they're revealed only when their own code path runs.
     if (handoverBody) handoverBody.hidden = true;
+    if (generatingBody) generatingBody.hidden = true;
+
+    if (mode === 'generating') {
+      chatBody.hidden = true;
+      adminBody.hidden = true;
+      if (newaiBody) newaiBody.hidden = true;
+      if (inputArea) inputArea.hidden = true;
+      if (topNav)    topNav.hidden = false;
+      // Generating AIs don't expose Chat/Handover/Admin tabs — the AI
+      // isn't ready for interaction yet.
+      if (avtabsBar) avtabsBar.hidden = true;
+      if (generatingBody) generatingBody.hidden = false;
+      if (p8Main) p8Main.classList.remove('shine-chat-tab');
+      return;
+    }
 
     if (mode === 'admin') {
       chatBody.hidden = true;
@@ -9625,7 +9852,21 @@
       clearTimeout(window._handoverToStep3Timer);
       window._handoverToStep3Timer = null;
     }
-    goTo(2);
+    // "Generate" commits the new teammate AI to the team list in a
+    // 'generating' state. In the Cody demo this is Marcus AI — so we
+    // drop the user onto page 8 and auto-select Marcus, landing in
+    // the generating surface. For the pre-signup / Shine onboarding
+    // flow (no Cody team), fall back to the original page-2 behavior.
+    if (window._isCodyDemo) {
+      const s = document.getElementById('screens');
+      if (s) s.classList.remove('no-skip');
+      goTo(8);
+      // selectTeamMember switches to the generating view on its own
+      // when it sees status === 'generating'.
+      if (typeof selectTeamMember === 'function') selectTeamMember('Marcus AI');
+    } else {
+      goTo(2);
+    }
   }
 
   /* Back-compat shims — in case any stale onclick still points here. */
