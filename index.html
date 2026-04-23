@@ -95,7 +95,9 @@
     .btn-back:disabled:hover { background: #fff; }
 
     /* ── Skip-for-now — subtle text-style escape hatch opposite Back ──
-       Lives on every page that has a Back button (pages 2-7, 10-13).
+       Lives ONLY on page 2 (the "choose an option" page). From page 3
+       (What's your job title?) onward it's removed, since once the user
+       has committed to a build path the escape hatch would be confusing.
        Styled muted so it doesn't compete with the primary Continue CTA,
        but still clearly clickable. */
     .btn-skip {
@@ -111,8 +113,6 @@
       transition: background 0.15s, color 0.15s;
     }
     .btn-skip:hover { color: #07191e; background: #f2f4f7; }
-    /* In .topnav (Back-only nav) push Skip to the right edge. */
-    .topnav .btn-skip { margin-left: auto; }
     /* In .ob-topbar, wrap Skip in a fixed-width slot so the centered
        step dots stay centered regardless of the Skip label's width. */
     .ob-topbar-right {
@@ -4947,10 +4947,15 @@
 
   <!-- ═══════════ PAGE 2: Build Your AI Employee ═══════════ -->
   <div class="screen" id="page2">
-    <nav class="topnav">
+    <!-- Use the same .ob-topbar chrome as pages 3-7 so the Back button
+         lands in the identical position across the whole onboarding flow.
+         Skip-for-now ONLY lives here — from page 3 onward it's removed,
+         since once the user commits to building their AI the escape hatch
+         would be confusing. -->
+    <div class="ob-topbar">
       <button class="btn-back" id="backbtn">Back</button>
-      <button class="btn-skip" type="button" onclick="goTo(8)">Skip for now</button>
-    </nav>
+      <div class="ob-topbar-right"><button class="btn-skip" type="button" onclick="goTo(8)">Skip for now</button></div>
+    </div>
 
     <!-- Body -->
     <div class="p2-body">
@@ -5006,7 +5011,7 @@
         <div class="step-dot"></div>
         <div class="step-dot"></div>
       </div>
-      <div class="ob-topbar-right"><button class="btn-skip" type="button" onclick="goTo(8)">Skip for now</button></div>
+      <div class="ob-topbar-right"></div>
     </div>
 
     <div class="step-centered">
@@ -5049,7 +5054,7 @@
         <div class="step-dot"></div>
         <div class="step-dot"></div>
       </div>
-      <div class="ob-topbar-right"><button class="btn-skip" type="button" onclick="goTo(8)">Skip for now</button></div>
+      <div class="ob-topbar-right"></div>
     </div>
 
     <div class="av2-body">
@@ -5096,7 +5101,7 @@
         <div class="step-dot"></div>
         <div class="step-dot"></div>
       </div>
-      <div class="ob-topbar-right"><button class="btn-skip" type="button" onclick="goTo(8)">Skip for now</button></div>
+      <div class="ob-topbar-right"></div>
     </div>
 
     <div class="p5-main">
@@ -5166,7 +5171,7 @@
         <div class="step-dot active"></div>
         <div class="step-dot"></div>
       </div>
-      <div class="ob-topbar-right"><button class="btn-skip" type="button" onclick="goTo(8)">Skip for now</button></div>
+      <div class="ob-topbar-right"></div>
     </div>
 
     <div class="p6-main">
@@ -5244,7 +5249,7 @@
         <div class="step-dot done"></div>
         <div class="step-dot active"></div>
       </div>
-      <div class="ob-topbar-right"><button class="btn-skip" type="button" onclick="goTo(8)">Skip for now</button></div>
+      <div class="ob-topbar-right"></div>
     </div>
     <div class="loading-body" id="p7-loading-body">
       <div class="loading-head">
@@ -5794,7 +5799,7 @@
         <div class="step-dot"></div>
         <div class="step-dot"></div>
       </div>
-      <div class="ob-topbar-right"><button class="btn-skip" type="button" onclick="goTo(8)">Skip for now</button></div>
+      <div class="ob-topbar-right"></div>
     </div>
 
     <div class="step-centered handover-step-centered">
@@ -5942,7 +5947,7 @@
         <div class="step-dot"></div>
         <div class="step-dot"></div>
       </div>
-      <div class="ob-topbar-right"><button class="btn-skip" type="button" onclick="goTo(8)">Skip for now</button></div>
+      <div class="ob-topbar-right"></div>
     </div>
 
     <div class="step-centered handover-step-centered">
@@ -6028,7 +6033,7 @@
         <div class="step-dot done"></div>
         <div class="step-dot active"></div>
       </div>
-      <div class="ob-topbar-right"><button class="btn-skip" type="button" onclick="goTo(8)">Skip for now</button></div>
+      <div class="ob-topbar-right"></div>
     </div>
 
     <div class="step-centered handover-step-centered">
@@ -6107,7 +6112,7 @@
         <div class="step-dot active"></div>
         <div class="step-dot"></div>
       </div>
-      <div class="ob-topbar-right"><button class="btn-skip" type="button" onclick="goTo(8)">Skip for now</button></div>
+      <div class="ob-topbar-right"></div>
     </div>
 
     <div class="step-centered handover-step-centered">
