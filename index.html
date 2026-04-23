@@ -3263,14 +3263,14 @@
       padding: 6px 12px;
       border-radius: 999px;
     }
-    /* Input wrapper — mirrors the main chat's .p8-input-area layout
-       (centered column, 16px padding) without the absolute positioning
-       (handover uses flex-column, not absolute-over-chat). The inner
-       .p8-input-box style is reused directly so the textarea, attach
-       icon, Deep Research pill, and send button are visually identical
-       to the single-AI chat input. No .p8-link-tools bar is rendered. */
+    /* Input wrapper — mirrors the main chat's .p8-input-area exactly
+       (same 16px padding top + bottom) but sits as a static flex item
+       instead of absolutely positioned. The inner .p8-input-box reuses
+       the single-AI chat box style so the 144px height, shadow,
+       attach icon, Deep Research pill, and send button all render at
+       the same size in both views. */
     .ho-input-wrap {
-      padding: 16px 0 24px;
+      padding: 16px 0;
       display: flex; flex-direction: column; align-items: center;
       flex-shrink: 0;
       background: #fff;
