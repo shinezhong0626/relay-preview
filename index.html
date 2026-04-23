@@ -2237,15 +2237,11 @@
       flex-shrink: 0;
     }
     .p8-main-nav[hidden] { display: none; }
-    .p8-nav-left {
-      display: flex; flex-direction: column; align-items: flex-start;
-      gap: 0;
-    }
     /* Space switcher — Team / Shine AI breadcrumb that acts as a single
        clickable component. Team (workspace) is gray and acts as the parent
        crumb; Shine AI is the active child with a chevron hinting at the
        dropdown. The whole button highlights on hover so it reads as one
-       switcher affordance. */
+       switcher affordance. Sits at the left edge of the single-row nav. */
     .p8-space-switcher {
       display: inline-flex; align-items: center;
       gap: 8px;
@@ -2281,11 +2277,6 @@
       width: 14px; height: 14px;
       color: #6b7280;
       flex-shrink: 0;
-    }
-    .p8-nav-sub {
-      font-size: 12px; line-height: 20px;
-      color: #6d7574; margin-top: 2px;
-      padding-left: 0;
     }
     /* Chat body — scrollable, content centered so conversation + welcome
        align with the input box (which is also centered at max 920px). */
@@ -2352,15 +2343,12 @@
       max-width: 960px; width: 100%; margin: 0 auto;
       text-align: center;
     }
-    /* ── Tab-pill bar (sits above the Shine AI topNav) ──
-       The Profile/Chat tab pill used to live inside .p8-admin-body, which
-       forced it to render below the topNav. Moving it out to a dedicated
-       sibling that's the first child of .p8-main lets it show above the
-       "who you're chatting with" avatar header in both Profile and Chat
-       modes. Visibility is toggled by switchP8View via the `hidden` attr. */
+    /* ── Tab-pill wrapper (now lives inline inside .p8-main-nav) ──
+       Holds the Profile/Chat pill on the right edge of the single-row
+       top nav. Hidden whenever we're not in the Shine AI admin view. */
     .p8-avtabs-bar {
-      padding: 14px 48px 0;
-      background: #fafbfc;
+      display: inline-flex;
+      align-items: center;
     }
     .p8-avtabs-bar[hidden] { display: none; }
     /* ── Chat-tab layout override ──
@@ -5564,50 +5552,33 @@
       </aside>
       <!-- Main area -->
       <main class="p8-main">
-        <!-- Profile / Chat tab pill. Sits above topNav so switching between
-             the two Shine AI views is the topmost control. Hidden by default;
-             switchP8View('admin') reveals it. -->
-        <div class="p8-avtabs-bar" id="p8-avtabs-bar" hidden>
-          <div class="admin-avtabs-row">
-            <div class="admin-tabs" role="tablist" aria-label="Avatar view">
-              <button class="admin-tab active" id="av-tab-profile" type="button"
-                      role="tab" aria-selected="true"
-                      onclick="switchAvatarTab('profile')">Profile</button>
-              <button class="admin-tab" id="av-tab-chat" type="button"
-                      role="tab" aria-selected="false"
-                      onclick="switchAvatarTab('chat')">Chat</button>
-            </div>
-          </div>
-        </div>
+        <!-- Single-row top nav: Team / Shine AI switcher on the left,
+             Chat/Profile tab pill on the right. Avatar, subtitle ("Free"),
+             and search icon removed per latest design. The tab pill
+             (#p8-avtabs-bar) lives inside the nav now and is hidden
+             whenever we're not in the Shine AI admin view. -->
         <header class="p8-main-nav">
-          <div class="p8-nav-left">
-            <!-- Team / Shine AI breadcrumb switcher. Clicking would reveal a
-                 dropdown to switch teams or switch to another AI within the
-                 team; for the prototype it's a single affordance. Team is
-                 gray (parent workspace); Shine AI is primary (active AI).
-                 Avatar removed per design update; subtitle is just the tier
-                 ("Free") with no job title. -->
-            <button class="p8-space-switcher" type="button" aria-haspopup="listbox" aria-label="Switch space">
-              <span class="p8-space-team">Team</span>
-              <span class="p8-space-sep">/</span>
-              <span class="p8-space-ai">
-                <span id="p8-nav-title">Shine AI</span>
-                <svg class="p8-space-chevron" viewBox="0 0 20 20" fill="none"
-                     stroke="currentColor" stroke-width="1.8"
-                     stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5.5 7.5l4.5 4.5 4.5-4.5"/>
-                </svg>
-              </span>
-            </button>
-            <div class="p8-nav-sub">Free</div>
-          </div>
-          <div class="p8-nav-right">
-            <button class="p8-icon-btn" aria-label="Search">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="6.5"/>
-                <path d="M16 16l4 4"/>
+          <button class="p8-space-switcher" type="button" aria-haspopup="listbox" aria-label="Switch space">
+            <span class="p8-space-team">Team</span>
+            <span class="p8-space-sep">/</span>
+            <span class="p8-space-ai">
+              <span id="p8-nav-title">Shine AI</span>
+              <svg class="p8-space-chevron" viewBox="0 0 20 20" fill="none"
+                   stroke="currentColor" stroke-width="1.8"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5.5 7.5l4.5 4.5 4.5-4.5"/>
               </svg>
-            </button>
+            </span>
+          </button>
+          <div class="p8-avtabs-bar" id="p8-avtabs-bar" hidden>
+            <div class="admin-tabs" role="tablist" aria-label="Avatar view">
+              <button class="admin-tab active" id="av-tab-chat" type="button"
+                      role="tab" aria-selected="true"
+                      onclick="switchAvatarTab('chat')">Chat</button>
+              <button class="admin-tab" id="av-tab-profile" type="button"
+                      role="tab" aria-selected="false"
+                      onclick="switchAvatarTab('profile')">Profile</button>
+            </div>
           </div>
         </header>
         <div class="p8-chat-body" id="p8-chat-body">
@@ -7570,8 +7541,8 @@
       adminBody.hidden = false;
       if (newaiBody) newaiBody.hidden = true;
       if (inputArea) inputArea.hidden = true;
-      // Keep the Shine AI topNav (avatar + name + job title) visible in the
-      // Shine AI page — the Profile/Chat tabs sit ABOVE it (see p8-avtabs-bar).
+      // Shine AI topNav (Team / Shine AI switcher) visible, and the
+      // Chat/Profile tab pill is shown inline on the right side of that nav.
       if (topNav)    topNav.hidden = false;
       if (avtabsBar) avtabsBar.hidden = false;
       syncAdminView();
