@@ -3612,7 +3612,7 @@
       transition: opacity 0.15s;
     }
     .newai-choice-overlay-modal.show {
-      display: flex;
+      display: flex !important;
       opacity: 1;
     }
     .newai-choice-modal {
@@ -6508,11 +6508,8 @@
                has already landed in the product and deliberately chose to
                build another AI. -->
           <div class="p8-nav-item" id="p8-nav-newai" onclick="startBuildNewAI()">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="4" y="3" width="12" height="8" rx="2"/>
-              <path d="M7.5 11v2.5M12.5 11v2.5M6 16h8"/>
-              <circle cx="8" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
-              <circle cx="12" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 12H19M12 5V19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             Build New AI
           </div>
@@ -7147,52 +7144,6 @@
     </div>
   </div>
 
-  <!-- ═══════════ Build New AI → Choose an option modal ═══════════
-       Opened by the sidebar "+ Build New AI" entry. Two choice cards
-       that route into the existing wizard pages (3 = Build your AI
-       self, 9 = Build your teammate AI). Reuses the page-2 card style
-       so the visual language matches the pre-signup flow. -->
-  <div class="newai-choice-overlay-modal" id="newai-choice-overlay-modal" role="dialog" aria-modal="true" aria-labelledby="newai-choice-title" onclick="if(event.target===this)closeNewAiChoiceModal()">
-    <div class="newai-choice-modal">
-      <div class="newai-choice-modal-head">
-        <div class="newai-choice-modal-title" id="newai-choice-title">Choose An Option</div>
-        <button class="newai-choice-modal-close" type="button" aria-label="Close" onclick="closeNewAiChoiceModal()">
-          <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 5l10 10M15 5L5 15"/>
-          </svg>
-        </button>
-      </div>
-      <div class="choice-cards newai-choice-modal-cards">
-        <div class="choice-card left" onclick="pickBuildChoice(3)" style="cursor:pointer">
-          <div class="choice-card-image blue">
-            <img src="assets/build-your-ai-self.png" alt="Build your AI self" />
-          </div>
-          <div class="card-text">
-            <div class="choice-title">Build your AI self</div>
-            <div class="choice-desc">Learns how you work and handles your tasks 24/7 — as a Slack bot.</div>
-          </div>
-          <button class="card-btn blue-btn" type="button" onclick="event.stopPropagation();pickBuildChoice(3)">
-            Start build
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
-          </button>
-        </div>
-        <div class="choice-card right" onclick="pickBuildChoice(9)" style="cursor:pointer">
-          <div class="choice-card-image peach">
-            <img src="assets/build-your-teammate.png" alt="Build your teammate" />
-          </div>
-          <div class="card-text">
-            <div class="choice-title">Build your teammate AI</div>
-            <div class="choice-desc">Capture their knowledge before they go. Your team keeps working with them.</div>
-          </div>
-          <button class="card-btn peach-btn" type="button" onclick="event.stopPropagation();pickBuildChoice(9)">
-            Start build
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ═══════════ Handover → Add member modal ═══════════
        Cody (org owner) can pull teammates into the handover thread
        from this picker. Stubbed list — selections are visual only. -->
@@ -7655,6 +7606,54 @@
   </div>
 
 </div><!-- /#screens — close the transformed container so modals below are positioned relative to the viewport, not to translateX(-N*100vw) -->
+
+  <!-- ═══════════ Build New AI → Choose an option modal ═══════════
+       Opened by the sidebar "+ Build New AI" entry. Two choice cards
+       that route into the existing wizard pages (3 = Build your AI
+       self, 9 = Build your teammate AI). Lives OUTSIDE #screens so
+       position:fixed is relative to the viewport — #screens has a
+       transform which would otherwise make "fixed" mean "fixed within
+       the translated strip". -->
+  <div class="newai-choice-overlay-modal" id="newai-choice-overlay-modal" role="dialog" aria-modal="true" aria-labelledby="newai-choice-title" onclick="if(event.target===this)closeNewAiChoiceModal()">
+    <div class="newai-choice-modal">
+      <div class="newai-choice-modal-head">
+        <div class="newai-choice-modal-title" id="newai-choice-title">Choose An Option</div>
+        <button class="newai-choice-modal-close" type="button" aria-label="Close" onclick="closeNewAiChoiceModal()">
+          <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 5l10 10M15 5L5 15"/>
+          </svg>
+        </button>
+      </div>
+      <div class="choice-cards newai-choice-modal-cards">
+        <div class="choice-card left" onclick="pickBuildChoice(3)" style="cursor:pointer">
+          <div class="choice-card-image blue">
+            <img src="assets/build-your-ai-self.png" alt="Build your AI self" />
+          </div>
+          <div class="card-text">
+            <div class="choice-title">Build your AI self</div>
+            <div class="choice-desc">Learns how you work and handles your tasks 24/7 — as a Slack bot.</div>
+          </div>
+          <button class="card-btn blue-btn" type="button" onclick="event.stopPropagation();pickBuildChoice(3)">
+            Start build
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
+          </button>
+        </div>
+        <div class="choice-card right" onclick="pickBuildChoice(9)" style="cursor:pointer">
+          <div class="choice-card-image peach">
+            <img src="assets/build-your-teammate.png" alt="Build your teammate" />
+          </div>
+          <div class="card-text">
+            <div class="choice-title">Build your teammate AI</div>
+            <div class="choice-desc">Capture their knowledge before they go. Your team keeps working with them.</div>
+          </div>
+          <button class="card-btn peach-btn" type="button" onclick="event.stopPropagation();pickBuildChoice(9)">
+            Start build
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
     <!-- Link Apps modal — opened from the "Link tools to Relay" bar on p8 -->
   <div class="p8-link-overlay" id="p8-link-overlay" onclick="if(event.target===this)closeLinkAppsModal()" role="dialog" aria-modal="true" aria-labelledby="p8-link-modal-title">
