@@ -2267,53 +2267,43 @@
     .p8-nav-item .nav-icon-filled { display: none; }
     .p8-nav-item.active .nav-icon-outline { display: none; }
     .p8-nav-item.active .nav-icon-filled { display: block; }
-    /* ── TEAM section header (label + view-switch tabs) ──
-       Two tabs sit inline with the TEAM label: AI Employee (default
-       active) and Handover Group. Claude cowork pattern — active pill
-       shows icon + label, inactive tabs are icon-only on transparent
-       background. */
-    .p8-team-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 20px 6px;
-      gap: 8px;
-    }
+    /* ── TEAM view-switch (segmented control) ──
+       Sits below the TEAM label, spans the list width, left-aligned.
+       Two equal-width segments; active segment gets a white inset pill
+       with a subtle shadow so it reads as selected. */
     .p8-team-tabs {
-      display: inline-flex;
-      align-items: center;
+      display: flex;
+      align-items: stretch;
       gap: 2px;
-      background: transparent;
-      padding: 0;
+      padding: 2px;
+      margin: 4px 8px 8px;
+      background: #eef1f5;
+      border-radius: 10px;
     }
     .p8-team-tab {
-      display: inline-flex; align-items: center;
+      flex: 1;
+      display: inline-flex; align-items: center; justify-content: center;
       gap: 6px;
       background: transparent;
       border: none;
-      padding: 5px 8px;
-      border-radius: 999px;
+      padding: 6px 10px;
+      border-radius: 8px;
       cursor: pointer;
-      color: #9aa0a6;
+      color: #6b7280;
       font-family: 'Poppins', sans-serif;
-      transition: background 0.15s, color 0.15s;
+      transition: background 0.15s, color 0.15s, box-shadow 0.15s;
     }
     .p8-team-tab:hover { color: #07191e; }
     .p8-team-tab.active {
-      background: #f3f5f9;
+      background: #fff;
       color: #07191e;
-      padding: 5px 10px;
-    }
-    .p8-team-tab svg {
-      width: 16px; height: 16px;
-      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(7,25,30,0.08);
     }
     .p8-team-tab-label {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
       white-space: nowrap;
-      /* Hidden on inactive tabs — only the active pill shows its label. */
-      display: none;
     }
-    .p8-team-tab.active .p8-team-tab-label { display: inline; }
     .p8-handover-list[hidden] { display: none; }
     .p8-handover-list {
       padding: 8px;
@@ -2371,6 +2361,7 @@
       overflow: hidden;
     }
     .p8-team-label {
+      padding: 10px 20px 2px;
       font-size: 13px; line-height: 20px;
       color: #9aa0a6;
       font-weight: 500;
@@ -6623,25 +6614,16 @@
                single entry point; the page opens with Profile / Chat tabs. -->
         </nav>
         <div class="p8-team-section">
-          <div class="p8-team-header">
-            <span class="p8-team-label">TEAM</span>
-            <!-- Tab switcher — AI Employee (default) vs Handover Group.
-                 Claude chat/cowork pattern: active pill shows icon +
-                 label, inactive shows icon only. -->
-            <div class="p8-team-tabs" role="tablist" aria-label="Team view">
-              <button class="p8-team-tab active" id="team-tab-ai" type="button" role="tab" aria-selected="true" onclick="switchTeamTab('ai')">
-                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M4 5h12a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H9l-3.5 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/>
-                </svg>
-                <span class="p8-team-tab-label">AI Employee</span>
-              </button>
-              <button class="p8-team-tab" id="team-tab-handover" type="button" role="tab" aria-selected="false" onclick="switchTeamTab('handover')">
-                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M7 15l-4-5 4-5M13 5l4 5-4 5"/>
-                </svg>
-                <span class="p8-team-tab-label">Handover Group</span>
-              </button>
-            </div>
+          <div class="p8-team-label">TEAM</div>
+          <!-- Segmented control: Chats / Handover. Sits below the TEAM
+               label, full-width to match the list beneath. -->
+          <div class="p8-team-tabs" role="tablist" aria-label="Team view">
+            <button class="p8-team-tab active" id="team-tab-ai" type="button" role="tab" aria-selected="true" onclick="switchTeamTab('ai')">
+              <span class="p8-team-tab-label">Chats</span>
+            </button>
+            <button class="p8-team-tab" id="team-tab-handover" type="button" role="tab" aria-selected="false" onclick="switchTeamTab('handover')">
+              <span class="p8-team-tab-label">Handover</span>
+            </button>
           </div>
           <div class="p8-chat-list">
             <!-- Shine AI is the single entry point to the tabbed Profile /
