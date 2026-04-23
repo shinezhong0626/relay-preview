@@ -2371,6 +2371,7 @@
       padding: 8px;
       display: flex; flex-direction: column; gap: 4px;
     }
+    .p8-chat-list[hidden] { display: none; }
     .p8-chat-item {
       display: flex; align-items: center; gap: 12px;
       padding: 12px;
@@ -2399,6 +2400,7 @@
       font-weight: 500;
       font-size: 16px; line-height: 24px;
       color: #101828;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .p8-chat-time {
       font-size: 14px; line-height: 18px;
@@ -9699,7 +9701,10 @@
         : ((opts[member.avatarIndex] && opts[member.avatarIndex].dataset.src) || '');
       const unread = member.handoverUnread || 0;
       const departing = member.departingName || member.name.replace(/ AI$/, '');
-      const groupName = departing + '\u2019s Handover';
+      // Use first name only so the row title fits on one line in the
+      // 320px sidebar — "Ana's Handover" vs "Ana Rodríguez's Handover".
+      const firstName = departing.split(' ')[0];
+      const groupName = firstName + '\u2019s Handover';
       const item = document.createElement('div');
       item.className = 'p8-chat-item' + (isGen ? ' generating' : '');
       item.setAttribute('role', 'button');
