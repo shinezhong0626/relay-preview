@@ -2456,11 +2456,28 @@
       color: #101828;   /* primary — active AI */
       display: inline-flex; align-items: center; gap: 6px;
     }
-    .p8-space-chevron {
-      width: 14px; height: 14px;
-      color: #6b7280;
-      flex-shrink: 0;
+    /* Right-side action icons in the topNav: Search + View profile.
+       Sit at the right edge via the parent nav's space-between layout. */
+    .p8-nav-actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
+    .p8-nav-action-btn {
+      width: 32px; height: 32px;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: #6b7280;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background 0.12s, color 0.12s;
+    }
+    .p8-nav-action-btn:hover {
+      background: #f3f5f9;
+      color: #07191e;
+    }
+    .p8-nav-action-btn svg { width: 20px; height: 20px; }
     /* Demo tag — only shown for the pre-built Sarah AI that appears when
        the user enters via Skip-for-now. Hidden by default; revealed only
        when #screens has .demo-ai. */
@@ -5839,7 +5856,7 @@
              (#p8-avtabs-bar) lives inside the nav now and is hidden
              whenever we're not in the Shine AI admin view. -->
         <header class="p8-main-nav">
-          <button class="p8-space-switcher" type="button" aria-haspopup="listbox" aria-label="Switch space">
+          <button class="p8-space-switcher" type="button" aria-label="Team and AI">
             <span class="p8-space-team">Team</span>
             <span class="p8-space-sep">/</span>
             <span class="p8-space-ai">
@@ -5847,11 +5864,6 @@
               <!-- Demo tag only shown when the user entered via Skip-for-now
                    (#screens.demo-ai). Marks this as the pre-built demo AI. -->
               <span class="p8-space-demo-tag" id="p8-space-demo-tag">Demo</span>
-              <svg class="p8-space-chevron" viewBox="0 0 20 20" fill="none"
-                   stroke="currentColor" stroke-width="1.8"
-                   stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5.5 7.5l4.5 4.5 4.5-4.5"/>
-              </svg>
             </span>
           </button>
           <div class="p8-avtabs-bar" id="p8-avtabs-bar" hidden>
@@ -5863,6 +5875,20 @@
                       role="tab" aria-selected="false"
                       onclick="switchAvatarTab('profile')">Admin</button>
             </div>
+          </div>
+          <div class="p8-nav-actions">
+            <button class="p8-nav-action-btn" type="button" aria-label="Search">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="9" r="5.5"/>
+                <path d="M13.5 13.5l3 3"/>
+              </svg>
+            </button>
+            <button class="p8-nav-action-btn" type="button" aria-label="View profile" onclick="openAiProfilePanel()">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="10" cy="7.5" r="3"/>
+                <path d="M4 17c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+              </svg>
+            </button>
           </div>
         </header>
         <div class="p8-chat-body" id="p8-chat-body">
