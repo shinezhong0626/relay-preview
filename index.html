@@ -3067,6 +3067,70 @@
     }
     .p8-newai-body[hidden] { display: none; }
 
+    /* ── Handover body (shown when Handover tab is active) ──
+       Centered card in a light-gray field; matches the calm tone of
+       the admin view (not the chat). */
+    .p8-handover-body {
+      flex: 1; min-height: 0;
+      overflow-y: auto;
+      padding: 48px 48px;
+      background: #fafbfc;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .p8-handover-body[hidden] { display: none; }
+    .handover-body-card {
+      max-width: 560px; width: 100%;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 32px;
+      display: flex; flex-direction: column;
+      gap: 16px;
+    }
+    .handover-body-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      background: #fff3ef;
+      color: #ae3906;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .handover-body-title {
+      font-size: 22px; font-weight: 600; line-height: 28px;
+      color: #07191e;
+      margin: 0;
+    }
+    .handover-body-desc {
+      font-size: 14px; line-height: 22px;
+      color: #6b7280;
+      margin: 0;
+    }
+    .handover-body-actions {
+      display: flex; gap: 12px;
+      margin-top: 8px;
+    }
+    .handover-body-primary,
+    .handover-body-secondary {
+      height: 40px;
+      padding: 0 18px;
+      border-radius: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px; font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .handover-body-primary {
+      background: #07191e; color: #fff; border: 1px solid #07191e;
+    }
+    .handover-body-primary:hover { background: #000; }
+    .handover-body-secondary {
+      background: #fff; color: #07191e;
+      border: 1px solid rgba(7,25,30,0.2);
+    }
+    .handover-body-secondary:hover { background: #f7f8fb; }
+
     /* Embedded "Choose an option" heading — matches the page-2 full-screen
        typography but lives inside the main column so the sidebar stays put. */
     .newai-choose-heading {
@@ -5871,6 +5935,11 @@
               <button class="admin-tab active" id="av-tab-chat" type="button"
                       role="tab" aria-selected="true"
                       onclick="switchAvatarTab('chat')">Chat</button>
+              <!-- Handover tab — only shown for AIs the current user owns.
+                   selectTeamMember() toggles this via data-owned. -->
+              <button class="admin-tab" id="av-tab-handover" type="button"
+                      role="tab" aria-selected="false" hidden
+                      onclick="switchAvatarTab('handover')">Handover</button>
               <button class="admin-tab" id="av-tab-profile" type="button"
                       role="tab" aria-selected="false"
                       onclick="switchAvatarTab('profile')">Admin</button>
@@ -6184,6 +6253,27 @@
                 Start build
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/></svg>
               </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- HANDOVER VIEW — shown when the Handover tab is active on an
+             owned AI. Keeps the current user (Cody) in-app and gives a
+             clear "kick off handover" affordance that defers to the
+             existing full-screen handover flow (page 10+) when clicked. -->
+        <div class="p8-handover-body" id="p8-handover-body" hidden>
+          <div class="handover-body-card">
+            <div class="handover-body-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12h13M12 6l4 6-4 6"/>
+                <path d="M20 6v12"/>
+              </svg>
+            </div>
+            <h2 class="handover-body-title">Handover <span id="p8-handover-name">this AI</span></h2>
+            <p class="handover-body-desc">Transfer ownership, pause activity, or archive when the employee leaves. Handover preserves the AI's memory and context for the next owner.</p>
+            <div class="handover-body-actions">
+              <button class="handover-body-primary" type="button" onclick="goTo(10)">Start handover flow</button>
+              <button class="handover-body-secondary" type="button">Archive AI</button>
             </div>
           </div>
         </div>
@@ -7314,9 +7404,13 @@
     const roleVal = (document.getElementById('role-select')?.value || '').trim();
     // Demo variant (Skip-for-now entry) overrides name + role. For normal
     // onboarding it stays as Shine AI with the selected job title.
+    // Cody flow sets window._activeMemberName to whichever team member is
+    // currently selected (Shine / Ana / Marcus / Priya) so the nav,
+    // welcome card, and sidebar all stay in sync.
     const isDemo  = !!window._isDemoAi;
+    const activeMember = window._activeMemberName;
     const ROLE    = isDemo ? 'Product Manager' : (roleVal || 'AI Employee');
-    const AI_NAME = isDemo ? 'Sarah AI' : 'Shine AI';
+    const AI_NAME = isDemo ? 'Sarah AI' : (activeMember || 'Shine AI');
 
     // Reset the chat area to the welcome view (in case user came back from a
     // previous session where they'd sent a question).
@@ -7779,11 +7873,16 @@
      account row shows Cody. Avatars are pulled from the onboarding
      av2-opt bank so the visuals feel consistent with the rest of the
      product. */
+  /* Cody's team roster. avatarIndex pins each member to a specific
+     onboarding-bank avatar (deterministic across reloads). owned=false
+     means the AI wasn't created by Cody — he can only view/chat with
+     it, not admin or hand it over. owned=true gets the 3-tab view
+     (Chat / Handover / Admin). */
   const _CODY_TEAM = [
-    { name: 'Shine AI',  role: 'UI Designer',     preview: 'welcome to relay',      time: 'Just now', badge: '1', active: true  },
-    { name: 'Ana AI',    role: 'Product Manager', preview: 'Sprint recap is ready', time: '2h',       badge: '',  active: false },
-    { name: 'Marcus AI', role: 'Engineer',        preview: 'CI is green again',     time: 'Yesterday',badge: '',  active: false },
-    { name: 'Priya AI',  role: 'Marketing',       preview: 'Campaign draft posted', time: 'Mon',      badge: '',  active: false }
+    { name: 'Shine AI',  role: 'UI Designer',     preview: 'welcome to relay',      time: 'Just now',  badge: '1', active: true,  owned: false, avatarIndex: 0  },
+    { name: 'Ana AI',    role: 'Product Manager', preview: 'Sprint recap is ready', time: '2h',        badge: '',  active: false, owned: true,  avatarIndex: 3  },
+    { name: 'Marcus AI', role: 'Engineer',        preview: 'CI is green again',     time: 'Yesterday', badge: '',  active: false, owned: true,  avatarIndex: 6  },
+    { name: 'Priya AI',  role: 'Marketing',       preview: 'Campaign draft posted', time: 'Mon',       badge: '',  active: false, owned: true,  avatarIndex: 9  }
   ];
 
   function enterCodyDemo() {
@@ -7796,10 +7895,6 @@
     window._isDemoAi = false;
     const screensEl = document.getElementById('screens');
     if (screensEl) screensEl.classList.remove('demo-ai');
-    // Seed the role select so syncAdminView / syncP8 render Shine AI
-    // with the "UI Designer" job title instead of the generic default.
-    const roleSelect = document.getElementById('role-select');
-    if (roleSelect) roleSelect.value = 'UI Designer';
 
     // Swap the bottom-left account row to Cody.
     const userAvatar = document.querySelector('.p8-sidebar-user .p8-user-avatar-sq');
@@ -7812,35 +7907,34 @@
     const userSub  = document.querySelector('.p8-sidebar-user .p8-user-sub');
     if (userSub)  userSub.textContent  = 'Tanka';
 
-    // Populate the TEAM list with 4 AI employees. Shuffle the avatar bank
-    // once and assign one per member; Shine AI is always present and
-    // active by default.
+    // Populate the TEAM list with 4 AI employees. All items are
+    // clickable — selectTeamMember() toggles the pill / view based on
+    // ownership. Avatars are pinned to avatarIndex for stable visuals.
     const list = document.querySelector('.p8-chat-list');
     if (list) {
-      const avatarPool = Array.from(document.querySelectorAll('.av2-opt'))
-        .map(el => el.dataset.src)
-        .filter(Boolean)
-        .sort(() => Math.random() - 0.5);
+      const opts = Array.from(document.querySelectorAll('.av2-opt'));
+      const avatarFor = m => (opts[m.avatarIndex] && opts[m.avatarIndex].dataset.src) || '';
 
       list.innerHTML = '';
-      _CODY_TEAM.forEach((member, i) => {
-        const src = avatarPool[i] || '';
+      _CODY_TEAM.forEach(member => {
+        const src = avatarFor(member);
         const item = document.createElement('div');
         item.className = 'p8-chat-item' + (member.active ? ' active' : '');
         item.setAttribute('role', 'button');
         item.setAttribute('tabindex', '0');
-        // Shine AI is the clickable one (opens the existing admin/chat
-        // view). Other members are passive placeholders for now.
-        if (member.name === 'Shine AI') {
-          item.setAttribute('onclick', 'openShineAI()');
-        }
+        item.setAttribute('data-member', member.name);
+        item.setAttribute('data-owned', member.owned ? 'true' : 'false');
+        // All four members are clickable in the Cody flow. Route through
+        // a shared selectTeamMember helper that owns the pill + view
+        // toggling based on data-owned.
+        item.setAttribute('onclick', 'selectTeamMember("' + member.name.replace(/"/g, '&quot;') + '")');
         item.innerHTML =
           '<div class="p8-chat-avatar">' +
-            '<img ' + (member.name === 'Shine AI' ? 'id="p8-chat-avatar-img" ' : '') + 'src="' + src + '" alt=""/>' +
+            '<img src="' + src + '" alt=""/>' +
           '</div>' +
           '<div class="p8-chat-info">' +
             '<div class="p8-chat-row-1">' +
-              '<span class="p8-chat-name"' + (member.name === 'Shine AI' ? ' id="p8-chat-name"' : '') + '>' + member.name + '</span>' +
+              '<span class="p8-chat-name">' + member.name + '</span>' +
               '<span class="p8-chat-time">' + member.time + '</span>' +
             '</div>' +
             '<div class="p8-chat-row-2">' +
@@ -7850,24 +7944,57 @@
           '</div>';
         list.appendChild(item);
       });
-
-      // Pre-select a random avatar for Shine AI so syncP8 / openShineAI
-      // pick it up when user opens the Shine AI view.
-      try {
-        const opts = document.querySelectorAll('.av2-opt');
-        if (opts.length) {
-          opts.forEach(o => o.classList.remove('selected'));
-          const shineIdx = _CODY_TEAM.findIndex(m => m.name === 'Shine AI');
-          // Use the same avatar that appears next to Shine AI in the list.
-          const shineSrc = avatarPool[shineIdx] || '';
-          const match = Array.from(opts).find(o => o.dataset.src === shineSrc);
-          (match || opts[0]).classList.add('selected');
-        }
-      } catch (e) { /* no-op */ }
     }
 
-    // Land on the product home.
+    // Land on the product home — default to Shine AI (the active team row).
     goTo(8);
+    selectTeamMember('Shine AI');
+  }
+
+  /* Select a Cody team member and drive the main column accordingly.
+     Shine AI is not owned by Cody → hide the Chat/Handover/Admin pill
+     so Cody only sees the read-only chat surface.
+     Ana / Marcus / Priya are owned → show the full 3-tab pill. */
+  function selectTeamMember(name) {
+    const member = _CODY_TEAM.find(m => m.name === name);
+    if (!member) return;
+    window._activeMemberName  = member.name;
+    window._activeMemberOwned = member.owned;
+
+    // Sidebar active state
+    document.querySelectorAll('.p8-sidebar .p8-chat-item').forEach(el => {
+      el.classList.toggle('active', el.getAttribute('data-member') === name);
+    });
+
+    // Pin the avatar source on .av2-opt.selected so the existing sync
+    // pipeline (syncP8 / syncAdminView / welcome card / panel / message
+    // bubble) all pick up the same image.
+    const opts = Array.from(document.querySelectorAll('.av2-opt'));
+    opts.forEach(o => o.classList.remove('selected'));
+    if (opts[member.avatarIndex]) opts[member.avatarIndex].classList.add('selected');
+
+    // Job title is read from the role-select value by syncP8/syncAdminView.
+    const roleSelect = document.getElementById('role-select');
+    if (roleSelect) roleSelect.value = member.role;
+
+    // Enter the Shine-AI-style surface (admin body available), then
+    // default to the Chat tab so the user lands in conversation.
+    switchP8View('admin');
+    switchAvatarTab('chat');
+    // Rebuild the welcome card + nav title + sidebar row for the active
+    // member so avatar/name/role propagate through the whole page. The
+    // Cody sidebar rows don't carry the p8-chat-name / p8-chat-avatar-img
+    // IDs, so syncP8 won't accidentally overwrite them.
+    if (typeof syncP8 === 'function') syncP8();
+
+    // Ownership-aware pill: hidden for Shine AI (not created by Cody),
+    // full 3-tab pill for Ana / Marcus / Priya. The Handover tab toggles
+    // alongside pill visibility since non-owned AIs also can't be handed
+    // over.
+    const avtabsBar  = document.getElementById('p8-avtabs-bar');
+    const handoverTab = document.getElementById('av-tab-handover');
+    if (avtabsBar) avtabsBar.hidden = !member.owned;
+    if (handoverTab) handoverTab.hidden = !member.owned;
   }
 
   /* Page-2 "Skip for now" — lands the user inside the product but parked on
@@ -8105,7 +8232,7 @@
     const main  = document.querySelector('.p8-main');
     const tabP  = document.getElementById('av-tab-profile');
     const tabC  = document.getElementById('av-tab-chat');
-    const isChat = tab === 'chat';
+    const tabH  = document.getElementById('av-tab-handover');
 
     // If the user is currently on the Build New AI choose-option view,
     // clicking Chat/Admin should jump them back into the Shine AI area
@@ -8116,14 +8243,53 @@
       switchP8View('admin');
     }
 
-    if (main) main.classList.toggle('shine-chat-tab', isChat);
-    if (tabP) {
-      tabP.classList.toggle('active', !isChat);
-      tabP.setAttribute('aria-selected', !isChat);
+    const handoverBody = document.getElementById('p8-handover-body');
+    const chatBody     = document.getElementById('p8-chat-body');
+    const adminBody    = document.getElementById('p8-admin-body');
+    const inputArea    = document.getElementById('p8-input-area');
+
+    if (tab === 'handover') {
+      // Handover view: dedicated body, no input, admin-wrap hidden,
+      // chat-body hidden. The admin-body is still present in the DOM
+      // (it's the scrollable wrap); keep it visible so its scroll
+      // container doesn't collapse but hide its content via the class.
+      if (main) main.classList.remove('shine-chat-tab');
+      if (handoverBody) handoverBody.hidden = false;
+      if (chatBody)     chatBody.hidden     = true;
+      if (inputArea)    inputArea.hidden    = true;
+      if (adminBody)    adminBody.hidden    = true;
+    } else {
+      // Chat / Admin (profile) — hide the handover body; existing
+      // shine-chat-tab class + admin-body toggle handle the rest.
+      if (handoverBody) handoverBody.hidden = true;
+      if (adminBody)    adminBody.hidden    = false;
+      const isChat = tab === 'chat';
+      if (main) main.classList.toggle('shine-chat-tab', isChat);
     }
+
+    // Pill active states (only one tab can be active at a time)
     if (tabC) {
-      tabC.classList.toggle('active', isChat);
-      tabC.setAttribute('aria-selected', isChat);
+      const on = tab === 'chat';
+      tabC.classList.toggle('active', on);
+      tabC.setAttribute('aria-selected', on);
+    }
+    if (tabH) {
+      const on = tab === 'handover';
+      tabH.classList.toggle('active', on);
+      tabH.setAttribute('aria-selected', on);
+    }
+    if (tabP) {
+      const on = tab === 'profile';
+      tabP.classList.toggle('active', on);
+      tabP.setAttribute('aria-selected', on);
+    }
+
+    // Reflect the active AI's name inside the handover card.
+    if (tab === 'handover') {
+      const nameSpan = document.getElementById('p8-handover-name');
+      if (nameSpan) {
+        nameSpan.textContent = window._activeMemberName || 'this AI';
+      }
     }
   }
 
@@ -8131,11 +8297,15 @@
     const chatBody  = document.getElementById('p8-chat-body');
     const adminBody = document.getElementById('p8-admin-body');
     const newaiBody = document.getElementById('p8-newai-body');
+    const handoverBody = document.getElementById('p8-handover-body');
     const inputArea = document.getElementById('p8-input-area');
     const topNav    = document.querySelector('.p8-main .p8-main-nav');
     const p8Main    = document.querySelector('.p8-main');
     const avtabsBar = document.getElementById('p8-avtabs-bar');
     if (!chatBody || !adminBody) return;
+    // Hide the handover body on every view switch; switchAvatarTab
+    // re-reveals it only when Handover is explicitly selected.
+    if (handoverBody) handoverBody.hidden = true;
 
     if (mode === 'admin') {
       chatBody.hidden = true;
@@ -8199,10 +8369,12 @@
     const avatarSrc = sel ? sel.dataset.src : '';
     const roleVal = (document.getElementById('role-select')?.value || '').trim();
     // Demo variant (Skip-for-now entry) overrides name + role in the
-    // admin profile hero: "Sarah AI" + "Product Manager".
+    // admin profile hero: "Sarah AI" + "Product Manager". Cody flow
+    // threads its active team member through window._activeMemberName.
     const isDemo  = !!window._isDemoAi;
+    const activeMember = window._activeMemberName;
     const ROLE    = isDemo ? 'Product Manager' : (roleVal || 'AI Employee');
-    const AI_NAME = isDemo ? 'Sarah AI' : 'Shine AI';
+    const AI_NAME = isDemo ? 'Sarah AI' : (activeMember || 'Shine AI');
 
     const img = document.getElementById('admin-hero-avatar-img');
     if (img && avatarSrc) img.src = avatarSrc;
