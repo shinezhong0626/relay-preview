@@ -2267,6 +2267,66 @@
     .p8-nav-item .nav-icon-filled { display: none; }
     .p8-nav-item.active .nav-icon-outline { display: none; }
     .p8-nav-item.active .nav-icon-filled { display: block; }
+    /* ── TEAM section header (label + view-switch tabs) ──
+       Two tabs sit inline with the TEAM label: AI Employee (default
+       active) and Handover Group. Claude cowork pattern — active pill
+       shows icon + label, inactive tabs are icon-only on transparent
+       background. */
+    .p8-team-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px 6px;
+      gap: 8px;
+    }
+    .p8-team-tabs {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      background: transparent;
+      padding: 0;
+    }
+    .p8-team-tab {
+      display: inline-flex; align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: none;
+      padding: 5px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+      color: #9aa0a6;
+      font-family: 'Poppins', sans-serif;
+      transition: background 0.15s, color 0.15s;
+    }
+    .p8-team-tab:hover { color: #07191e; }
+    .p8-team-tab.active {
+      background: #f3f5f9;
+      color: #07191e;
+      padding: 5px 10px;
+    }
+    .p8-team-tab svg {
+      width: 16px; height: 16px;
+      flex-shrink: 0;
+    }
+    .p8-team-tab-label {
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      /* Hidden on inactive tabs — only the active pill shows its label. */
+      display: none;
+    }
+    .p8-team-tab.active .p8-team-tab-label { display: inline; }
+    .p8-handover-list[hidden] { display: none; }
+    .p8-handover-list { padding: 0 12px; }
+    /* Placeholder empty-state for the Handover Group list when no
+       threads exist yet. */
+    .p8-handover-empty {
+      padding: 24px 12px;
+      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      color: #9aa0a6;
+      line-height: 1.5;
+    }
+
     .p8-team-section {
       flex: 1;
       display: flex; flex-direction: column;
@@ -2274,11 +2334,10 @@
       overflow: hidden;
     }
     .p8-team-label {
-      padding: 0 20px;
-      font-size: 14px; line-height: 22px;
-      color: #4e5969;
-      font-weight: 400;
-      margin-bottom: 8px;
+      font-size: 13px; line-height: 20px;
+      color: #9aa0a6;
+      font-weight: 500;
+      letter-spacing: 0.04em;
     }
     .p8-chat-list {
       padding: 8px;
@@ -6518,7 +6577,26 @@
                single entry point; the page opens with Profile / Chat tabs. -->
         </nav>
         <div class="p8-team-section">
-          <div class="p8-team-label">TEAM</div>
+          <div class="p8-team-header">
+            <span class="p8-team-label">TEAM</span>
+            <!-- Tab switcher — AI Employee (default) vs Handover Group.
+                 Claude chat/cowork pattern: active pill shows icon +
+                 label, inactive shows icon only. -->
+            <div class="p8-team-tabs" role="tablist" aria-label="Team view">
+              <button class="p8-team-tab active" id="team-tab-ai" type="button" role="tab" aria-selected="true" onclick="switchTeamTab('ai')">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M4 5h12a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H9l-3.5 3v-3H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/>
+                </svg>
+                <span class="p8-team-tab-label">AI Employee</span>
+              </button>
+              <button class="p8-team-tab" id="team-tab-handover" type="button" role="tab" aria-selected="false" onclick="switchTeamTab('handover')">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M7 15l-4-5 4-5M13 5l4 5-4 5"/>
+                </svg>
+                <span class="p8-team-tab-label">Handover Group</span>
+              </button>
+            </div>
+          </div>
           <div class="p8-chat-list">
             <!-- Shine AI is the single entry point to the tabbed Profile /
                  Chat view. Default tab is Chat so clicking here still lands
@@ -6538,6 +6616,12 @@
                 </div>
               </div>
             </div>
+          </div>
+          <!-- Handover groups list — shown when the Handover tab is
+               active. Populated dynamically in the Cody flow with one
+               row per owned AI currently in a handover thread. -->
+          <div class="p8-handover-list" id="p8-handover-list" hidden>
+            <!-- Populated by renderHandoverGroupsList() in Cody flow -->
           </div>
         </div>
         <!-- Getting Started checklist. Sits above the account row, hidden
@@ -9535,6 +9619,75 @@
 
   // Initialize on DOMContentLoaded (also called defensively from goTo).
   document.addEventListener('DOMContentLoaded', () => { gsSyncProgress(); });
+
+  /* TEAM section tab switch — AI Employee (list of AIs) ↔ Handover
+     Group (list of handover threads). Mirrors Claude's chat/cowork
+     switcher visually. */
+  function switchTeamTab(tab) {
+    const tabAI  = document.getElementById('team-tab-ai');
+    const tabHO  = document.getElementById('team-tab-handover');
+    const listAI = document.querySelector('.p8-chat-list');
+    const listHO = document.getElementById('p8-handover-list');
+    const isHO   = tab === 'handover';
+    if (tabAI) {
+      tabAI.classList.toggle('active', !isHO);
+      tabAI.setAttribute('aria-selected', !isHO);
+    }
+    if (tabHO) {
+      tabHO.classList.toggle('active', isHO);
+      tabHO.setAttribute('aria-selected', isHO);
+    }
+    if (listAI) listAI.hidden = isHO;
+    if (listHO) listHO.hidden = !isHO;
+    if (isHO) renderHandoverGroupsList();
+  }
+
+  /* Populate the Handover Group list with one row per owned AI that's
+     currently in a handover thread. Rendered on demand when the user
+     flips to the Handover tab. */
+  function renderHandoverGroupsList() {
+    const wrap = document.getElementById('p8-handover-list');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    if (typeof _CODY_TEAM === 'undefined' || !window._isCodyDemo) {
+      wrap.innerHTML = '<div class="p8-handover-empty">No active handovers.<br/>When you start one, the group will appear here.</div>';
+      return;
+    }
+    const owned = _CODY_TEAM.filter(m => m.owned);
+    if (!owned.length) {
+      wrap.innerHTML = '<div class="p8-handover-empty">No active handovers yet.</div>';
+      return;
+    }
+    const opts = Array.from(document.querySelectorAll('.av2-opt'));
+    owned.forEach(member => {
+      const isGen = member.status === 'generating';
+      const src = isGen
+        ? _BUILDING_AVATAR_SRC
+        : ((opts[member.avatarIndex] && opts[member.avatarIndex].dataset.src) || '');
+      const unread = member.handoverUnread || 0;
+      const item = document.createElement('div');
+      item.className = 'p8-chat-item' + (isGen ? ' generating' : '');
+      item.setAttribute('role', 'button');
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('data-member', member.name);
+      // Clicking a handover-group row opens the AI on its Handover tab.
+      item.setAttribute('onclick', 'selectTeamMember("' + member.name.replace(/"/g, '&quot;') + '");' +
+                                    (isGen ? '' : 'switchAvatarTab("handover");'));
+      item.innerHTML =
+        '<div class="p8-chat-avatar"><img src="' + src + '" alt=""/></div>' +
+        '<div class="p8-chat-info">' +
+          '<div class="p8-chat-row-1">' +
+            '<span class="p8-chat-name">' + member.name + '</span>' +
+            '<span class="p8-chat-time">' + (isGen ? 'Pending' : 'Handover') + '</span>' +
+          '</div>' +
+          '<div class="p8-chat-row-2">' +
+            '<span class="p8-chat-preview">' + ((member.departingName || '') + ' → Cody') + '</span>' +
+            (unread ? '<span class="p8-chat-badge">' + unread + '</span>' : '') +
+          '</div>' +
+        '</div>';
+      wrap.appendChild(item);
+    });
+  }
 
   /* Sidebar "Build New AI" entry. Now opens a modal with the two
      choice cards instead of swapping the main column to an embedded
