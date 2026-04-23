@@ -2524,6 +2524,47 @@
       white-space: nowrap;
       flex-shrink: 0;
     }
+    /* "NEW" pill — shown for just-pushed teammate AIs until the user
+       engages with the row. Three shimmer passes over the pill draw
+       the eye; after that it stays solid until cleared on click. */
+    .p8-chat-new-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 7px;
+      background: #FFE4D6;
+      color: #C2410C;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 600;
+      line-height: 14px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .p8-chat-new-tag::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -60%;
+      width: 40%;
+      height: 100%;
+      background: linear-gradient(
+        100deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.75) 50%,
+        transparent 100%
+      );
+      animation: p8-new-shimmer 1.1s ease-out 3;
+      animation-delay: 0.5s;
+      animation-fill-mode: forwards;
+      pointer-events: none;
+    }
+    @keyframes p8-new-shimmer {
+      0%   { left: -60%; }
+      100% { left: 160%; }
+    }
     /* Shared-with-you badge — inline icon after the AI name on rows
        the current user doesn't own. 16x16 share glyph in Relay orange
        so it reads as a distinct "inherited" affordance. */
@@ -9468,6 +9509,9 @@
           '</span>'
         : '';
       const buildingTag = isGenerating ? '<span class="p8-chat-building-tag">Building</span>' : '';
+      // "NEW" pill sits right next to the name (before Building) so
+      // it's the first thing the eye catches. Cleared on select.
+      const newTag = member._isNew ? '<span class="p8-chat-new-tag">NEW</span>' : '';
       item.innerHTML =
         '<div class="p8-chat-avatar">' +
           '<img src="' + src + '" alt=""/>' +
@@ -9476,6 +9520,7 @@
           '<div class="p8-chat-row-1">' +
             '<span class="p8-chat-name">' + member.name + '</span>' +
             sharedBadge +
+            newTag +
             buildingTag +
             '<span class="p8-chat-time">' + member.time + '</span>' +
           '</div>' +
@@ -9520,7 +9565,8 @@
       departingName: draft.departing || draft.name.replace(/ AI$/, ''),
       handoverUnread: 0,
       status: 'generating',
-      _isNewlyAdded: true
+      _isNewlyAdded: true,
+      _isNew: true
     });
     window._teammateDraftCommitted = true;
     _renderCodyChatList();
@@ -9538,6 +9584,14 @@
     // Entering Chat/Profile clears the handover-active flag — the
     // handover row shouldn't look selected once the user leaves it.
     window._activeHandoverGroup = null;
+
+    // Clear the one-shot NEW tag as soon as the user engages with
+    // the row. Re-render the sidebar so the pill disappears; the
+    // active-state update below re-applies on the fresh DOM.
+    if (member._isNew) {
+      member._isNew = false;
+      if (typeof _renderCodyChatList === 'function') _renderCodyChatList();
+    }
 
     // Sidebar active state — only AI-employee rows (not handover).
     document.querySelectorAll('.p8-sidebar .p8-chat-item').forEach(el => {
@@ -10192,7 +10246,11 @@
       wrap.innerHTML = '<div class="p8-handover-empty">No active handovers.<br/>When you start one, the group will appear here.</div>';
       return;
     }
-    const owned = _CODY_TEAM.filter(m => m.owned);
+    // Still-building AIs (Marcus + any newly-created teammate) don't
+    // have a handover thread yet — the departing teammate hasn't even
+    // joined. Keep them out of the Handover list until their build
+    // completes; Chats is their only entry point for now.
+    const owned = _CODY_TEAM.filter(m => m.owned && m.status !== 'generating');
     if (!owned.length) {
       wrap.innerHTML = '<div class="p8-handover-empty">No active handovers yet.</div>';
       return;
