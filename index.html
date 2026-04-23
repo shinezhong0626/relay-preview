@@ -2139,25 +2139,54 @@
     }
     .p8-main-nav[hidden] { display: none; }
     .p8-nav-left {
-      display: flex; align-items: center; gap: 12px;
+      display: flex; flex-direction: column; align-items: flex-start;
+      gap: 0;
     }
-    .p8-nav-avatar {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      background: #ede9fe;
-      overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .p8-nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .p8-nav-title {
+    /* Space switcher — Team / Shine AI breadcrumb that acts as a single
+       clickable component. Team (workspace) is gray and acts as the parent
+       crumb; Shine AI is the active child with a chevron hinting at the
+       dropdown. The whole button highlights on hover so it reads as one
+       switcher affordance. */
+    .p8-space-switcher {
+      display: inline-flex; align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      margin-left: -10px;   /* visual-align text to the nav left edge */
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
       font-family: 'Poppins', sans-serif;
-      font-weight: 510; font-size: 18px; line-height: 24px;
-      color: #101828;
+      font-size: 18px; line-height: 24px;
+      font-weight: 510;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .p8-space-switcher:hover {
+      background: #f7f8fb;
+      border-color: #e5e7eb;
+    }
+    .p8-space-team {
+      color: #9aa0a6;   /* gray — parent workspace */
+      font-weight: 500;
+    }
+    .p8-space-sep {
+      color: #c4c7cc;
+      font-weight: 400;
+      margin: 0 -2px;
+    }
+    .p8-space-ai {
+      color: #101828;   /* primary — active AI */
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .p8-space-chevron {
+      width: 14px; height: 14px;
+      color: #6b7280;
+      flex-shrink: 0;
     }
     .p8-nav-sub {
       font-size: 12px; line-height: 20px;
       color: #6d7574; margin-top: 2px;
+      padding-left: 0;
     }
     /* Chat body — scrollable, content centered so conversation + welcome
        align with the input box (which is also centered at max 920px). */
@@ -5399,13 +5428,25 @@
         </div>
         <header class="p8-main-nav">
           <div class="p8-nav-left">
-            <div class="p8-nav-avatar">
-              <img id="p8-nav-avatar-img" src="" alt=""/>
-            </div>
-            <div>
-              <div class="p8-nav-title" id="p8-nav-title">Shine AI</div>
-              <div class="p8-nav-sub"><span id="p8-nav-role">AI Employee</span> &middot; Free</div>
-            </div>
+            <!-- Team / Shine AI breadcrumb switcher. Clicking would reveal a
+                 dropdown to switch teams or switch to another AI within the
+                 team; for the prototype it's a single affordance. Team is
+                 gray (parent workspace); Shine AI is primary (active AI).
+                 Avatar removed per design update; subtitle is just the tier
+                 ("Free") with no job title. -->
+            <button class="p8-space-switcher" type="button" aria-haspopup="listbox" aria-label="Switch space">
+              <span class="p8-space-team">Team</span>
+              <span class="p8-space-sep">/</span>
+              <span class="p8-space-ai">
+                <span id="p8-nav-title">Shine AI</span>
+                <svg class="p8-space-chevron" viewBox="0 0 20 20" fill="none"
+                     stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5.5 7.5l4.5 4.5 4.5-4.5"/>
+                </svg>
+              </span>
+            </button>
+            <div class="p8-nav-sub">Free</div>
           </div>
           <div class="p8-nav-right">
             <button class="p8-icon-btn" aria-label="Search">
