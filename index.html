@@ -2319,6 +2319,11 @@
     .p8-chat-avatar.group {
       position: relative;
       background: transparent !important;
+      /* Outer container's 50% radius + overflow:hidden (from the
+         base .p8-chat-avatar) was clipping the corners of the two
+         inner circles. Reset both so the full inner portraits show. */
+      border-radius: 0;
+      overflow: visible;
     }
     .p8-chat-avatar.group .p8-chat-avatar-back,
     .p8-chat-avatar.group .p8-chat-avatar-front {
@@ -3661,6 +3666,10 @@
     .ho-member-tag.tag-receiver {
       background: #dbeafe;
       color: #1d4ed8;
+    }
+    .ho-member-tag.tag-admin {
+      background: #f3f4f6;
+      color: #374151;
     }
     .ho-member-role {
       font-size: 11px; line-height: 14px;
@@ -9295,17 +9304,27 @@
      locally so the repo is self-contained and avatars are stable.
      AI rows keep their pixel-art portraits — these real-human photos
      are scoped to the handover surface (sidebar row + chat bubbles +
-     Group Member panel). */
+     Group Member panel).
+     Cody (the org admin / viewer) keeps his blue "C" chip identity
+     everywhere — he's not a participant in the handover conversation.
+     Instead, a separate Receiver person (Alex Kim) joins each thread
+     as the new teammate taking over, with their own real photo. */
   const _REAL_AVATARS = {
     'Shine Zhong':   'assets/person-shine.png',
     'Ana Rodríguez': 'assets/person-ana.png',
     'Marcus Chen':   'assets/person-marcus.png',
-    'Priya Patel':   'assets/person-priya.png',
-    'Cody':          'assets/person-cody.png'
+    'Priya Patel':   'assets/person-priya.png'
   };
   function _realAvatarFor(name) {
-    return _REAL_AVATARS[name] || 'assets/person-cody.png';
+    return _REAL_AVATARS[name] || 'assets/person-receiver.png';
   }
+  /* Shared Receiver identity — one stand-in teammate taking over every
+     demo handover. In a real build each handover would name a specific
+     receiver, but for this prototype one consistent face reads cleaner. */
+  const _HANDOVER_RECEIVER = {
+    name: 'Alex Kim',
+    avatar: 'assets/person-receiver.png'
+  };
   function _relayLogoImg() {
     return '<img src="' + _RELAY_LOGO_SRC + '" alt="Relay assistant"/>';
   }
@@ -9325,11 +9344,13 @@
     const opts = Array.from(document.querySelectorAll('.av2-opt'));
     const departing    = member.departingName || 'Teammate';
     const aiName       = member.name;
-    // Handover participants use real-human avatars (DiceBear personas)
-    // rather than the AI's pixel-art portrait, since the thread is
-    // person-to-person, not chatting with the AI itself.
+    // Handover participants use real-human photos. Cody isn't a
+    // chatter — he's the admin viewer. The conversation is between
+    // the departing teammate and the Receiver (Alex Kim), mediated
+    // by Relay assistant.
     const departingAvatar = _realAvatarFor(departing);
-    const codyAvatar      = _realAvatarFor('Cody');
+    const receiverAvatar  = _HANDOVER_RECEIVER.avatar;
+    const receiverName    = _HANDOVER_RECEIVER.name;
 
     // Seed messages — intentionally generic so they read well for any
     // owned AI. Senders alternate to mimic a real handover thread.
@@ -9341,11 +9362,11 @@
       .join(', ') || 'the connected apps';
 
     const msgs = [
-      { kind: 'system', text: 'Handover chat created · ' + departing + ' → Cody' },
-      { who: 'relay',     text: "I'm Relay assistant. I'll preserve " + aiName + "'s memory and context during this handover so Cody can pick up without losing anything." },
+      { kind: 'system', text: 'Handover chat created · ' + departing + ' → ' + receiverName },
+      { who: 'relay',     text: "I'm Relay assistant. I'll preserve " + aiName + "'s memory and context during this handover so " + receiverName + " can pick up without losing anything." },
       { who: 'departing', text: "Here's the short version: " + aiName + " already covers the weekly review, sprint tracking, and stakeholder updates. Context lives in " + linkedLabel + '.' },
-      { who: 'relay',     text: 'Memory snapshot preserved. ' + (member.linkedApps || []).length + ' linked apps transferred. No permissions changed yet — Cody will need to confirm access.' },
-      { who: 'cody',      text: "Got it — I'll review the pinned conversations tomorrow morning and flag anything unclear." }
+      { who: 'relay',     text: 'Memory snapshot preserved. ' + (member.linkedApps || []).length + ' linked apps transferred. No permissions changed yet — ' + receiverName + ' will need to confirm access.' },
+      { who: 'receiver',  text: "Got it — I'll review the pinned conversations tomorrow morning and flag anything unclear." }
     ];
 
     body.innerHTML = '';
@@ -9365,9 +9386,9 @@
       if (m.who === 'relay') {
         avatarHtml = '<span class="ho-msg-avatar">' + _relayLogoImg() + '</span>';
         senderName = 'Relay assistant';
-      } else if (m.who === 'cody') {
-        avatarHtml = '<span class="ho-msg-avatar"><img src="' + codyAvatar + '" alt=""/></span>';
-        senderName = 'Cody';
+      } else if (m.who === 'receiver') {
+        avatarHtml = '<span class="ho-msg-avatar"><img src="' + receiverAvatar + '" alt=""/></span>';
+        senderName = receiverName;
       } else {
         avatarHtml = '<span class="ho-msg-avatar"><img src="' + departingAvatar + '" alt=""/></span>';
         senderName = departing;
@@ -9438,13 +9459,25 @@
             '<div class="ho-member-role">' + member.role + '</div>' +
           '</div>' +
         '</div>' +
-        // Receiver — Cody
+        // Receiver — Alex Kim (the incoming teammate with a real photo)
         '<div class="ho-member">' +
-          '<span class="ho-member-avatar"><img src="' + codyAvatar + '" alt=""/></span>' +
+          '<span class="ho-member-avatar"><img src="' + receiverAvatar + '" alt=""/></span>' +
+          '<div class="ho-member-info">' +
+            '<div class="ho-member-name-row">' +
+              '<span class="ho-member-name">' + receiverName + '</span>' +
+              '<span class="ho-member-tag tag-receiver">Receiver</span>' +
+            '</div>' +
+            '<div class="ho-member-role">Incoming teammate</div>' +
+          '</div>' +
+        '</div>' +
+        // Cody — org admin observing the handover. Keeps the "C" blue
+        // chip (not a real photo) to match his account chrome.
+        '<div class="ho-member">' +
+          '<span class="ho-member-avatar" style="background:#2563eb;">C</span>' +
           '<div class="ho-member-info">' +
             '<div class="ho-member-name-row">' +
               '<span class="ho-member-name">Cody</span>' +
-              '<span class="ho-member-tag tag-receiver">Receiver</span>' +
+              '<span class="ho-member-tag tag-admin">Admin</span>' +
             '</div>' +
             '<div class="ho-member-role">You</div>' +
           '</div>' +
@@ -9716,16 +9749,17 @@
       item.setAttribute('data-handover', 'true');
       // Open the handover as a standalone surface (no Chat/Profile pill).
       item.setAttribute('onclick', 'selectHandoverGroup("' + member.name.replace(/"/g, '&quot;') + '")');
-      // Group avatar: two overlapping real-person portraits. Cody's
-      // DiceBear avatar sits in the top-right (behind); the departing
-      // teammate's DiceBear avatar sits bottom-left (in front) with a
-      // white ring. Represents the two-person handover conversation
-      // using real-human identities rather than the AI's pixel art.
+      // Group avatar: two overlapping real-person portraits. The
+      // Receiver (incoming teammate, Alex Kim) sits in the top-right
+      // (behind); the departing teammate sits bottom-left (in front)
+      // with a white ring. Cody is the org admin observing — he
+      // isn't a visible participant in the group icon and keeps his
+      // "C" chip elsewhere.
       const departingRealAvatar = _realAvatarFor(departing);
-      const codyRealAvatar = _realAvatarFor('Cody');
+      const receiverAvatar = _HANDOVER_RECEIVER.avatar;
       item.innerHTML =
         '<div class="p8-chat-avatar group">' +
-          '<span class="p8-chat-avatar-back"><img src="' + codyRealAvatar + '" alt=""/></span>' +
+          '<span class="p8-chat-avatar-back"><img src="' + receiverAvatar + '" alt=""/></span>' +
           '<span class="p8-chat-avatar-front"><img src="' + departingRealAvatar + '" alt=""/></span>' +
         '</div>' +
         '<div class="p8-chat-info">' +
