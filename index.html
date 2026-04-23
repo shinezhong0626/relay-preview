@@ -2065,6 +2065,104 @@
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
+    /* ── Getting Started checklist (sidebar, above the account row) ──
+       A compact progress widget that nudges users to complete the three
+       foundational actions in their first session: create an AI, chat with
+       it, and link apps. Collapsible (header click toggles). Items render
+       a circle → checkmark when done, and strike-through the label. A thin
+       progress bar at the bottom reflects n-done / total. */
+    .p8-gs {
+      margin: 0 8px;
+      padding: 10px 12px;
+      border-top: 1px solid #e5e7eb;
+      background: transparent;
+      flex-shrink: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+    .p8-gs-head {
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      padding: 4px 2px 6px;
+    }
+    .p8-gs-badge {
+      font-size: 11px; font-weight: 500; line-height: 14px;
+      color: #07191e;
+      background: #f3f4f6;
+      border-radius: 6px;
+      padding: 2px 6px;
+      flex-shrink: 0;
+    }
+    .p8-gs-title {
+      flex: 1;
+      font-size: 13px; font-weight: 600; line-height: 18px;
+      color: #07191e;
+    }
+    .p8-gs-chev {
+      width: 16px; height: 16px;
+      color: #9aa0a6;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    .p8-gs.collapsed .p8-gs-chev { transform: rotate(-90deg); }
+    .p8-gs.collapsed .p8-gs-items,
+    .p8-gs.collapsed .p8-gs-progress { display: none; }
+    .p8-gs-items {
+      display: flex; flex-direction: column;
+      margin-top: 2px;
+    }
+    .p8-gs-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 6px;
+      border-radius: 8px;
+      transition: background 0.12s;
+      cursor: pointer;
+    }
+    .p8-gs-item:hover { background: #f7f8fb; }
+    .p8-gs-check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid #d1d5db;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: #fff;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .p8-gs-item.done .p8-gs-check {
+      background: #10b981;
+      border-color: #10b981;
+    }
+    .p8-gs-check svg { width: 10px; height: 10px; color: #fff; display: none; }
+    .p8-gs-item.done .p8-gs-check svg { display: block; }
+    .p8-gs-label {
+      flex: 1;
+      font-size: 12.5px; line-height: 18px; color: #374151;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .p8-gs-item.done .p8-gs-label {
+      color: #9aa0a6;
+      text-decoration: line-through;
+    }
+    .p8-gs-help {
+      width: 16px; height: 16px;
+      color: #c4c7cc;
+      flex-shrink: 0;
+    }
+    .p8-gs-progress {
+      margin: 8px 4px 2px;
+      height: 3px;
+      background: #e5e7eb;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .p8-gs-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #10b981;
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
     .p8-sidebar-user {
       height: 72px;
       padding: 8px;
@@ -4986,7 +5084,7 @@
          would be confusing. -->
     <div class="ob-topbar">
       <button class="btn-back" id="backbtn">Back</button>
-      <div class="ob-topbar-right"><button class="btn-skip" type="button" onclick="goTo(8)">Skip for now</button></div>
+      <div class="ob-topbar-right"><button class="btn-skip" type="button" onclick="skipToNewai()">Skip for now</button></div>
     </div>
 
     <!-- Body -->
@@ -5390,6 +5488,61 @@
               </div>
             </div>
           </div>
+        </div>
+        <!-- Getting Started checklist. Sits above the account row so it's
+             always visible, never hidden by the active chat. Each item is
+             toggleable for demo/prototype use; in a real build the state
+             would be derived from user actions (AI created, first message
+             sent, apps linked). -->
+        <div class="p8-gs" id="p8-gs">
+          <div class="p8-gs-head" onclick="gsToggle()">
+            <span class="p8-gs-badge" id="p8-gs-badge">0/3</span>
+            <span class="p8-gs-title">Getting Started</span>
+            <svg class="p8-gs-chev" viewBox="0 0 20 20" fill="none"
+                 stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5.5 7.5l4.5 4.5 4.5-4.5"/>
+            </svg>
+          </div>
+          <div class="p8-gs-items">
+            <div class="p8-gs-item" data-gs="created" onclick="gsClickItem('created')">
+              <span class="p8-gs-check" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 10.5l3 3 7-7"/>
+                </svg>
+              </span>
+              <span class="p8-gs-label">Create your AI</span>
+              <svg class="p8-gs-help" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="10" cy="10" r="7.5"/>
+                <path d="M8 7.5a2 2 0 114 0c0 1.3-1.5 1.5-2 2.8M10 13.5v.01" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="p8-gs-item" data-gs="chatted" onclick="gsClickItem('chatted')">
+              <span class="p8-gs-check" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 10.5l3 3 7-7"/>
+                </svg>
+              </span>
+              <span class="p8-gs-label">Chat with your AI</span>
+              <svg class="p8-gs-help" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="10" cy="10" r="7.5"/>
+                <path d="M8 7.5a2 2 0 114 0c0 1.3-1.5 1.5-2 2.8M10 13.5v.01" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="p8-gs-item" data-gs="linked" onclick="gsClickItem('linked')">
+              <span class="p8-gs-check" aria-hidden="true">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 10.5l3 3 7-7"/>
+                </svg>
+              </span>
+              <span class="p8-gs-label">Link more apps</span>
+              <svg class="p8-gs-help" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="10" cy="10" r="7.5"/>
+                <path d="M8 7.5a2 2 0 114 0c0 1.3-1.5 1.5-2 2.8M10 13.5v.01" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+          <div class="p8-gs-progress"><div class="p8-gs-progress-bar" id="p8-gs-progress-bar"></div></div>
         </div>
         <div class="p8-sidebar-user">
           <div class="p8-user-row">
@@ -6543,6 +6696,9 @@
     if (window._p7ToP8Timer)   { clearTimeout(window._p7ToP8Timer); window._p7ToP8Timer = null; }
     if (typeof syncP8 === 'function') syncP8();
     if (typeof goTo === 'function') goTo(8);
+    // Full onboarding finished → mark "Create your AI" done in the
+    // Getting Started checklist.
+    if (typeof gsComplete === 'function') gsComplete('created');
   }
 
   // Role → 3 quick-question prompts tailored to the user's job.
@@ -6801,6 +6957,8 @@
     const send = document.getElementById('p8-input-send');
     if (send) send.classList.remove('active');
     inp.focus();
+    // Mark "Chat with your AI" done in the Getting Started checklist.
+    if (typeof gsComplete === 'function') gsComplete('chatted');
   }
 
   function syncP8() {
@@ -6925,6 +7083,9 @@
      section copies stay consistent with the category-section copies). */
   function _setModalLinkCardState(card, linked) {
     if (!card) return;
+    // Any successful link action → mark the Getting Started "Link more
+    // apps" task done (idempotent).
+    if (linked && typeof gsComplete === 'function') gsComplete('linked');
     // When the modal was opened from Page 5's "Explore all apps", clicking
     // a Link tag commits the connection and closes the modal immediately.
     if (linked && _linkModalOrigin === 'p5') {
@@ -7256,6 +7417,77 @@
     { id: 'research', name: 'Research AI', role: 'Research Analyst', status: 'Active', created: 'Mar 02, 2026', memory: 'FREE', active: 'Mar 08', kb: '820 MB', value: '$210', access: 'Team', src: '' },
     { id: 'support',  name: 'Support AI',  role: 'Customer Support', status: 'Paused', created: 'Feb 24, 2026', memory: 'FREE', active: 'Feb 28', kb: '540 MB', value: '$180', access: 'Restricted', src: '' }
   ];
+
+  /* Page-2 "Skip for now" — lands the user inside the product but parked on
+     the Build New AI choose-option view (empty state). This keeps the first
+     post-signup view actionable: the user hasn't set up any AI yet, so
+     showing the chat/team page would be confusing. Landing on "Choose an
+     option" makes the next step obvious. */
+  function skipToNewai() {
+    goTo(8);
+    if (typeof switchP8View === 'function') switchP8View('newai');
+    // Kick off Getting Started tracking in its empty state. If the user
+    // later completes the build flow, gsComplete('created') will check it.
+    if (typeof gsSyncProgress === 'function') gsSyncProgress();
+  }
+
+  /* ── Getting Started checklist state ──
+     Three foundational actions a new user should complete. Each is a
+     manual boolean for the prototype; the widget renders the checked
+     state, strike-through, and a progress bar. Toggling an item flips
+     its state (for demo interaction); in a real build, each would be
+     driven by the matching user action. */
+  window._gsState = window._gsState || {
+    created: false,
+    chatted: false,
+    linked: false
+  };
+  const _gsOrder = ['created', 'chatted', 'linked'];
+
+  function gsSyncProgress() {
+    const state = window._gsState;
+    const items = document.querySelectorAll('.p8-gs-item');
+    let done = 0;
+    items.forEach(el => {
+      const key = el.getAttribute('data-gs');
+      const isDone = !!state[key];
+      el.classList.toggle('done', isDone);
+      if (isDone) done++;
+    });
+    const total = _gsOrder.length;
+    const badge = document.getElementById('p8-gs-badge');
+    if (badge) badge.textContent = done + '/' + total;
+    const bar = document.getElementById('p8-gs-progress-bar');
+    if (bar) bar.style.width = Math.round((done / total) * 100) + '%';
+  }
+
+  function gsToggle() {
+    const el = document.getElementById('p8-gs');
+    if (el) el.classList.toggle('collapsed');
+  }
+
+  function gsClickItem(key) {
+    // Prototype-only: clicking an item toggles its completion state so
+    // demos can show off the checked/strikethrough visual. A real build
+    // would wire these up to the matching user actions and block manual
+    // toggling.
+    if (!window._gsState.hasOwnProperty(key)) return;
+    window._gsState[key] = !window._gsState[key];
+    gsSyncProgress();
+  }
+
+  /* Called from the places where a task is legitimately completed —
+     e.g. after the full onboarding finishes, after the first chat message,
+     after linking an app. Idempotent. */
+  function gsComplete(key) {
+    if (!window._gsState.hasOwnProperty(key)) return;
+    if (window._gsState[key]) return;
+    window._gsState[key] = true;
+    gsSyncProgress();
+  }
+
+  // Initialize on DOMContentLoaded (also called defensively from goTo).
+  document.addEventListener('DOMContentLoaded', () => { gsSyncProgress(); });
 
   /* Sidebar "Build New AI" entry. Re-enters the onboarding flow at Step 1
      (Page 2 — choose-an-option). Because the user is already inside the
