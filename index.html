@@ -2079,6 +2079,7 @@
       flex-shrink: 0;
       font-family: 'Poppins', sans-serif;
     }
+    .p8-gs[hidden] { display: none; }
     .p8-gs-head {
       display: flex; align-items: center; gap: 8px;
       cursor: pointer;
@@ -5489,12 +5490,11 @@
             </div>
           </div>
         </div>
-        <!-- Getting Started checklist. Sits above the account row so it's
-             always visible, never hidden by the active chat. Each item is
-             toggleable for demo/prototype use; in a real build the state
-             would be derived from user actions (AI created, first message
-             sent, apps linked). -->
-        <div class="p8-gs" id="p8-gs">
+        <!-- Getting Started checklist. Sits above the account row, hidden
+             by default. Only revealed when the user enters the app via
+             "Skip for now" on page 2 (skipToNewai) — users who finish the
+             full onboarding already did step 1 and don't need the nudge. -->
+        <div class="p8-gs" id="p8-gs" hidden>
           <div class="p8-gs-head" onclick="gsToggle()">
             <span class="p8-gs-badge" id="p8-gs-badge">0/3</span>
             <span class="p8-gs-title">Getting Started</span>
@@ -7426,8 +7426,11 @@
   function skipToNewai() {
     goTo(8);
     if (typeof switchP8View === 'function') switchP8View('newai');
-    // Kick off Getting Started tracking in its empty state. If the user
-    // later completes the build flow, gsComplete('created') will check it.
+    // Reveal the Getting Started checklist — this is the ONLY path that
+    // shows the widget. Full-onboarding users have already done step 1,
+    // so the nudge would be noise for them.
+    const gs = document.getElementById('p8-gs');
+    if (gs) gs.hidden = false;
     if (typeof gsSyncProgress === 'function') gsSyncProgress();
   }
 
