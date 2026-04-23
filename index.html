@@ -3345,7 +3345,7 @@
     .ho-progress-item.done .ho-progress-label { color: #9aa0a6; text-decoration: line-through; }
     /* Group members list */
     .ho-members-list {
-      display: flex; flex-direction: column; gap: 10px;
+      display: flex; flex-direction: column; gap: 16px;
     }
     .ho-member {
       display: flex; align-items: center; gap: 10px;
@@ -3395,27 +3395,21 @@
       font-size: 11px; line-height: 14px;
       color: #9aa0a6;
     }
-    /* "Add member" affordance at the bottom of the members list. Reads
-       as a dashed-border ghost row so it's clearly an add-slot rather
-       than another member. */
+    /* "Add member" affordance at the bottom of the members list. Now
+       a borderless ghost row — just a neutral plus-circle + label, so
+       it doesn't visually compete with the member rows above. */
     .ho-member-add {
       display: flex; align-items: center; gap: 10px;
-      padding: 8px 10px;
-      margin-top: 4px;
+      padding: 0;
       background: transparent;
-      border: 1px dashed #c8cdd3;
-      border-radius: 10px;
+      border: none;
       cursor: pointer;
       width: 100%;
       font-family: 'Poppins', sans-serif;
-      color: #4b5563;
-      transition: background 0.12s, border-color 0.12s, color 0.12s;
+      color: #6b7280;
+      transition: color 0.12s;
     }
-    .ho-member-add:hover {
-      background: #f7f8fb;
-      border-color: #9aa0a6;
-      color: #07191e;
-    }
+    .ho-member-add:hover { color: #07191e; }
     .ho-member-add-icon {
       width: 32px; height: 32px;
       border-radius: 50%;
@@ -3423,6 +3417,11 @@
       color: #6b7280;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
+      transition: background 0.12s, color 0.12s;
+    }
+    .ho-member-add:hover .ho-member-add-icon {
+      background: #e5e7eb;
+      color: #07191e;
     }
     .ho-member-add-icon svg { width: 16px; height: 16px; }
     .ho-member-add-label {
