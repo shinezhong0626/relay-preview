@@ -5824,9 +5824,10 @@
       font-size: 15px; line-height: 22px;
       word-wrap: break-word;
     }
-    /* AI message: flex row with an avatar on the left + text on the right.
-       Clicking the avatar opens a read-only profile panel on the right edge
-       of the app. */
+    /* AI message: flex row with an avatar on the left + a column
+       body on the right. Body stacks the AI name row (Slack-style)
+       on top and the message text below it so the first body line
+       lines up with the avatar's bottom half instead of its centre. */
     .p8-msg-ai {
       align-self: flex-start;
       max-width: 800px;
@@ -5847,13 +5848,23 @@
       cursor: default;
     }
     .p8-msg-ai-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .p8-msg-ai-text {
+    /* Right-side body: name row + text stacked vertically. */
+    .p8-msg-ai-body {
       flex: 1; min-width: 0;
+      display: flex; flex-direction: column;
+      gap: 2px;
+    }
+    .p8-msg-ai-name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px; font-weight: 600;
+      line-height: 20px;
+      color: #07191e;
+    }
+    .p8-msg-ai-text {
       color: #07191e;
       font-family: 'Poppins', sans-serif;
       font-size: 15px; line-height: 24px;
       white-space: pre-wrap;
-      padding-top: 4px;
     }
     .p8-msg-ai-text strong {
       font-weight: 600; color: #07191e;
@@ -8594,13 +8605,23 @@
     if (!convo) return;
     const sel = document.querySelector('.av2-opt.selected');
     const avatarSrc = sel ? sel.dataset.src : '';
+    // Resolve the AI's name the same way syncP8 does: Sarah AI for
+    // the demo variant, the active Cody team member otherwise, or
+    // the user's default AI name (Shine AI / Cody AI) as a fallback.
+    const isDemo = !!window._isDemoAi;
+    const activeMember = window._activeMemberName;
+    const userAiName = (window._currentUserFirstName || 'Shine') + ' AI';
+    const AI_NAME = isDemo ? 'Sarah AI' : (activeMember || userAiName);
     const msg = document.createElement('div');
     msg.className = 'p8-msg-ai';
     msg.innerHTML =
       '<span class="p8-msg-ai-avatar" aria-hidden="true">' +
         '<img src="' + avatarSrc + '" alt=""/>' +
       '</span>' +
-      '<div class="p8-msg-ai-text"><span class="p8-ai-typing"></span></div>';
+      '<div class="p8-msg-ai-body">' +
+        '<div class="p8-msg-ai-name">' + AI_NAME + '</div>' +
+        '<div class="p8-msg-ai-text"><span class="p8-ai-typing"></span></div>' +
+      '</div>';
     convo.appendChild(msg);
     const body = document.getElementById('p8-chat-body');
     body.scrollTop = body.scrollHeight;
@@ -8802,7 +8823,10 @@
           '<span class="p8-msg-ai-avatar" aria-hidden="true">' +
             '<img src="' + avatarSrc + '" alt=""/>' +
           '</span>' +
-          '<div class="p8-msg-ai-text p8-msg-ai-greeting">' + greetingHtml + '</div>';
+          '<div class="p8-msg-ai-body">' +
+            '<div class="p8-msg-ai-name">' + AI_NAME + '</div>' +
+            '<div class="p8-msg-ai-text p8-msg-ai-greeting">' + greetingHtml + '</div>' +
+          '</div>';
         convo.appendChild(msg);
         body.appendChild(convo);
       }
