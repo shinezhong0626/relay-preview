@@ -3229,13 +3229,17 @@
     .pending-head {
       text-align: center;
     }
+    /* Onboarding-style big pixel-font title to match page 10/11/13
+       heading treatment. */
     .pending-title {
-      font-size: 26px; font-weight: 600; line-height: 32px;
+      font-family: 'GeistPixel', monospace;
+      font-size: 36px; font-weight: 600; line-height: 1.2;
       color: #07191e;
-      margin: 0 0 6px;
+      margin: 0 0 10px;
     }
     .pending-sub {
-      font-size: 14px; line-height: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px; line-height: 1.6;
       color: #6b7280;
       margin: 0;
     }
@@ -3249,20 +3253,51 @@
       gap: 14px;
       box-shadow: 0 2px 8px rgba(7,25,30,0.03);
     }
-    .pending-check {
+    /* Avatar + Building chip, anchoring the card to a real identity. */
+    .pending-avatar {
       align-self: center;
-      width: 48px; height: 48px;
-      border-radius: 50%;
-      background: #10b981;
-      color: #fff;
-      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      width: 72px; height: 72px;
     }
-    .pending-check svg { width: 24px; height: 24px; }
+    .pending-avatar img {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      background: #ede9fe;
+      box-shadow: 0 0 0 1px rgba(7,25,30,0.06);
+      filter: saturate(0.9);
+    }
+    /* Small bottom-right chip anchored half-outside the avatar so it
+       reads as a status overlay. */
+    .pending-avatar-chip {
+      position: absolute;
+      left: 50%;
+      bottom: -8px;
+      transform: translateX(-50%);
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 10px;
+      background: #0089e6;
+      color: #fff;
+      border: 2px solid #fff;
+      border-radius: 999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .pending-avatar-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      animation: generating-pulse 1.4s ease-in-out infinite;
+    }
     .pending-card-title {
       align-self: center;
-      font-size: 20px; font-weight: 600; line-height: 26px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px; font-weight: 600; line-height: 24px;
       color: #07191e;
       text-align: center;
+      margin-top: 12px;
     }
     .pending-share-label {
       font-size: 14px; line-height: 20px;
@@ -7007,10 +7042,16 @@
               <p class="pending-sub">Waiting for the leaver to accept the invitation and link data sources.</p>
             </div>
             <div class="pending-card">
-              <div class="pending-check">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 12l4 4 10-10"/>
-                </svg>
+              <!-- Avatar swapped in for the previous abstract green check.
+                   Chosen pixel-art avatar (or a placeholder) + a bottom-
+                   right "Building" chip so the identity is legible and
+                   the pending state is signaled. -->
+              <div class="pending-avatar">
+                <img id="p8-pending-avatar-img" src="" alt=""/>
+                <span class="pending-avatar-chip">
+                  <span class="pending-avatar-dot"></span>
+                  Building
+                </span>
               </div>
               <div class="pending-card-title">Offboarding Process Generated</div>
               <div class="pending-share-label">Share this link with <strong id="p8-pending-name">your teammate</strong> to join in Relay</div>
@@ -8819,12 +8860,17 @@
      data-source logos they'll need to connect before the AI can
      actually build. */
   function renderGeneratingView(member) {
-    const nameEl = document.getElementById('p8-pending-name');
-    const linkEl = document.getElementById('p8-pending-link');
-    const grid   = document.getElementById('p8-pending-apps');
+    const nameEl   = document.getElementById('p8-pending-name');
+    const linkEl   = document.getElementById('p8-pending-link');
+    const grid     = document.getElementById('p8-pending-apps');
+    const avatarEl = document.getElementById('p8-pending-avatar-img');
 
     const departing = member.departingName || member.name.replace(/ AI$/, '');
     if (nameEl) nameEl.textContent = departing;
+    if (avatarEl) {
+      const opts = Array.from(document.querySelectorAll('.av2-opt'));
+      avatarEl.src = (opts[member.avatarIndex] && opts[member.avatarIndex].dataset.src) || '';
+    }
     if (linkEl) {
       // Deterministic mock slug derived from the name so the URL
       // doesn't reshuffle on every reopen.
