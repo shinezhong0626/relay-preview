@@ -3262,68 +3262,128 @@
       margin: 0;
       max-width: 440px;
     }
-    .generating-progress {
-      width: 100%;
-      height: 6px;
-      background: #e5e7eb;
+    /* Pending pill above the avatar so the status is legible before
+       any text is read. */
+    .generating-status-pill {
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #ae3906;
+      background: #ffedd5;
+      padding: 4px 12px;
       border-radius: 999px;
-      overflow: hidden;
-      margin-top: 4px;
     }
-    .generating-progress-bar {
-      height: 100%;
-      width: 42%;
-      background: linear-gradient(90deg, #4c8df6, #f89a6e);
-      border-radius: 999px;
-      animation: generating-progress 2.6s ease-in-out infinite;
-    }
-    @keyframes generating-progress {
-      0%   { transform: translateX(-40%); }
-      50%  { transform: translateX(0); }
-      100% { transform: translateX(120%); }
-    }
-    .generating-steps {
+    /* Flow checklist — each row reflects one step of the handover
+       pipeline. Shows a left connector line so the steps read as a
+       single vertical flow, with status icons on the left of each
+       row (done / current / not started). */
+    .generating-flow {
       width: 100%;
-      max-width: 380px;
+      max-width: 420px;
       list-style: none;
-      padding: 4px 0 0;
+      padding: 8px 0 0;
       margin: 4px 0 0;
-      display: flex; flex-direction: column; gap: 8px;
+      display: flex; flex-direction: column;
       text-align: left;
+      position: relative;
     }
-    .generating-step {
-      display: flex; align-items: center; gap: 10px;
-      font-size: 13px; line-height: 18px;
+    .generating-flow-step {
+      display: flex;
+      gap: 12px;
+      padding: 0 4px 16px 4px;
+      position: relative;
+    }
+    .generating-flow-step:last-child { padding-bottom: 0; }
+    /* vertical connector between steps */
+    .generating-flow-step::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 24px; bottom: -4px;
+      width: 2px;
+      background: #e5e7eb;
+    }
+    .generating-flow-step:last-child::before { display: none; }
+    .generating-flow-step.done::before { background: #10b981; }
+    .generating-flow-icon {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: #f3f5f9;
       color: #9aa0a6;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      z-index: 1;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px #e5e7eb;
     }
-    .generating-step::before {
+    .generating-flow-icon svg { width: 12px; height: 12px; display: none; }
+    .generating-flow-step.done .generating-flow-icon {
+      background: #10b981;
+      color: #fff;
+      box-shadow: 0 0 0 1px #10b981;
+    }
+    .generating-flow-step.done .generating-flow-icon svg.done-icon { display: block; }
+    .generating-flow-step.current .generating-flow-icon {
+      background: #fff;
+      color: #0089e6;
+      box-shadow: 0 0 0 2px #0089e6;
+      animation: generating-pulse-ring 1.6s ease-in-out infinite;
+    }
+    .generating-flow-step.current .generating-flow-icon::after {
       content: '';
       width: 8px; height: 8px;
       border-radius: 50%;
-      background: #d1d5db;
-      flex-shrink: 0;
-    }
-    .generating-step.done { color: #10b981; }
-    .generating-step.done::before { background: #10b981; }
-    .generating-step.active { color: #07191e; font-weight: 500; }
-    .generating-step.active::before {
       background: #0089e6;
-      box-shadow: 0 0 0 3px rgba(0,137,230,0.22);
     }
-    .generating-close {
-      margin-top: 12px;
+    @keyframes generating-pulse-ring {
+      0%, 100% { box-shadow: 0 0 0 2px #0089e6, 0 0 0 2px rgba(0,137,230,0.0); }
+      50%      { box-shadow: 0 0 0 2px #0089e6, 0 0 0 8px rgba(0,137,230,0.18); }
+    }
+    .generating-flow-text {
+      flex: 1;
+      padding-top: 1px;
+      min-width: 0;
+    }
+    .generating-flow-label {
+      font-size: 13px; font-weight: 500; line-height: 18px;
+      color: #9aa0a6;
+    }
+    .generating-flow-step.done .generating-flow-label { color: #10b981; }
+    .generating-flow-step.current .generating-flow-label { color: #07191e; }
+    .generating-flow-detail {
+      font-size: 12px; line-height: 16px;
+      color: #9aa0a6;
+      margin-top: 2px;
+    }
+    .generating-flow-step.current .generating-flow-detail { color: #6b7280; }
+    /* Actions row — secondary Close + primary Resend invite. */
+    .generating-actions {
+      display: flex; gap: 10px;
+      margin-top: 8px;
+    }
+    .generating-secondary,
+    .generating-primary {
       height: 40px;
-      padding: 0 22px;
-      background: #fff;
-      color: #07191e;
-      border: 1px solid rgba(7,25,30,0.2);
+      padding: 0 20px;
       border-radius: 10px;
       font-family: 'Poppins', sans-serif;
       font-size: 14px; font-weight: 500;
       cursor: pointer;
-      transition: background 0.15s;
+      transition: background 0.15s, border-color 0.15s;
     }
-    .generating-close:hover { background: #f7f8fb; }
+    .generating-secondary {
+      background: #fff;
+      color: #07191e;
+      border: 1px solid rgba(7,25,30,0.2);
+    }
+    .generating-secondary:hover { background: #f7f8fb; }
+    .generating-primary {
+      background: #07191e;
+      color: #fff;
+      border: 1px solid #07191e;
+    }
+    .generating-primary:hover { background: #000; }
 
     /* ── Handover body ──
        Structurally mirrors the main chat column: scrollable messages +
@@ -6951,27 +7011,30 @@
           </div>
         </div>
 
-        <!-- GENERATING VIEW — shown when the selected team member is in
-             'generating' state. The AI was just created via Build your
-             teammate AI → Generate, and is still being trained. No
-             chat, no admin — just a progress card. -->
+        <!-- PENDING VIEW — shown when the selected team member is in
+             'generating' state. The AI was just kicked off via Build
+             your teammate AI → Generate, but real creation requires
+             the departing teammate to accept the invite, share context,
+             etc. This surface shows exactly which step of the handover
+             flow is currently pending. -->
         <div class="p8-generating-body" id="p8-generating-body" hidden>
           <div class="generating-card">
+            <span class="generating-status-pill">Pending</span>
             <div class="generating-avatar">
               <img id="p8-generating-avatar-img" src="" alt=""/>
               <span class="generating-avatar-spinner" aria-hidden="true"></span>
             </div>
-            <h2 class="generating-title">Building <span id="p8-generating-name">your AI</span></h2>
-            <p class="generating-desc">We're ingesting the last 12 months of context, training a voice &amp; style model, and calibrating the memory snapshot. This usually takes 10–15 minutes. You can close this and come back later — we'll notify you when it's ready.</p>
-            <div class="generating-progress">
-              <div class="generating-progress-bar"></div>
+            <h2 class="generating-title"><span id="p8-generating-name">Your AI</span></h2>
+            <p class="generating-desc" id="p8-generating-desc">Waiting on the departing teammate to accept the handover invite.</p>
+            <ol class="generating-flow" id="p8-generating-flow">
+              <!-- Populated by renderGeneratingView() with the 4-step
+                   handover progress: Invited → Joined → Memory captured →
+                   AI trained. -->
+            </ol>
+            <div class="generating-actions">
+              <button class="generating-secondary" type="button" onclick="exitGeneratingView()">Close</button>
+              <button class="generating-primary" type="button">Resend invite</button>
             </div>
-            <ul class="generating-steps">
-              <li class="generating-step done">Ingested emails, chats, and docs</li>
-              <li class="generating-step active">Training voice &amp; style model</li>
-              <li class="generating-step">Calibrating memory snapshot</li>
-            </ul>
-            <button class="generating-close" type="button" onclick="exitGeneratingView()">Close</button>
           </div>
         </div>
       </main>
@@ -8748,17 +8811,51 @@
     renderHandoverChat(member);
   }
 
-  /* Populate the generating view for the selected team member. Shows
-     the avatar, name, a progress bar animation, and a 3-step build
-     checklist that reads as "currently training". Close exits to the
-     first ready AI in the team (Shine AI). */
+  /* Populate the pending view for the selected team member. Shows the
+     avatar, name, a vertical 4-step flow with the CURRENT blocking
+     step highlighted, and a description of what we're waiting on. */
   function renderGeneratingView(member) {
-    const nameEl = document.getElementById('p8-generating-name');
+    const nameEl   = document.getElementById('p8-generating-name');
     const avatarEl = document.getElementById('p8-generating-avatar-img');
-    if (nameEl) nameEl.textContent = member.name;
+    const descEl   = document.getElementById('p8-generating-desc');
+    const flowEl   = document.getElementById('p8-generating-flow');
+    if (nameEl)   nameEl.textContent = member.name;
     if (avatarEl) {
       const opts = Array.from(document.querySelectorAll('.av2-opt'));
       avatarEl.src = (opts[member.avatarIndex] && opts[member.avatarIndex].dataset.src) || '';
+    }
+
+    // Four-step handover pipeline. For the Marcus AI demo we're
+    // parked on "Waiting for [departing] to accept" — Invitation sent
+    // is done, everything after is pending.
+    const departing = member.departingName || 'Teammate';
+    const steps = [
+      { key: 'invite',   label: 'Invitation sent',                 detail: 'Sent to ' + departing.toLowerCase().split(' ')[0] + '@company.com', state: 'done' },
+      { key: 'accept',   label: 'Waiting for ' + departing + ' to accept',
+                         detail: 'They\u2019ll receive an email to join this handover thread.',           state: 'current' },
+      { key: 'capture',  label: 'Memory snapshot',                 detail: 'We\u2019ll ingest the last 12 months of context once they join.', state: 'pending' },
+      { key: 'train',    label: 'Train AI & deploy',               detail: 'Voice model + knowledge base, then ready to chat.',               state: 'pending' }
+    ];
+    if (descEl) {
+      descEl.textContent = 'Waiting on ' + departing + ' to accept the handover invite. Once they join we can capture the memory snapshot and finish training.';
+    }
+    if (flowEl) {
+      flowEl.innerHTML = '';
+      steps.forEach(s => {
+        const li = document.createElement('li');
+        li.className = 'generating-flow-step ' + s.state;
+        li.innerHTML =
+          '<span class="generating-flow-icon" aria-hidden="true">' +
+            '<svg class="done-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path d="M5 10.5l3 3 7-7"/>' +
+            '</svg>' +
+          '</span>' +
+          '<div class="generating-flow-text">' +
+            '<div class="generating-flow-label">' + s.label + '</div>' +
+            '<div class="generating-flow-detail">' + s.detail + '</div>' +
+          '</div>';
+        flowEl.appendChild(li);
+      });
     }
   }
 
