@@ -2315,8 +2315,12 @@
     }
     .p8-chat-time {
       font-size: 14px; line-height: 18px;
-      color: #0089e6;
+      color: #9aa0a6;
     }
+    /* Highlight the timestamp only on the currently selected chat row.
+       Before this, every row's timestamp rendered in blue which made it
+       look like multiple rows were selected. */
+    .p8-chat-item.active .p8-chat-time { color: #0089e6; }
     .p8-chat-preview {
       font-size: 14px; line-height: 18px;
       color: #6d7574;
@@ -8468,13 +8472,19 @@
     // lives on that chat-item regardless of whether the user is on Profile or
     // Chat tab.
     document.querySelectorAll('.p8-sidebar .p8-nav-item').forEach(el => el.classList.remove('active'));
-    const shineTeamItem = document.querySelector('.p8-sidebar .p8-chat-item');
     if (mode === 'newai') {
       const newaiNav = document.getElementById('p8-nav-newai');
       if (newaiNav) newaiNav.classList.add('active');
-      if (shineTeamItem) shineTeamItem.classList.remove('active');
+      // Clear any team-row active so "Build New AI" is the only lit row.
+      document.querySelectorAll('.p8-sidebar .p8-chat-item').forEach(el => el.classList.remove('active'));
+    } else if (window._isCodyDemo) {
+      // Cody flow: selectTeamMember owns the chat-item active state.
+      // Don't forcibly add .active to the first row — that would stomp
+      // the user's real selection (e.g. Marcus) with Shine AI.
     } else {
-      // admin (Shine AI page) and chat both light up the Shine AI TEAM item.
+      // Single-AI flows (Shine onboarding / Sarah demo): admin + chat
+      // both light up the only team row.
+      const shineTeamItem = document.querySelector('.p8-sidebar .p8-chat-item');
       if (shineTeamItem) shineTeamItem.classList.add('active');
     }
   }
