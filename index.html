@@ -2394,6 +2394,19 @@
       object-fit: cover;
       display: block;
     }
+    /* Cody letter-chip variant — used when the handover hasn't
+       started yet (e.g. Marcus's pending handover). Same 32x32 slot
+       as an image, but renders the "C" initial on the current user's
+       blue background instead. */
+    .p8-chat-avatar.group .p8-chat-avatar-cody {
+      background: #2563eb;
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      letter-spacing: 0.4px;
+      display: flex; align-items: center; justify-content: center;
+    }
     /* Placeholder empty-state for the Handover Group list when no
        threads exist yet. */
     .p8-handover-empty {
@@ -3665,6 +3678,27 @@
       display: flex; flex-direction: column; align-items: center;
       flex-shrink: 0;
       background: transparent;
+    }
+    /* Disabled state — pending handover (e.g. Marcus before build
+       completes). Dims the input box + footer icons and blocks
+       keyboard/mouse interaction. Textarea still receives a custom
+       placeholder from JS; the Link-tools footer stays active so
+       Cody can prep connectors while waiting. */
+    .ho-input-wrap.ho-input-disabled .p8-input-box {
+      background: #f3f5f9;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+    .ho-input-wrap.ho-input-disabled .p8-input-text {
+      color: #9aa0a6;
+      cursor: not-allowed;
+    }
+    .ho-input-wrap.ho-input-disabled .p8-input-text::placeholder {
+      color: #9aa0a6;
+    }
+    .ho-input-wrap.ho-input-disabled .p8-input-footer button {
+      opacity: 0.5;
+      pointer-events: none;
     }
 
     /* Right-hand info column — two stacked collapsible panels.
@@ -9570,16 +9604,27 @@
       })
       .join(', ') || 'the connected apps';
 
-    const msgs = [
-      { kind: 'system', text: 'Handover chat created · ' + departing + ' → ' + receiverName },
-      { who: 'relay',     text: "I'm Relay assistant. I'll preserve " + aiName + "'s memory and context during this handover so " + receiverName + " can pick up without losing anything." },
-      { who: 'departing', text: "Here's the short version: " + aiName + " already covers the weekly review, sprint tracking, and stakeholder updates. Context lives in " + linkedLabel + '.' },
-      { who: 'relay',     text: 'Memory snapshot preserved. ' + (member.linkedApps || []).length + ' linked apps transferred. No permissions changed yet — ' + receiverName + ' will need to confirm access.' },
-      { who: 'receiver',  text: "Got it — I'll review the pinned conversations tomorrow morning and flag anything unclear." },
-      // Cody's own message — renders as a blue bubble, right-aligned,
-      // mirroring the main chat's user-message style.
-      { who: 'self',      text: "Thanks \u2014 I'll join the review tomorrow." }
-    ];
+    // Pending handover (AI still generating, e.g. Marcus) has a very
+    // different thread: only Cody and Relay are in the room, and Relay
+    // is waiting on the departing teammate to join. Active handovers
+    // render the full scripted conversation with departing + receiver.
+    const isPending = member.status === 'generating';
+    const firstName = (departing || '').split(' ')[0] || 'your teammate';
+    const msgs = isPending
+      ? [
+          { kind: 'system', text: 'Handover chat created \u00b7 waiting for ' + firstName + ' to join' },
+          { who: 'relay',   text: "I'm Relay assistant. I'll preserve " + aiName + "'s memory and context as soon as " + firstName + " joins and links their tools. You'll see activity here once the build is ready." }
+        ]
+      : [
+          { kind: 'system', text: 'Handover chat created \u00b7 ' + departing + ' \u2192 ' + receiverName },
+          { who: 'relay',     text: "I'm Relay assistant. I'll preserve " + aiName + "'s memory and context during this handover so " + receiverName + " can pick up without losing anything." },
+          { who: 'departing', text: "Here's the short version: " + aiName + " already covers the weekly review, sprint tracking, and stakeholder updates. Context lives in " + linkedLabel + '.' },
+          { who: 'relay',     text: 'Memory snapshot preserved. ' + (member.linkedApps || []).length + ' linked apps transferred. No permissions changed yet \u2014 ' + receiverName + ' will need to confirm access.' },
+          { who: 'receiver',  text: "Got it \u2014 I'll review the pinned conversations tomorrow morning and flag anything unclear." },
+          // Cody's own message — renders as a blue bubble, right-aligned,
+          // mirroring the main chat's user-message style.
+          { who: 'self',      text: "Thanks \u2014 I'll join the review tomorrow." }
+        ];
 
     body.innerHTML = '';
     msgs.forEach(m => {
@@ -9716,6 +9761,24 @@
           '<span class="ho-member-add-label">Add member</span>' +
         '</button>';
     }
+
+    // Pending handovers (departing teammate hasn't joined the build
+    // yet) disable the input area — Cody can open the thread and
+    // read the Relay primer, but can't send anything until the
+    // build completes. Reset to the normal state for active threads.
+    const hoInput = document.getElementById('ho-input-field');
+    const hoWrap  = document.querySelector('.p8-handover-body .ho-input-wrap');
+    if (hoInput) {
+      if (isPending) {
+        hoInput.disabled = true;
+        hoInput.value = '';
+        hoInput.placeholder = 'Waiting for ' + firstName + ' to join in\u2026';
+      } else {
+        hoInput.disabled = false;
+        hoInput.placeholder = 'Message this handover\u2026';
+      }
+    }
+    if (hoWrap) hoWrap.classList.toggle('ho-input-disabled', isPending);
   }
 
   /* Mock teammates Cody can pull into the handover thread. */
@@ -9990,11 +10053,25 @@
       const lastMsg = isGen
         ? 'Waiting to join\u2026'
         : 'You: Thanks \u2014 I\u2019ll join the review tomorrow.';
+      // Pending handovers (e.g. Marcus's) haven't been joined by the
+      // departing teammate or the receiver yet — only Cody and the
+      // Relay assistant are "in the room". Show those two instead of
+      // departing + receiver so the avatar reflects the real state.
+      const avatarHtml = isGen
+        ? (
+            '<div class="p8-chat-avatar group">' +
+              '<span class="p8-chat-avatar-back"><img src="' + _RELAY_LOGO_SRC + '" alt=""/></span>' +
+              '<span class="p8-chat-avatar-front p8-chat-avatar-cody">C</span>' +
+            '</div>'
+          )
+        : (
+            '<div class="p8-chat-avatar group">' +
+              '<span class="p8-chat-avatar-back"><img src="' + receiverAvatar + '" alt=""/></span>' +
+              '<span class="p8-chat-avatar-front"><img src="' + departingRealAvatar + '" alt=""/></span>' +
+            '</div>'
+          );
       item.innerHTML =
-        '<div class="p8-chat-avatar group">' +
-          '<span class="p8-chat-avatar-back"><img src="' + receiverAvatar + '" alt=""/></span>' +
-          '<span class="p8-chat-avatar-front"><img src="' + departingRealAvatar + '" alt=""/></span>' +
-        '</div>' +
+        avatarHtml +
         '<div class="p8-chat-info">' +
           '<div class="p8-chat-row-1">' +
             '<span class="p8-chat-name">' + groupName + '</span>' +
@@ -10014,12 +10091,9 @@
   function selectHandoverGroup(name) {
     const member = (typeof _CODY_TEAM !== 'undefined') ? _CODY_TEAM.find(m => m.name === name) : null;
     if (!member) return;
-    if (member.status === 'generating') {
-      // Still pending — route to the usual pending surface rather than
-      // opening a half-built handover thread.
-      selectTeamMember(name);
-      return;
-    }
+    // Generating AIs (Marcus) still open the handover thread — the
+    // group surface just shows a Relay-only primer with a disabled
+    // input while we wait for Marcus to actually join.
     window._activeMemberName    = member.name;
     window._activeMemberOwned   = member.owned;
     // Flag the active handover so the list renderer can preserve the
