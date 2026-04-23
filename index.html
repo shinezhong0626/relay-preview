@@ -5782,19 +5782,17 @@
       align-items: flex-start;
       gap: 12px;
     }
+    /* AI avatar next to each AI bubble. 40×40 to match the handover
+       avatar size. No longer clickable — the Profile tab on the top
+       pill is the single entry into the profile view. */
     .p8-msg-ai-avatar {
-      width: 32px; height: 32px;
+      width: 40px; height: 40px;
       border-radius: 50%;
       overflow: hidden;
       background: #ede9fe;
       flex-shrink: 0;
       padding: 0; border: 1px solid rgba(7,25,30,0.08);
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-    .p8-msg-ai-avatar:hover {
-      transform: scale(1.05);
-      box-shadow: 0 2px 8px rgba(7,25,30,0.12);
+      cursor: default;
     }
     .p8-msg-ai-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .p8-msg-ai-text {
@@ -6744,12 +6742,15 @@
               <span class="p8-team-tab-label">Handover</span>
             </button>
             <!-- Search icon — anchored to the right end of the pill,
-                 mirroring the Notion topbar icon cluster. Click opens
-                 the same search surface the topbar button used to. -->
+                 mirroring the Notion topbar icon cluster. Uses the
+                 same 24×24 viewBox + stroke-width 2 as the Chats and
+                 Handover icons so all three read as the same visual
+                 weight. Click opens the same search surface the
+                 topbar button used to. -->
             <button class="p8-team-tab-search" type="button" aria-label="Search">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="9" r="5.5"/>
-                <path d="M13.5 13.5l3 3"/>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"/>
+                <path d="M16 16l5 5"/>
               </svg>
             </button>
           </div>
@@ -8528,9 +8529,9 @@
     const msg = document.createElement('div');
     msg.className = 'p8-msg-ai';
     msg.innerHTML =
-      '<button class="p8-msg-ai-avatar" type="button" aria-label="View AI profile" onclick="openAiProfilePanel()">' +
+      '<span class="p8-msg-ai-avatar" aria-hidden="true">' +
         '<img src="' + avatarSrc + '" alt=""/>' +
-      '</button>' +
+      '</span>' +
       '<div class="p8-msg-ai-text"><span class="p8-ai-typing"></span></div>';
     convo.appendChild(msg);
     const body = document.getElementById('p8-chat-body');
@@ -8730,9 +8731,9 @@
         const msg = document.createElement('div');
         msg.className = 'p8-msg-ai';
         msg.innerHTML =
-          '<button class="p8-msg-ai-avatar" type="button" aria-label="View AI profile" onclick="openAiProfilePanel()">' +
+          '<span class="p8-msg-ai-avatar" aria-hidden="true">' +
             '<img src="' + avatarSrc + '" alt=""/>' +
-          '</button>' +
+          '</span>' +
           '<div class="p8-msg-ai-text p8-msg-ai-greeting">' + greetingHtml + '</div>';
         convo.appendChild(msg);
         body.appendChild(convo);
