@@ -2267,6 +2267,26 @@
     .p8-nav-item .nav-icon-filled { display: none; }
     .p8-nav-item.active .nav-icon-outline { display: none; }
     .p8-nav-item.active .nav-icon-filled { display: block; }
+    /* Build New AI entry — dashed-frame CTA that reads as "add another"
+       rather than a regular sidebar nav row. Centred content, fixed
+       64px height, 16px radius, and a dashed border in a soft grey
+       that darkens on hover. */
+    #p8-nav-newai {
+      justify-content: center;
+      gap: 8px;
+      height: 64px;
+      padding: 0 16px;
+      margin: 6px 0 10px;
+      border: 1.5px dashed #c9cfd7;
+      border-radius: 16px;
+      background: transparent;
+    }
+    #p8-nav-newai:hover {
+      background: #f3f5f9;
+      border-color: #014261;
+      color: #014261;
+    }
+    #p8-nav-newai:hover svg { color: #014261; }
     /* ── TEAM view-switch (Notion-style icon toggle) ──
        Sits below the TEAM label with no container background. Only the
        hover and active states fill with #F3F4F6, giving each segment a
