@@ -3185,63 +3185,28 @@
     .p8-newai-body[hidden] { display: none; }
 
     /* ── Handover body ──
-       Group-chat surface between the departing teammate, Relay AI,
-       and the new owner (Cody). Mirrors the main chat column: header
-       with participants, scrollable message list, bottom input. */
+       Structurally mirrors the main chat column: scrollable messages +
+       bottom input. No separate header (the topNav "Team / <member>"
+       already conveys context). A right-hand column holds the two
+       floating info panels (Progress + Group Member). */
     .p8-handover-body {
       flex: 1; min-height: 0;
       background: #fff;
       font-family: 'Poppins', sans-serif;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
     }
     .p8-handover-body[hidden] { display: none; }
-    .ho-group-header {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 48px;
-      border-bottom: 1px solid #e5e7eb;
-      background: #fff;
-      flex-shrink: 0;
-    }
-    .ho-group-avatars {
-      display: inline-flex; align-items: center;
-    }
-    .ho-group-avatars .ho-avatar {
-      width: 32px; height: 32px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 2px solid #fff;
-      background: #ede9fe;
-      margin-left: -8px;
-      box-shadow: 0 0 0 1px rgba(7,25,30,0.06);
-    }
-    .ho-group-avatars .ho-avatar:first-child { margin-left: 0; }
-    .ho-group-avatars .ho-avatar img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-    }
-    .ho-group-avatars .ho-avatar.initial {
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-family: 'Poppins', sans-serif;
-      font-size: 13px; font-weight: 500;
-    }
-    .ho-group-meta {
-      display: flex; flex-direction: column; gap: 2px;
-    }
-    .ho-group-title {
-      font-family: 'Poppins', sans-serif;
-      font-size: 16px; font-weight: 600; line-height: 22px;
-      color: #07191e;
-    }
-    .ho-group-sub {
-      font-family: 'Poppins', sans-serif;
-      font-size: 12px; line-height: 16px;
-      color: #6d7574;
+    .ho-chat-col {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column;
+      min-height: 0;
     }
     /* Scrollable message list */
     .ho-chat-body {
       flex: 1; min-height: 0;
       overflow-y: auto;
-      padding: 24px 48px 16px;
+      padding: 24px 40px 16px;
       display: flex; flex-direction: column; gap: 18px;
     }
     .ho-msg {
@@ -3249,7 +3214,7 @@
       max-width: 720px;
     }
     .ho-msg-avatar {
-      width: 32px; height: 32px;
+      width: 36px; height: 36px;
       border-radius: 50%;
       overflow: hidden;
       background: #ede9fe;
@@ -3257,9 +3222,10 @@
       border: 1px solid rgba(7,25,30,0.08);
       display: flex; align-items: center; justify-content: center;
       color: #fff; font-family: 'Poppins', sans-serif;
-      font-size: 12px; font-weight: 500;
+      font-size: 13px; font-weight: 600;
     }
-    .ho-msg-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ho-msg-avatar img,
+    .ho-msg-avatar svg { width: 100%; height: 100%; object-fit: cover; display: block; }
     .ho-msg-body {
       display: flex; flex-direction: column; gap: 4px;
       min-width: 0;
@@ -3277,10 +3243,6 @@
       background: #f3f4f6;
       border-radius: 4px;
       padding: 1px 6px;
-    }
-    .ho-msg-time {
-      font-size: 11px; line-height: 16px;
-      color: #9aa0a6;
     }
     .ho-msg-text {
       font-size: 14px; line-height: 22px;
@@ -3303,7 +3265,7 @@
     }
     /* Input bar at the bottom, mirroring the main chat input. */
     .ho-input-area {
-      padding: 12px 48px 20px;
+      padding: 12px 40px 20px;
       background: #fff;
       flex-shrink: 0;
     }
@@ -3339,6 +3301,105 @@
       flex-shrink: 0;
     }
     .ho-input-send svg { width: 18px; height: 18px; }
+
+    /* Right-hand info column — two stacked collapsible panels. */
+    .ho-side-col {
+      width: 260px;
+      flex-shrink: 0;
+      border-left: 1px solid #e5e7eb;
+      padding: 20px 16px;
+      display: flex; flex-direction: column; gap: 12px;
+      overflow-y: auto;
+      background: #fafbfc;
+    }
+    .ho-side-panel {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .ho-side-head {
+      width: 100%;
+      padding: 12px 14px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 600;
+      color: #07191e;
+    }
+    .ho-side-head:hover { background: #f7f8fb; }
+    .ho-side-chev {
+      width: 16px; height: 16px;
+      color: #9aa0a6;
+      transition: transform 0.18s;
+    }
+    .ho-side-panel.collapsed .ho-side-chev { transform: rotate(-90deg); }
+    .ho-side-panel.collapsed .ho-side-body { display: none; }
+    .ho-side-body {
+      padding: 4px 14px 14px;
+    }
+    /* Progress checklist */
+    .ho-progress-list {
+      list-style: none;
+      padding: 0; margin: 0;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .ho-progress-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 13px; line-height: 18px;
+      color: #374151;
+    }
+    .ho-progress-check {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid #d1d5db;
+      background: #fff;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+    .ho-progress-check svg { width: 11px; height: 11px; display: none; color: #fff; }
+    .ho-progress-item.done .ho-progress-check {
+      background: #10b981;
+      border-color: #10b981;
+    }
+    .ho-progress-item.done .ho-progress-check svg { display: block; }
+    .ho-progress-item.done .ho-progress-label { color: #9aa0a6; text-decoration: line-through; }
+    /* Group members list */
+    .ho-members-list {
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .ho-member {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .ho-member-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #ede9fe;
+      flex-shrink: 0;
+      border: 1px solid rgba(7,25,30,0.08);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-family: 'Poppins', sans-serif;
+      font-size: 13px; font-weight: 600;
+    }
+    .ho-member-avatar img,
+    .ho-member-avatar svg { width: 100%; height: 100%; display: block; }
+    .ho-member-info {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column; gap: 2px;
+    }
+    .ho-member-name {
+      font-size: 13px; font-weight: 500; line-height: 18px;
+      color: #07191e;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ho-member-role {
+      font-size: 11px; line-height: 14px;
+      color: #9aa0a6;
+    }
 
     /* ── Tab unread count badge (Chat / Handover / Admin) ──
        Small blue pill that sits to the right of the tab label. Hidden
@@ -6496,32 +6557,54 @@
              owned AI. Keeps the current user (Cody) in-app and gives a
              clear "kick off handover" affordance that defers to the
              existing full-screen handover flow (page 10+) when clicked. -->
-        <!-- HANDOVER VIEW — a group chat between the departing teammate,
-             the new owner (Cody), and Relay AI. Structure mirrors the
-             regular chat: scrollable message list + input box, with a
-             group header at the top that stacks member avatars so the
-             "who's in this chat" context is always visible. -->
+        <!-- HANDOVER VIEW — structurally identical to the main chat
+             (scrollable messages + input), just as a group thread with
+             the departing teammate + Relay AI + Cody. Two floating
+             panels on the right (Progress, Group Member) surface the
+             handover state without stealing vertical space from the
+             conversation. -->
         <div class="p8-handover-body" id="p8-handover-body" hidden>
-          <div class="ho-group-header">
-            <div class="ho-group-avatars" id="ho-group-avatars">
-              <!-- Populated by renderHandoverChat() with departing + Relay + Cody avatars. -->
+          <div class="ho-chat-col">
+            <div class="ho-chat-body" id="ho-chat-body">
+              <!-- Messages injected by renderHandoverChat(). -->
             </div>
-            <div class="ho-group-meta">
-              <div class="ho-group-title">Handover · <span id="ho-group-name">this AI</span></div>
-              <div class="ho-group-sub"><span id="ho-group-count">3</span> members</div>
+            <div class="ho-input-area">
+              <div class="ho-input-box">
+                <textarea class="ho-input-text" rows="1" placeholder="Message this handover…"></textarea>
+                <button class="ho-input-send" type="button" aria-label="Send">
+                  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 16V4M5.5 8.5L10 4l4.5 4.5"/>
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
-          <div class="ho-chat-body" id="ho-chat-body">
-            <!-- Messages injected by renderHandoverChat(). -->
-          </div>
-          <div class="ho-input-area">
-            <div class="ho-input-box">
-              <textarea class="ho-input-text" rows="1" placeholder="Message this handover…"></textarea>
-              <button class="ho-input-send" type="button" aria-label="Send">
-                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M10 16V4M5.5 8.5L10 4l4.5 4.5"/>
+          <div class="ho-side-col">
+            <div class="ho-side-panel" id="ho-panel-progress">
+              <button class="ho-side-head" type="button" onclick="toggleHoPanel('progress')">
+                <span>Progress</span>
+                <svg class="ho-side-chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5.5 7.5l4.5 4.5 4.5-4.5"/>
                 </svg>
               </button>
+              <div class="ho-side-body">
+                <ul class="ho-progress-list" id="ho-progress-list">
+                  <!-- Populated by renderHandoverChat(). -->
+                </ul>
+              </div>
+            </div>
+            <div class="ho-side-panel" id="ho-panel-members">
+              <button class="ho-side-head" type="button" onclick="toggleHoPanel('members')">
+                <span>Group Member</span>
+                <svg class="ho-side-chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5.5 7.5l4.5 4.5 4.5-4.5"/>
+                </svg>
+              </button>
+              <div class="ho-side-body">
+                <div class="ho-members-list" id="ho-members-list">
+                  <!-- Populated by renderHandoverChat(). -->
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -8254,35 +8337,45 @@
     renderHandoverChat(member);
   }
 
+  /* Relay AI brand mark — a blue→orange gradient circle with a white
+     "R". Rendered inline so chat bubbles + member list share the same
+     identity without loading an external asset. Unique gradient id per
+     invocation so multiple copies on the page render correctly. */
+  let _relayLogoCounter = 0;
+  function _relayLogoSvg() {
+    _relayLogoCounter += 1;
+    const id = 'relay-g-' + _relayLogoCounter;
+    return '<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">' +
+      '<defs>' +
+        '<linearGradient id="' + id + '" x1="18%" y1="14%" x2="86%" y2="90%">' +
+          '<stop offset="0%" stop-color="#4c8df6"/>' +
+          '<stop offset="55%" stop-color="#8fbdf7"/>' +
+          '<stop offset="100%" stop-color="#f89a6e"/>' +
+        '</linearGradient>' +
+      '</defs>' +
+      '<circle cx="20" cy="20" r="20" fill="url(#' + id + ')"/>' +
+      '<text x="20" y="27.5" text-anchor="middle" fill="#ffffff" ' +
+        'font-family="Poppins, Inter, -apple-system, sans-serif" ' +
+        'font-size="20" font-weight="700">R</text>' +
+    '</svg>';
+  }
+
   /* Render the Handover group chat for the currently selected team
      member. Three participants:
        1. The departing teammate (the AI's original owner).
-       2. Relay AI (acts as the mediator / source-of-truth bot).
+       2. Relay AI (mediator / source-of-truth bot, brand mark above).
        3. Cody (the new owner).
-     Messages are seeded from the AI's linked-app context so the chat
-     reads as a real knowledge-transfer conversation. */
+     Also renders the right-hand Progress + Group Member panels. */
   function renderHandoverChat(member) {
-    const avatarsWrap = document.getElementById('ho-group-avatars');
-    const nameEl      = document.getElementById('ho-group-name');
-    const countEl     = document.getElementById('ho-group-count');
-    const body        = document.getElementById('ho-chat-body');
-    if (!avatarsWrap || !body) return;
+    const body         = document.getElementById('ho-chat-body');
+    const progressList = document.getElementById('ho-progress-list');
+    const membersList  = document.getElementById('ho-members-list');
+    if (!body) return;
 
     const opts = Array.from(document.querySelectorAll('.av2-opt'));
     const memberAvatar = (opts[member.avatarIndex] && opts[member.avatarIndex].dataset.src) || '';
     const departing    = member.departingName || 'Teammate';
-    const departingInit = departing.charAt(0).toUpperCase();
-    const aiName = member.name;
-
-    if (nameEl)  nameEl.textContent = aiName;
-    if (countEl) countEl.textContent = '3';
-
-    // Member avatar row: departing (real avatar), Relay AI (dark chip),
-    // Cody (blue "C"). Stacked with a slight overlap.
-    avatarsWrap.innerHTML =
-      '<span class="ho-avatar"><img src="' + memberAvatar + '" alt="' + departing + '"/></span>' +
-      '<span class="ho-avatar initial" style="background:#07191e">R</span>' +
-      '<span class="ho-avatar initial" style="background:#2563eb">C</span>';
+    const aiName       = member.name;
 
     // Seed messages — intentionally generic so they read well for any
     // owned AI. Senders alternate to mimic a real handover thread.
@@ -8298,7 +8391,7 @@
       { who: 'relay',     text: "I'm Relay AI. I'll preserve " + aiName + "'s memory and context during this handover so Cody can pick up without losing anything." },
       { who: 'departing', text: "Here's the short version: " + aiName + " already covers the weekly review, sprint tracking, and stakeholder updates. Context lives in " + linkedLabel + '.' },
       { who: 'relay',     text: 'Memory snapshot preserved. ' + (member.linkedApps || []).length + ' linked apps transferred. No permissions changed yet — Cody will need to confirm access.' },
-      { who: 'cody',      text: 'Got it — I\'ll review the pinned conversations tomorrow morning and flag anything unclear.' }
+      { who: 'cody',      text: "Got it — I'll review the pinned conversations tomorrow morning and flag anything unclear." }
     ];
 
     body.innerHTML = '';
@@ -8313,7 +8406,7 @@
       row.className = 'ho-msg';
       let avatarHtml, senderName, tag;
       if (m.who === 'relay') {
-        avatarHtml = '<span class="ho-msg-avatar" style="background:#07191e;">R</span>';
+        avatarHtml = '<span class="ho-msg-avatar">' + _relayLogoSvg() + '</span>';
         senderName = 'Relay AI';
         tag = 'Bot';
       } else if (m.who === 'cody') {
@@ -8337,6 +8430,63 @@
       body.appendChild(row);
     });
     body.scrollTop = 0;
+
+    // Progress panel — first three steps are "done" because the chat
+    // demonstrates them visibly; the last two are still pending.
+    if (progressList) {
+      const steps = [
+        { label: 'Handover chat created', done: true },
+        { label: 'Memory snapshot preserved', done: true },
+        { label: 'Linked apps transferred', done: true },
+        { label: 'Access confirmed by Cody', done: false },
+        { label: 'Handover complete', done: false }
+      ];
+      progressList.innerHTML = '';
+      steps.forEach(s => {
+        const li = document.createElement('li');
+        li.className = 'ho-progress-item' + (s.done ? ' done' : '');
+        li.innerHTML =
+          '<span class="ho-progress-check">' +
+            '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path d="M5 10.5l3 3 7-7"/>' +
+            '</svg>' +
+          '</span>' +
+          '<span class="ho-progress-label">' + s.label + '</span>';
+        progressList.appendChild(li);
+      });
+    }
+
+    // Group Member panel — three rows. Relay AI uses the brand logo.
+    if (membersList) {
+      membersList.innerHTML =
+        '<div class="ho-member">' +
+          '<span class="ho-member-avatar"><img src="' + memberAvatar + '" alt=""/></span>' +
+          '<div class="ho-member-info">' +
+            '<div class="ho-member-name">' + departing + '</div>' +
+            '<div class="ho-member-role">Departing · ' + member.role + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ho-member">' +
+          '<span class="ho-member-avatar">' + _relayLogoSvg() + '</span>' +
+          '<div class="ho-member-info">' +
+            '<div class="ho-member-name">Relay AI</div>' +
+            '<div class="ho-member-role">Bot · mediator</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="ho-member">' +
+          '<span class="ho-member-avatar" style="background:#2563eb;">C</span>' +
+          '<div class="ho-member-info">' +
+            '<div class="ho-member-name">Cody</div>' +
+            '<div class="ho-member-role">New owner · you</div>' +
+          '</div>' +
+        '</div>';
+    }
+  }
+
+  /* Collapse/expand one of the right-hand handover panels. */
+  function toggleHoPanel(key) {
+    const panel = document.getElementById('ho-panel-' + key);
+    if (panel) panel.classList.toggle('collapsed');
   }
 
   /* Update the small unread-count pills next to each tab label. Called
