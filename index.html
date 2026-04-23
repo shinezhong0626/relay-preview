@@ -7074,11 +7074,11 @@
                       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="7" width="9" height="6" rx="1"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>
                     </div>
                     <div class="admin-perm-info">
-                      <div class="admin-perm-label">Who can access</div>
+                      <div class="admin-perm-label" id="admin-perm-label">Who can access</div>
                       <div class="admin-perm-hint" id="admin-perm-hint">Only you can chat with this AI.</div>
                     </div>
                   </div>
-                  <div class="admin-perm-value">
+                  <div class="admin-perm-value" id="admin-perm-value-wrap">
                     <span id="admin-perm-value">Only me</span>
                     <svg class="admin-perm-chev" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 5 3 3 3-3"/></svg>
                   </div>
@@ -10301,8 +10301,9 @@
     // Ownership-gated admin affordances. For AIs the current user
     // DOESN'T own (Cody's Shine AI row), the Profile/Admin view is
     // read-only: no Settings button, no "Link more" in Feed, and
-    // the Permissions row renders as a static "Restricted" pill
-    // (no dropdown, no click). Everything else stays as-is.
+    // the Permissions row collapses to a static "Managed by <owner>
+    // / shared with you" info card (no right-side pill, no chevron,
+    // no click). Everything else stays as-is.
     const isCodyFlow = !!window._isCodyDemo;
     const isSharedAi = isCodyFlow && activeMember
       && typeof _CODY_TEAM !== 'undefined'
@@ -10311,23 +10312,36 @@
     if (settingsBtn) settingsBtn.hidden = !!isSharedAi;
     const linkMoreBtn = document.getElementById('admin-btn-link-more');
     if (linkMoreBtn) linkMoreBtn.hidden = !!isSharedAi;
-    const permRow = document.getElementById('admin-perm-row');
-    const permVal = document.getElementById('admin-perm-value');
-    const permHint = document.getElementById('admin-perm-hint');
-    const permChev = permRow ? permRow.querySelector('.admin-perm-chev') : null;
+    const permRow    = document.getElementById('admin-perm-row');
+    const permLabel  = document.getElementById('admin-perm-label');
+    const permVal    = document.getElementById('admin-perm-value');
+    const permValWrap= document.getElementById('admin-perm-value-wrap');
+    const permHint   = document.getElementById('admin-perm-hint');
+    const permChev   = permRow ? permRow.querySelector('.admin-perm-chev') : null;
     if (permRow) {
       permRow.classList.toggle('readonly', !!isSharedAi);
       permRow.disabled = !!isSharedAi;
     }
     if (permChev) permChev.style.display = isSharedAi ? 'none' : '';
     if (isSharedAi) {
-      if (permVal)  permVal.textContent = 'Restricted';
-      if (permHint) permHint.textContent = 'Shared with you · only the owner can change who has access.';
-    } else if (permVal) {
-      // Not shared — reset to the user's current permission label.
-      const currentPerm = window._currentPerm || 'me';
-      if (typeof _PERM_LABELS !== 'undefined' && _PERM_LABELS[currentPerm]) {
-        permVal.textContent = _PERM_LABELS[currentPerm];
+      // Shared AI (e.g. Cody viewing Shine AI) — figure out the real
+      // owner's first name. For the demo team this is always "Shine"
+      // for the shared entry, but derive from departingName to keep
+      // it future-proof.
+      const member = _CODY_TEAM.find(m => m.name === activeMember) || {};
+      const ownerFirstName = (member.departingName || 'Shine').split(' ')[0];
+      if (permLabel) permLabel.textContent = 'Managed by ' + ownerFirstName;
+      if (permHint)  permHint.textContent = 'shared with you';
+      if (permValWrap) permValWrap.hidden = true;
+    } else {
+      if (permLabel)   permLabel.textContent = 'Who can access';
+      if (permValWrap) permValWrap.hidden = false;
+      if (permVal) {
+        // Not shared — reset to the user's current permission label.
+        const currentPerm = window._currentPerm || 'me';
+        if (typeof _PERM_LABELS !== 'undefined' && _PERM_LABELS[currentPerm]) {
+          permVal.textContent = _PERM_LABELS[currentPerm];
+        }
       }
     }
 
