@@ -3393,10 +3393,29 @@
       flex: 1; min-width: 0;
       display: flex; flex-direction: column; gap: 2px;
     }
+    .ho-member-name-row {
+      display: flex; align-items: center; gap: 6px;
+      min-width: 0;
+    }
     .ho-member-name {
       font-size: 13px; font-weight: 500; line-height: 18px;
       color: #07191e;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .ho-member-tag {
+      flex-shrink: 0;
+      font-size: 10px; font-weight: 500; line-height: 14px;
+      padding: 1px 7px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .ho-member-tag.tag-departing {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .ho-member-tag.tag-receiver {
+      background: #dbeafe;
+      color: #1d4ed8;
     }
     .ho-member-role {
       font-size: 11px; line-height: 14px;
@@ -8390,26 +8409,25 @@
         return;
       }
       row.className = 'ho-msg';
-      let avatarHtml, senderName, tag;
+      // Role labels (Departing / Receiver) now live on the Group
+      // Member panel, not on each message. Chat bubbles just show
+      // avatar + sender name + text.
+      let avatarHtml, senderName;
       if (m.who === 'relay') {
         avatarHtml = '<span class="ho-msg-avatar">' + _relayLogoImg() + '</span>';
         senderName = 'Relay assistant';
-        tag = '';   // no tag — "assistant" is already in the name
       } else if (m.who === 'cody') {
         avatarHtml = '<span class="ho-msg-avatar" style="background:#2563eb;">C</span>';
         senderName = 'Cody';
-        tag = 'New owner';
       } else {
         avatarHtml = '<span class="ho-msg-avatar"><img src="' + memberAvatar + '" alt=""/></span>';
         senderName = departing;
-        tag = 'Departing';
       }
       row.innerHTML =
         avatarHtml +
         '<div class="ho-msg-body">' +
           '<div class="ho-msg-head">' +
             '<span class="ho-msg-name">' + senderName + '</span>' +
-            (tag ? '<span class="ho-msg-tag">' + tag + '</span>' : '') +
           '</div>' +
           '<div class="ho-msg-text">' + m.text + '</div>' +
         '</div>';
@@ -8442,28 +8460,42 @@
       });
     }
 
-    // Group Member panel — three rows. Relay AI uses the brand logo.
+    // Group Member panel — Relay assistant is pinned to the top (no
+    // tag, it's always the mediator). Human members show their role
+    // tag inline next to the name (Departing / Receiver) with their
+    // actual job title on the second line.
     if (membersList) {
       membersList.innerHTML =
-        '<div class="ho-member">' +
-          '<span class="ho-member-avatar"><img src="' + memberAvatar + '" alt=""/></span>' +
-          '<div class="ho-member-info">' +
-            '<div class="ho-member-name">' + departing + '</div>' +
-            '<div class="ho-member-role">Departing · ' + member.role + '</div>' +
-          '</div>' +
-        '</div>' +
+        // Relay assistant — always first
         '<div class="ho-member">' +
           '<span class="ho-member-avatar">' + _relayLogoImg() + '</span>' +
           '<div class="ho-member-info">' +
-            '<div class="ho-member-name">Relay assistant</div>' +
+            '<div class="ho-member-name-row">' +
+              '<span class="ho-member-name">Relay assistant</span>' +
+            '</div>' +
             '<div class="ho-member-role">Mediator</div>' +
           '</div>' +
         '</div>' +
+        // Departing teammate
+        '<div class="ho-member">' +
+          '<span class="ho-member-avatar"><img src="' + memberAvatar + '" alt=""/></span>' +
+          '<div class="ho-member-info">' +
+            '<div class="ho-member-name-row">' +
+              '<span class="ho-member-name">' + departing + '</span>' +
+              '<span class="ho-member-tag tag-departing">Departing</span>' +
+            '</div>' +
+            '<div class="ho-member-role">' + member.role + '</div>' +
+          '</div>' +
+        '</div>' +
+        // Receiver — Cody
         '<div class="ho-member">' +
           '<span class="ho-member-avatar" style="background:#2563eb;">C</span>' +
           '<div class="ho-member-info">' +
-            '<div class="ho-member-name">Cody</div>' +
-            '<div class="ho-member-role">New owner · you</div>' +
+            '<div class="ho-member-name-row">' +
+              '<span class="ho-member-name">Cody</span>' +
+              '<span class="ho-member-tag tag-receiver">Receiver</span>' +
+            '</div>' +
+            '<div class="ho-member-role">You</div>' +
           '</div>' +
         '</div>';
     }
