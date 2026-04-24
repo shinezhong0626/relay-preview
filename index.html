@@ -6968,37 +6968,25 @@
             </svg>
           </div>
           <div class="p8-gs-items">
-            <div class="p8-gs-item" data-gs="created" onclick="gsClickItem('created')">
+            <div class="p8-gs-item" data-gs="email" onclick="gsClickItem('email')">
               <span class="p8-gs-check" aria-hidden="true">
                 <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M5 10.5l3 3 7-7"/>
                 </svg>
               </span>
-              <span class="p8-gs-label">Create your AI</span>
+              <span class="p8-gs-label">Set up email inbox for AI</span>
               <svg class="p8-gs-help" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
                 <circle cx="10" cy="10" r="7.5"/>
                 <path d="M8 7.5a2 2 0 114 0c0 1.3-1.5 1.5-2 2.8M10 13.5v.01" stroke-linecap="round"/>
               </svg>
             </div>
-            <div class="p8-gs-item" data-gs="chatted" onclick="gsClickItem('chatted')">
+            <div class="p8-gs-item" data-gs="meeting" onclick="gsClickItem('meeting')">
               <span class="p8-gs-check" aria-hidden="true">
                 <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M5 10.5l3 3 7-7"/>
                 </svg>
               </span>
-              <span class="p8-gs-label">Chat with your AI</span>
-              <svg class="p8-gs-help" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
-                <circle cx="10" cy="10" r="7.5"/>
-                <path d="M8 7.5a2 2 0 114 0c0 1.3-1.5 1.5-2 2.8M10 13.5v.01" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div class="p8-gs-item" data-gs="linked" onclick="gsClickItem('linked')">
-              <span class="p8-gs-check" aria-hidden="true">
-                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M5 10.5l3 3 7-7"/>
-                </svg>
-              </span>
-              <span class="p8-gs-label">Link more apps</span>
+              <span class="p8-gs-label">Link meeting apps (Google Meet, Zoom)</span>
               <svg class="p8-gs-help" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
                 <circle cx="10" cy="10" r="7.5"/>
                 <path d="M8 7.5a2 2 0 114 0c0 1.3-1.5 1.5-2 2.8M10 13.5v.01" stroke-linecap="round"/>
@@ -8523,9 +8511,18 @@
       if (typeof goTo === 'function') goTo(8);
     }
 
-    // Full onboarding finished → mark "Create your AI" done in the
-    // Getting Started checklist.
+    // Full onboarding finished → reveal the Getting Started checklist
+    // for Shine-flow users so they can see follow-up tasks (set up
+    // email inbox, link meeting apps). Cody demo already has a full
+    // product-populated team and doesn't need the nudge.
+    // The old gsComplete('created') call is a no-op now that the
+    // widget tracks 'email'/'meeting' keys instead — safe to leave.
     if (typeof gsComplete === 'function') gsComplete('created');
+    if (!window._isCodyDemo) {
+      const gs = document.getElementById('p8-gs');
+      if (gs) gs.hidden = false;
+      if (typeof gsSyncProgress === 'function') gsSyncProgress();
+    }
   }
 
   // Role → 3 quick-question prompts tailored to the user's job.
@@ -10168,17 +10165,17 @@
   }
 
   /* ── Getting Started checklist state ──
-     Three foundational actions a new user should complete. Each is a
-     manual boolean for the prototype; the widget renders the checked
-     state, strike-through, and a progress bar. Toggling an item flips
-     its state (for demo interaction); in a real build, each would be
-     driven by the matching user action. */
+     Two follow-up actions a freshly-onboarded user should complete
+     to round out their AI: hook up an email inbox the AI can work
+     out of, and link meeting apps so the AI can sit in on calls.
+     Each is a manual boolean for the prototype — clicking toggles
+     the checked state + strike-through + progress bar. In a real
+     build each would fire when the matching action completes. */
   window._gsState = window._gsState || {
-    created: false,
-    chatted: false,
-    linked: false
+    email: false,
+    meeting: false
   };
-  const _gsOrder = ['created', 'chatted', 'linked'];
+  const _gsOrder = ['email', 'meeting'];
 
   function gsSyncProgress() {
     const state = window._gsState;
