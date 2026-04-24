@@ -10467,10 +10467,12 @@
   /* Called by each choice card — close the modal, then route into
      the wizard. Setting .no-skip (already set by startBuildNewAI) is
      idempotent.
-     Cody flow skips the "Preserve a departing teammate" intro (page 9)
-     — that 3-step overview is only relevant for first-time Shine
-     onboarding. Cody already knows the product, so we jump straight
-     into the step-1 form on page 10.
+     "Preserve a departing teammate" intro (page 9) is skipped for
+     anyone entering via the Build New AI modal — Shine already saw
+     the 3-step overview during onboarding, Cody already knows the
+     product. Both jump straight into the step-1 form on page 10.
+     First-time Shine onboarding still reaches page 9 through its
+     own goTo(9) callsites on the initial choose-an-option cards.
      Page 3 ("Build your AI self") is blocked once the user already
      has their AI self — clicking routes to viewing it instead. */
   function pickBuildChoice(page) {
@@ -10488,7 +10490,7 @@
       }
       return;
     }
-    if (window._isCodyDemo && page === 9) page = 10;
+    if (page === 9) page = 10;
     // Reset the teammate draft each time the user re-enters the
     // wizard so a previous attempt doesn't leak into the new one.
     if (page === 9 || page === 10) {
