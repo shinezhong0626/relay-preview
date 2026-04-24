@@ -10397,10 +10397,59 @@
     openNewAiChoiceModal();
   }
 
+  /* Does the current user already have their own AI self built?
+     - Skip-for-now / Sarah demo: false — the AI in-app is a canned
+       mock, user hasn't built anything.
+     - Cody demo: true iff "Cody AI" is present & owned in _CODY_TEAM.
+       (Cody starts without his own AI, so initially false.)
+     - Shine onboarding: true once the user is in the product
+       (page 8) — completion of the build flow is the only way to
+       reach this surface. */
+  function _userHasAiSelf() {
+    if (window._isDemoAi) return false;
+    if (window._isCodyDemo) {
+      return (typeof _CODY_TEAM !== 'undefined')
+        && _CODY_TEAM.some(m => m.owned && m.name === 'Cody AI');
+    }
+    return true;
+  }
+
+  /* Rewrite the "Build your AI self" card's CTA when the user already
+     has their AI self. Text flips to "View AI Self", the plus-style
+     icon becomes an eye, and pickBuildChoice(3) reroutes to opening
+     the existing AI instead of starting a second build. */
+  function _updateNewAiChoiceModalState() {
+    const overlay = document.getElementById('newai-choice-overlay-modal');
+    if (!overlay) return;
+    const aiSelfBtn = overlay.querySelector('.choice-card.left .card-btn');
+    if (!aiSelfBtn) return;
+    if (_userHasAiSelf()) {
+      aiSelfBtn.innerHTML =
+        'View AI Self' +
+        '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" ' +
+          'stroke="currentColor" stroke-width="2" ' +
+          'stroke-linecap="round" stroke-linejoin="round" ' +
+          'style="flex-shrink:0">' +
+          '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>' +
+          '<circle cx="12" cy="12" r="3"/>' +
+        '</svg>';
+      aiSelfBtn.setAttribute('aria-label', 'View your AI self');
+    } else {
+      aiSelfBtn.innerHTML =
+        'Start build' +
+        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" ' +
+          'viewBox="0 0 24 24" style="flex-shrink:0">' +
+          '<path fill="currentColor" d="M4 11v2h12v2h2v-2h2v-2h-2V9h-2v2zm10-4h2v2h-2zm0 0h-2V5h2zm0 10h2v-2h-2zm0 0h-2v2h2z"/>' +
+        '</svg>';
+      aiSelfBtn.setAttribute('aria-label', 'Start build of your AI self');
+    }
+  }
+
   /* Open/close the Choose-an-option modal. */
   function openNewAiChoiceModal() {
     const overlay = document.getElementById('newai-choice-overlay-modal');
     if (!overlay) return;
+    _updateNewAiChoiceModalState();
     overlay.classList.add('show');
     document.addEventListener('keydown', _newAiChoiceEscHandler);
   }
@@ -10418,9 +10467,24 @@
      Cody flow skips the "Preserve a departing teammate" intro (page 9)
      — that 3-step overview is only relevant for first-time Shine
      onboarding. Cody already knows the product, so we jump straight
-     into the step-1 form on page 10. */
+     into the step-1 form on page 10.
+     Page 3 ("Build your AI self") is blocked once the user already
+     has their AI self — clicking routes to viewing it instead. */
   function pickBuildChoice(page) {
     closeNewAiChoiceModal();
+    if (page === 3 && _userHasAiSelf()) {
+      // Already have an AI self — open it rather than re-entering
+      // the build flow. Cody uses selectTeamMember; Shine uses
+      // openShineAI (the static sidebar row).
+      const s = document.getElementById('screens');
+      if (s) s.classList.remove('no-skip');
+      if (window._isCodyDemo) {
+        if (typeof selectTeamMember === 'function') selectTeamMember('Cody AI');
+      } else {
+        if (typeof openShineAI === 'function') openShineAI();
+      }
+      return;
+    }
     if (window._isCodyDemo && page === 9) page = 10;
     // Reset the teammate draft each time the user re-enters the
     // wizard so a previous attempt doesn't leak into the new one.
